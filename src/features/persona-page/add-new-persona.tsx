@@ -104,7 +104,7 @@ export const AddNewPersona: FC<Props> = (props) => {
                 <Textarea
                   className="min-h-[300px]"
                   required
-                  defaultValue={persona.personaMessage}
+                  defaultValue={persona.persona_message}
                   name="personaMessage"
                   placeholder="Personality of your persona"
                 />

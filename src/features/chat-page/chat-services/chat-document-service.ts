@@ -113,7 +113,15 @@ export const FindAllChatDocuments = async (
 
     return {
       status: "OK",
-      response: rows,
+      response: rows.map((row: Record<string, any>) => ({
+        id: row.id,
+        name: row.name,
+        chatThreadId: row.chat_thread_id,
+        userId: row.user_id,
+        createdAt: new Date(row.created_at),
+        type: row.type,
+        isDeleted: row.is_deleted,
+      })),
     };
   } catch (e) {
     return {
@@ -168,7 +176,15 @@ export const CreateChatDocument = async (
 
       return {
         status: "OK",
-        response: rows[0],
+        response: {
+          id: rows[0].id,
+          name: rows[0].name,
+          chatThreadId: rows[0].chat_thread_id,
+          userId: rows[0].user_id,
+          createdAt: new Date(rows[0].created_at),
+          type: rows[0].type,
+          isDeleted: rows[0].is_deleted,
+        },
       };
     }
 
