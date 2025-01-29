@@ -78,14 +78,12 @@ Clone this repository locally or fork it to your Github account.
 ### Steps
 
 1. Change directory to the `src` folder
-2. Rename the file `.env.example` to `.env.local` and populate the environment variables (At least Azure OpenAI service to test out AI Chat feature).
+2. Rename the file `.env.example` to `.env.local` and populate the environment variables (At least [Azure OpenAI service](https://learn.microsoft.com/en-us/azure/ai-services/openai/quickstart?tabs=command-line%2Capi-key%2Cjavascript-keyless%2Ctypescript-keyless%2Cpython-new&pivots=programming-language-typescript#retrieve-resource-information) to test out AI Chat feature).
 3. Retrive the Neon API Key: Create [create a new API Key](https://neon.tech/docs/manage/api-keys#creating-api-keys) and set it in the `.env.local ` file to the value of `NEON_API_KEY`.
 4. Install npm packages by running `npm install`
 5. Start the app by running `npm run dev`
-6. It automatically creates a new database for the dev user on Neon database and populates schemas from `./data/schema.sql` SQL file used in the application.
+6. It automatically creates a new database for each new user on Neon database and populates schemas from `./data/schema.sql` SQL file used in the application.
 7. Access the app on [http://localhost:3000](http://localhost:3000)
-
-You should now be prompted to login with your chosen OAuth provider.
 
 > [!NOTE]
 > If using Basic Auth (DEV ONLY) any username you enter will create a new user id (hash of username@localhost). You can use this to simulate multiple users. Once successfully logged in, you can start creating new conversations.
@@ -121,7 +119,7 @@ You can deploy the application using one of the following options:
 
 Click on the Deploy to Azure button to deploy the Azure resources for the application.
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fneondatabase-lab%2Fazure-tenant-ai-chat%2Fmain%2Finfra%2Fmain.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fneondatabase-labs%2Fazure-tenant-ai-chat%2Fmain%2Finfra%2Fmain.json)
 
 > [!IMPORTANT]
 > The application is protected by an identity provider and follow the steps in [Add an identity provider](/docs/add-identity.md) section for adding authentication to your app.

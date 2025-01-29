@@ -52,7 +52,7 @@ export const FindExtensionByID = async (
 
     return {
       status: "OK",
-      response: rows[0],
+      response: rows[0] as ExtensionModel,
     };
   } catch (error) {
     return {
@@ -122,7 +122,7 @@ export const CreateExtension = async (
       if (rows.length > 0) {
         return {
           status: "OK",
-          response: rows[0],
+          response: rows[0] as ExtensionModel,
         };
       }
 
@@ -207,7 +207,7 @@ export const UpdateExtension = async (
       if (rows.length > 0) {
         return {
           status: "OK",
-          response: rows[0],
+          response: rows[0] as ExtensionModel,
         };
       }
 
@@ -379,7 +379,7 @@ export const DeleteExtension = async (
       if (rows.length > 0) {
         return {
           status: "OK",
-          response: rows[0],
+          response: rows[0] as ExtensionModel,
         };
       }
 
@@ -422,7 +422,7 @@ export const FindAllExtensionForCurrentUser = async (): Promise<
 
     return {
       status: "OK",
-      response: rows,
+      response: rows as ExtensionModel[],
     };
   } catch (error) {
     return {

@@ -37,7 +37,20 @@ export const FindAllChatThreadsForAdmin = async (
 
     return {
       status: "OK",
-      response: rows,
+      response: rows.map(row => ({
+        id: row.id,
+        name: row.name,
+        createdAt: row.created_at,
+        lastMessageAt: row.last_message_at,
+        userId: row.user_id,
+        useName: row.user_name,
+        isDeleted: row.is_deleted,
+        bookmarked: row.bookmarked,
+        personaMessage: row.persona_message,
+        personaMessageTitle: row.persona_message_title,
+        extension: row.extension,
+        type: row.type,
+      })),
     };
   } catch (error) {
     return {
@@ -73,7 +86,20 @@ export const FindAllChatMessagesForAdmin = async (
 
     return {
       status: "OK",
-      response: rows,
+      response: rows.map(row => ({
+        id: row.id,
+        createdAt: row.created_at,
+        isDeleted: row.is_deleted,
+        threadId: row.thread_id,
+        userId: row.user_id,
+        userName: row.user_name,
+        content: row.content,
+        contentType: row.content_type,
+        updatedAt: row.updated_at,
+        role: row.role,
+        name: row.name,
+        type: row.type,
+      })),
     };
   } catch (error) {
     return {

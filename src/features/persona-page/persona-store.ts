@@ -11,11 +11,11 @@ class PersonaState {
     id: "",
     name: "",
     description: "",
-    personaMessage: "",
-    createdAt: new Date(),
+    persona_message: "",
+    created_at: new Date(),
     isPublished: false,
     type: "PERSONA",
-    userId: "",
+    user_id: "",
   };
 
   public isOpened: boolean = false;
@@ -49,7 +49,7 @@ class PersonaState {
       ...this.defaultModel,
       name: persona.name,
       description: persona.description,
-      personaMessage: persona.personaMessage,
+      persona_message: persona.personaMessage,
     };
     this.isOpened = true;
   }
@@ -90,10 +90,10 @@ export const FormDataToPersonaModel = (formData: FormData): PersonaModel => {
     id: formData.get("id") as string,
     name: formData.get("name") as string,
     description: formData.get("description") as string,
-    personaMessage: formData.get("personaMessage") as string,
+    persona_message: formData.get("personaMessage") as string,
     isPublished: formData.get("isPublished") === "on" ? true : false,
-    userId: "", // the user id is set on the server once the user is authenticated
-    createdAt: new Date(),
+    user_id: "", // the user id is set on the server once the user is authenticated
+    created_at: new Date(),
     type: PERSONA_ATTRIBUTE,
   };
 };

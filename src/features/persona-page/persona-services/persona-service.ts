@@ -21,7 +21,7 @@ import {
 interface PersonaInput {
   name: string;
   description: string;
-  personaMessage: string;
+  persona_message: string;
   isPublished: boolean;
 }
 
@@ -52,7 +52,7 @@ export const FindPersonaByID = async (
 
     return {
       status: "OK",
-      response: rows[0],
+      response: rows[0] as PersonaModel,
     };
   } catch (error) {
     return {
@@ -76,7 +76,7 @@ export const CreatePersona = async (
       id: uniqueId(),
       name: props.name,
       description: props.description,
-      persona_message: props.personaMessage,
+      persona_message: props.persona_message,
       isPublished: user.isAdmin ? props.isPublished : false,
       user_id: await userHashedId(),
       created_at: new Date(),
@@ -111,7 +111,7 @@ export const CreatePersona = async (
     if (rows.length > 0) {
       return {
         status: "OK",
-        response: rows[0],
+        response: rows[0] as PersonaModel,
       };
     } else {
       return {
@@ -179,7 +179,7 @@ export const DeletePersona = async (
       if (rows.length > 0) {
         return {
           status: "OK",
-          response: rows[0],
+          response: rows[0] as PersonaModel,
         };
       }
 
@@ -263,7 +263,7 @@ export const UpsertPersona = async (
       if (rows.length > 0) {
         return {
           status: "OK",
-          response: rows[0],
+          response: rows[0] as PersonaModel,
         };
       }
 
@@ -306,7 +306,7 @@ export const FindAllPersonaForCurrentUser = async (): Promise<
 
     return {
       status: "OK",
-      response: rows,
+      response: rows as PersonaModel[],
     };
   } catch (error) {
     return {

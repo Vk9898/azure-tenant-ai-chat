@@ -37,7 +37,20 @@ export const FindAllChatThreadForCurrentUser = async (): Promise<
 
     return {
       status: "OK",
-      response: rows,
+      response: rows.map(row => ({
+        id: row.id,
+        name: row.name,
+        createdAt: row.created_at,
+        lastMessageAt: row.last_message_at,
+        userId: row.user_id,
+        type: row.type,
+        isDeleted: row.is_deleted,
+        bookmarked: row.bookmarked,
+        personaMessage: row.persona_message,
+        personaMessageTitle: row.persona_message_title,
+        extension: row.extension,
+        useName: row.use_name,
+      })),
     };
   } catch (error) {
     return {
@@ -70,7 +83,7 @@ export const FindChatThreadForCurrentUser = async (
 
     return {
       status: "OK",
-      response: rows[0],
+      response: rows[0] as ChatThreadModel,
     };
   } catch (error) {
     return {
@@ -223,7 +236,7 @@ export const UpsertChatThread = async (
     if (rows.length > 0) {
       return {
         status: "OK",
-        response: rows[0],
+        response: rows[0] as ChatThreadModel,
       };
     }
 
@@ -284,7 +297,7 @@ export const CreateChatThread = async (): Promise<
     if (rows.length > 0) {
       return {
         status: "OK",
-        response: rows[0],
+        response: rows[0] as ChatThreadModel,
       };
     }
 

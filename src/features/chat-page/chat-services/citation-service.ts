@@ -33,7 +33,12 @@ export const CreateCitation = async (
 
     return {
       status: "OK",
-      response: rows[0],
+      response: {
+        id: rows[0].id,
+        content: rows[0].content,
+        type: rows[0].type,
+        userId: rows[0].user_id,
+      },
     };
   } catch (error) {
     return {
@@ -86,7 +91,12 @@ export const FindCitationByID = async (
 
     return {
       status: "OK",
-      response: rows[0],
+      response: {
+        id: rows[0].id,
+        content: rows[0].content,
+        type: rows[0].type,
+        userId: rows[0].user_id,
+      },
     };
   } catch (error) {
     return {
@@ -106,7 +116,7 @@ export const FormatCitations = (citation: DocumentSearchResponse[]) => {
         pageContent: d.document.pageContent,
         chatThreadId: d.document.chatThreadId,
         id: "",
-        user: "",
+        userId: "",
       },
     });
   });

@@ -37,7 +37,7 @@ export const ViewPersona: FC<Props> = (props) => {
               <Textarea
                 disabled
                 className="min-h-[300px]"
-                defaultValue={persona.personaMessage}
+                defaultValue={persona.persona_message}
                 name="personaMessage"
                 placeholder="Personality of your persona"
               />

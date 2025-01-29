@@ -30,7 +30,18 @@ export const FindTopChatMessagesForCurrentUser = async (
 
     return {
       status: "OK",
-      response: rows,
+      response: rows.map(row => ({
+        id: row.id,
+        createdAt: row.created_at,
+        type: row.type,
+        isDeleted: row.is_deleted,
+        content: row.content,
+        name: row.name,
+        role: row.role,
+        threadId: row.thread_id,
+        userId: row.user_id,
+        multiModalImage: row.multi_modal_image,
+      })),
     };
   } catch (e) {
     return {
@@ -66,7 +77,18 @@ export const FindAllChatMessagesForCurrentUser = async (
 
     return {
       status: "OK",
-      response: rows,
+      response: rows.map(row => ({
+        id: row.id,
+        createdAt: row.created_at,
+        type: row.type,
+        isDeleted: row.is_deleted,
+        content: row.content,
+        name: row.name,
+        role: row.role,
+        threadId: row.thread_id,
+        userId: row.user_id,
+        multiModalImage: row.multi_modal_image,
+      })),
     };
   } catch (e) {
     return {
@@ -147,7 +169,18 @@ export const UpsertChatMessage = async (
     if (rows.length > 0) {
       return {
         status: "OK",
-        response: rows[0],
+        response: {
+          id: rows[0].id,
+          createdAt: rows[0].created_at,
+          type: rows[0].type,
+          isDeleted: rows[0].is_deleted,
+          content: rows[0].content,
+          name: rows[0].name,
+          role: rows[0].role,
+          threadId: rows[0].thread_id,
+          userId: rows[0].user_id,
+          multiModalImage: rows[0].multi_modal_image,
+        },
       };
     }
 

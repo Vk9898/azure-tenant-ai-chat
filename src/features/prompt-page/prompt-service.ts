@@ -62,12 +62,13 @@ export const CreatePrompt = async (
       modelToSave.type,
     ];
 
+    const sql = await NeonDBInstance();
     const rows = await sql(query, values);
 
     if (rows.length > 0) {
       return {
         status: "OK",
-        response: rows[0],
+        response: rows[0] as PromptModel,
       };
     } else {
       return {
@@ -106,7 +107,7 @@ export const FindAllPrompts = async (): Promise<
 
     return {
       status: "OK",
-      response: rows,
+      response: rows as PromptModel[],
     };
   } catch (error) {
     return {
@@ -162,7 +163,7 @@ export const DeletePrompt = async (
       if (rows.length > 0) {
         return {
           status: "OK",
-          response: rows[0],
+          response: rows[0] as PromptModel,
         };
       }
 
@@ -215,7 +216,7 @@ export const FindPromptByID = async (
 
     return {
       status: "OK",
-      response: rows[0],
+      response: rows[0] as PromptModel,
     };
   } catch (error) {
     return {
@@ -281,7 +282,7 @@ export const UpsertPrompt = async (
       if (rows.length > 0) {
         return {
           status: "OK",
-          response: rows[0],
+          response: rows[0] as PromptModel,
         };
       }
 

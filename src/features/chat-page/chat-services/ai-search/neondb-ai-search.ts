@@ -5,6 +5,10 @@ import { userHashedId } from "@/features/auth-page/helpers";
 import { ServerActionResponse } from "@/features/common/server-action-response";
 import { OpenAIEmbeddingInstance } from "@/features/common/services/openai";
 import { uniqueId } from "@/features/common/util";
+import {
+  AzureKeyCredential,
+  SearchClient,
+} from "@azure/search-documents";
 
 export interface NeonSearchDocument {
   id: string;
@@ -95,7 +99,14 @@ export const SimilaritySearch = async (
       status: "OK",
       response: rows.map((row: Record<string, any>) => ({
         score: 1 / (1 + row.distance), // Convert distance to similarity score
-        document: row,
+        document: {
+          id: row.id,
+          pageContent: row.pageContent,
+          userId: row.user_id,
+          chatThreadId: row.chatThreadId,
+          metadata: row.metadata,
+          embedding: row.embedding,
+        },
       })),
     };
   } catch (e) {
@@ -105,6 +116,90 @@ export const SimilaritySearch = async (
       errors: [{
         message: `${e}`,
       }],
+    };
+  }
+};
+
+export const ExtensionSimilaritySearch = async (props: {
+  searchText: string;
+  vectors: string[];
+  apiKey: string;
+  searchName: string;
+  indexName: string;
+}): Promise<ServerActionResponse<Array<DocumentSearchResponse>>> => {
+  try {
+    const openai = OpenAIEmbeddingInstance();
+    const { searchText, vectors, apiKey, searchName, indexName } = props;
+
+    const embeddings = await openai.embeddings.create({
+      input: searchText,
+      model: "",
+    });
+    const endpointSuffix = process.env.AZURE_SEARCH_ENDPOINT_SUFFIX || "search.windows.net";
+
+    const endpoint = `https://${searchName}.${endpointSuffix}`;
+
+    const searchClient = new SearchClient(
+      endpoint,
+      indexName,
+      new AzureKeyCredential(apiKey)
+    );
+
+    const searchResults = await searchClient.search(searchText, {
+      top: 3,
+
+      // filter: filter,
+      vectorSearchOptions: {
+        queries: [
+          {
+            vector: embeddings.data[0].embedding,
+            fields: vectors,
+            kind: "vector",
+            kNearestNeighborsCount: 10,
+          },
+        ],
+      },
+    });
+
+    const results: Array<any> = [];
+    for await (const result of searchResults.results) {
+      const item = {
+        score: result.score,
+        document: result.document,
+      };
+
+      // exclude the all the fields that are not in the fields array
+      const document = item.document as any;
+      const newDocument: any = {};
+
+      // iterate over the object entries in document
+      // and only include the fields that are in the fields array
+
+      for (const key in document) {
+        const hasKey = vectors.includes(key);
+        if (!hasKey) {
+          newDocument[key] = document[key];
+        }
+      }
+
+      results.push({
+        score: result.score,
+        document: newDocument, // Use the newDocument object instead of the original document
+      });
+    }
+
+    return {
+      status: "OK",
+      response: results,
+    };
+  } catch (e) {
+    return {
+      status: "ERROR",
+      errors: [
+        {
+          message: `${e}`,
+        },
+      ],
     };
   }
 };
@@ -179,7 +274,7 @@ export const EmbedDocuments = async (
 
     const embeddings = await openai.embeddings.create({
       input: contentsToEmbed,
-      model: process.env.OPENAI_EMBEDDING_MODEL,
+      model: "",
     });
 
     embeddings.data.forEach((embedding: { embedding: number[] | undefined; }, index: number) => {
