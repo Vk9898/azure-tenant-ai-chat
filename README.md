@@ -1,8 +1,8 @@
-# Azure Tenant AI Chat Solution Accelerator
+# Multiuser RAG Chat in Azure
 
 ## Introduction
 
-Tenant AI Chat Solution Accelerator uses [Neon Serverless Postgres](https://learn.microsoft.com/en-us/azure/partner-solutions/neon/overview) on Azure to allow organisations to deploy a private chat tenant in their Azure Subscription with dedicated database per user on Neon. It is a modified version of [Azure Chat Solution Accelerator](https://github.com/microsoft/azurechat) by replacing [Azure AI Search](https://learn.microsoft.com/en-GB/azure/search/) and [Azure CosmosDB](https://learn.microsoft.com/en-GB/azure/cosmos-db/nosql/) with [Neon](https://neon.tech/) for chat data storage and search functionality.
+Multiuser RAG Chat uses [Neon Serverless Postgres](https://learn.microsoft.com/en-us/azure/partner-solutions/neon/overview) on Azure to allow organizations to deploy a private chat tenant in their Azure Subscription with a dedicated database per user on Neon. It is a modified version of [Azure Chat Solution Accelerator](https://github.com/microsoft/azurechat) by replacing [Azure AI Search](https://learn.microsoft.com/en-GB/azure/search/) and [Azure CosmosDB](https://learn.microsoft.com/en-GB/azure/cosmos-db/nosql/) with [Neon](https://neon.tech/) for chat data storage and search functionality.
 
 ![Tenant AI Chat Solution Accelerator with Neon](/assets/Multiuser%20AI%20Chat%20Solution%20Accelerator%20App%20View%201.png)
 
@@ -10,7 +10,7 @@ Tenant AI Chat Solution Accelerator uses [Neon Serverless Postgres](https://lear
 
 - 📀 **Database per user**: Keeps chat data isolated by creating a separate database instance per user.
 - 🔑 **Authentication and User Management**: Allows flexible login options, including OAuth providers like Google, GitHub, and Microsoft Entra ID (Azure AD).
-- 🧠 **AI-Powered Conversations**: Chat with documents such as PDF. You can also buiild your own prompt templates.
+- 🧠 **AI-Powered Conversations**: Chat with documents such as PDF. You can also build your own prompt templates.
 - 💾 **Chat History**: Stores chat history with multiple chat threads, messages, and metadata.
 - 🎨 **Customizable Chat Personas**: Personalizes conversations with user-defined chat personas. Manage persona settings directly from the application interface.
 - 🛠️ **Extensions Support**: Extends chat functionalities by defining custom extensions. Store and manage extensions in the database, allowing dynamic interaction with custom workflows.
@@ -23,8 +23,8 @@ Tenant AI Chat Solution Accelerator uses [Neon Serverless Postgres](https://lear
 
 ## Solution Benefits
 
-- **Private**: Offers both application and database level isolation with standalone single-tenant app with single-tenant database. You can use it with your own internal data sources (PDFs, Docs) or integrate with your internal services (APIs)
-- **Cost-Efficient**: Combines relational storage, vector storage in a single platform reduces the need for additional services, lowering costs. Scale efficiently as your user base grows while keeping costs manageable.
+- **Private**: Offers both application and database level isolation with the standalone single-tenant app with a single-tenant database. You can use it with your own internal data sources (PDFs, Docs) or integrate with your internal services (APIs)
+- **Cost-Efficient**: Combines relational storage, and vector storage in a single platform reduces the need for additional services, lowering costs. Scale efficiently as your user base grows while keeping costs manageable.
 
 
 
