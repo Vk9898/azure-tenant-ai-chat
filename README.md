@@ -1,4 +1,4 @@
-# Multiuser RAG Chat in Azure
+# Multi-user RAG Chat in Azure
 
 ## Introduction
 
