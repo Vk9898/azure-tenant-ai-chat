@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Multiuser RAG Chat uses [Neon Serverless Postgres](https://learn.microsoft.com/en-us/azure/partner-solutions/neon/overview) on Azure to allow organizations to deploy a private chat tenant in their Azure Subscription with a dedicated database per user on Neon. It is a modified version of [Azure Chat Solution Accelerator](https://github.com/microsoft/azurechat) by replacing [Azure AI Search](https://learn.microsoft.com/en-GB/azure/search/) and [Azure CosmosDB](https://learn.microsoft.com/en-GB/azure/cosmos-db/nosql/) with [Neon](https://neon.tech/) for chat data storage and search functionality.
+Multiuser RAG Chat uses [Neon Serverless Postgres](https://learn.microsoft.com/en-us/azure/partner-solutions/neon/overview) on Azure to allow organizations to deploy a private chat tenant in their Azure Subscription with a dedicated database per user on Neon. It is a modified version of [Azure Chat Solution Accelerator](https://github.com/microsoft/azurechat) with [Neon](https://neon.tech/) for chat data storage and search functionality.
 
 ![Tenant AI Chat Solution Accelerator with Neon](/assets/Multiuser%20AI%20Chat%20Solution%20Accelerator%20App%20View%201.png)
 
