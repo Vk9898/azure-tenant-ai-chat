@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.32.4.45862",
-      "templateHash": "5933110433756737368"
+      "version": "0.33.93.31351",
+      "templateHash": "15772151611461082892"
     }
   },
   "parameters": {
@@ -244,8 +244,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.32.4.45862",
-              "templateHash": "3679852009160364678"
+              "version": "0.33.93.31351",
+              "templateHash": "11848578023168218100"
             }
           },
           "parameters": {
@@ -648,41 +648,22 @@
               "location": "[parameters('location')]",
               "tags": "[parameters('tags')]",
               "properties": {
-                "companyDetails": {
-                  "businessPhone": "string",
-                  "companyName": "string",
-                  "country": "string",
-                  "domain": "string"
-                },
+                "companyDetails": {},
                 "marketplaceDetails": {
                   "offerDetails": {
-                    "offerId": "string",
-                    "planId": "string",
-                    "planName": "string",
-                    "publisherId": "string",
-                    "termId": "string",
-                    "termUnit": "string"
+                    "offerId": "neon_serverless_postgres_azure_prod",
+                    "planId": "neon_serverless_postgres_azure_prod_free",
+                    "planName": "Free Plan",
+                    "publisherId": "neon1722366567200",
+                    "termId": "gmz7xq9ge3py",
+                    "termUnit": "P1M"
                   },
-                  "subscriptionId": "string",
-                  "subscriptionStatus": "string"
+                  "subscriptionId": "[subscription().id]"
                 },
                 "partnerOrganizationProperties": {
-                  "organizationId": "string",
-                  "organizationName": "string",
-                  "singleSignOnProperties": {
-                    "aadDomains": [
-                      "string"
-                    ],
-                    "enterpriseAppId": "string",
-                    "singleSignOnState": "string",
-                    "singleSignOnUrl": "string"
-                  }
+                  "organizationName": "string"
                 },
                 "userDetails": {
-                  "emailAddress": "bobur@neon.tech",
-                  "firstName": "string",
-                  "lastName": "string",
-                  "phoneNumber": "string",
                   "upn": "string"
                 }
               }
