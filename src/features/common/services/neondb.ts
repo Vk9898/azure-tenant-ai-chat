@@ -114,23 +114,111 @@ export const createNeonProjectForUser = async (userId: string): Promise<string> 
  */
 const initializeDatabaseSchema = async (connectionString: string) => {
   try {
-    // Read the schema file
-    const schemaPath = path.resolve("../data/schema.sql");
-    const schemaSQL = await fs.readFile(schemaPath, "utf8");
-
-    // Split the SQL file into individual statements
-    const sqlStatements = schemaSQL
-      .split(";") // Split by semicolon
-      .map((stmt) => stmt.trim()) // Remove extra spaces
-      .filter((stmt) => stmt.length > 0); // Exclude empty statements
+    console.log("Initializing database schema...");
 
     // Initialize Neon client
     const sql = neon(connectionString);
 
+    // Define the schema creation SQL statements
+    const schemaSQLStatements = [
+      `CREATE EXTENSION IF NOT EXISTS vector;`,
+
+      `CREATE TABLE IF NOT EXISTS chat_threads (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        use_name TEXT NULL,
+        user_id TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        last_message_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        bookmarked BOOLEAN NOT NULL DEFAULT FALSE,
+        is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+        type TEXT NOT NULL,
+        persona_message TEXT,
+        persona_message_title TEXT,
+        extension TEXT[] DEFAULT '{}'
+      );`,
+
+      `CREATE TABLE IF NOT EXISTS chat_citations (
+        id TEXT PRIMARY KEY,
+        content TEXT NOT NULL,
+        type TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );`,
+
+      `CREATE TABLE IF NOT EXISTS personas (
+        id CHAR(64) PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT NOT NULL,
+        persona_message TEXT NOT NULL,
+        is_published BOOLEAN NOT NULL DEFAULT FALSE,
+        user_id CHAR(64) NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        type TEXT NOT NULL
+      );`,
+
+      `CREATE TABLE IF NOT EXISTS extensions (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        execution_steps TEXT NOT NULL,
+        description TEXT NOT NULL,
+        is_published BOOLEAN NOT NULL DEFAULT FALSE,
+        user_id TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        type TEXT NOT NULL,
+        functions JSONB DEFAULT '[]'::JSONB,
+        headers JSONB DEFAULT '[]'::JSONB
+      );`,
+
+      `CREATE TABLE IF NOT EXISTS documents (
+        id TEXT PRIMARY KEY,
+        metadata TEXT,
+        page_content TEXT NOT NULL,
+        chat_thread_id TEXT NOT NULL,
+        embedding VECTOR(1536),
+        user_id TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );`,
+
+      `CREATE TABLE IF NOT EXISTS chat_messages (
+        id CHAR(64) PRIMARY KEY,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        type TEXT NOT NULL,
+        is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+        content TEXT NOT NULL,
+        name TEXT,
+        role TEXT,
+        thread_id CHAR(64) NOT NULL,
+        user_id CHAR(64),
+        multi_modal_image TEXT
+      );`,
+
+      `CREATE TABLE IF NOT EXISTS chat_documents (
+        id CHAR(64) PRIMARY KEY,
+        chat_thread_id CHAR(64) NOT NULL,
+        user_id CHAR(64) NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        type TEXT NOT NULL,
+        is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+        name TEXT NOT NULL
+      );`,
+
+      `CREATE TABLE IF NOT EXISTS prompts (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT NOT NULL,
+        is_published BOOLEAN NOT NULL DEFAULT FALSE,
+        user_id TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        type TEXT NOT NULL,
+        embedding VECTOR(1536)
+      );`
+    ];
+
     // Execute each SQL statement sequentially
-    for (const statement of sqlStatements) {
+    for (const statement of schemaSQLStatements) {
       console.log(`Executing SQL: ${statement}`);
-      await sql(statement); // Execute the SQL statement
+      await sql(statement);
     }
 
     console.log("Database schema initialized successfully.");
