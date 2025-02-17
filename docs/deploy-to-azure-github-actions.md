@@ -12,14 +12,26 @@ Fork this repository to your own organisation so that you can execute GitHub Act
 
 The GitHub workflow requires a secret named `AZURE_CREDENTIALS` to authenticate with Azure. The secret contains the credentials for a service principal with the Contributor role on the resource group containing the container app and container registry.
 
-1. Create a service principal with the Contributor role on the resource group that contains the Azure App Service.
+1. Before you login a service principal secret, you need to prepare a service principal with a secret.
 
-   ```console
-   az ad sp create-for-rbac
-      --name <NAME OF THE CREDENTIAL> --role contributor --scopes /subscriptions/<SUBSCRIPTION ID>/resourceGroups/<RESOURCE GROUP> --sdk-auth --output json
+- [Create a service principal and assign a role to it](https://learn.microsoft.com/entra/identity-platform/howto-create-service-principal-portal)
+- [Create a new service principal client secret](https://learn.microsoft.com/entra/identity-platform/howto-create-service-principal-portal#option-3-create-a-new-client-secret)
+
+2. After it, create a GitHub Action secret `AZURE_CREDENTIALS` with the value like below: (Refer to [Using secrets in GitHub Actions](https://docs.github.com/actions/security-guides/using-secrets-in-github-actions).)
+
+   ```json
+   {
+       "clientSecret":  "******",
+       "subscriptionId":  "******",
+       "tenantId":  "******",
+       "clientId":  "******"
+   }
    ```
 
-2. Copy the JSON output from the command.
+- clientSecret: the service principal client secret
+- subscriptionId: the subscription ID
+- tenantId: the tenant ID
+- clientId: the service principal client ID
 
 3. In the GitHub repository, navigate to Settings > Secrets > Actions and select New repository secret.
 
