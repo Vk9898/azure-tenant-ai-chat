@@ -34,7 +34,7 @@ export const LogIn: FC<LoginProps> = (props) => {
       </CardHeader>
       <CardContent className="grid gap-4">
         {props.githubEnabled && (
-          <Button onClick={() => signIn("github")}>GitHub</Button>
+          <Button onClick={() => signIn("github")}>Continue with GitHub</Button>
         )}
         {/* {props.entraIdEnabled && (
           <Button onClick={() => signIn("azure-ad")}>Microsoft 365</Button>
