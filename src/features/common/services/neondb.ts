@@ -85,6 +85,7 @@ export const createNeonProjectForUser = async (userId: string): Promise<string> 
         project: {
           pg_version: 17, // Specify the PostgreSQL version
           name: projectName, // Specify the project name
+          region_id: "azure-eastus2", // Specify the region
         },
       }),
     });
