@@ -2,6 +2,7 @@ param name string = 'internal-ai-chat'
 param resourceToken string
 
 param openai_api_version string
+param userPrincipalName string
 param neonPostgresName string
 param openAiLocation string
 param openAiSkuName string 
@@ -223,7 +224,7 @@ resource symbolicname 'Neon.Postgres/organizations@2024-08-01-preview' = {
       organizationName: 'string'
     }
     userDetails: {
-      upn: 'string'
+      upn: userPrincipalName
     }
   }
 }

@@ -41,6 +41,8 @@ param dalleDeploymentName string = 'dall-e-3'
 param dalleModelName string = 'dall-e-3'
 param dalleApiVersion string = '2023-12-01-preview'
 
+@description('Enter your Azure user principal name (e.g. jane.doe@contoso.com)')
+param userPrincipalName string
 param neonPostgresName string = 'neon-postgres'
 param formRecognizerSkuName string = 'S0'
 
@@ -67,6 +69,7 @@ module resources 'resources.bicep' = {
     name: name
     resourceToken: resourceToken
     tags: tags
+    userPrincipalName: userPrincipalName
     neonPostgresName: neonPostgresName
     openai_api_version: openAIApiVersion
     openAiLocation: openAILocation
