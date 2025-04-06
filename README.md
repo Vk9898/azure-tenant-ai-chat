@@ -110,7 +110,8 @@ You can deploy the application using one of the following options:
 1. Download the [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview)
 2. Run `azd auth login` and log in using your Azure account credentials.
 3. If you have not cloned this repo, run `azd init -t https://github.com/neondatabase-labs/azure-tenant-ai-chat`. If you have cloned this repo, just run 'azd init' from the repo root directory.
-4. Run `azd up` to provision and deploy the application
+4. Run `azd up` to provision and deploy the application.
+5. To complete the application setup and run it successfully, you will need to follow [Application Settings Setup](#application-settings-setup) guide.
 
 ### 2. Azure Portal Deployment
 
@@ -123,6 +124,35 @@ Click on the Deploy to Azure button to deploy the Azure resources for the applic
 
 > [!IMPORTANT]
 > The application is protected by an identity provider and follow the steps in [Add an identity provider](/docs/add-identity.md) section for adding authentication to your app.
+
+## Application Settings Setup
+
+Open running Azure Web App service [App Settings](https://learn.microsoft.com/en-us/azure/app-service/configure-common?tabs=portal) page and populate the environment variables manually.  
+
+### Configure GitHub as an identity provider
+
+  1. Navigate to GitHub OAuth Apps setup https://github.com/settings/developers
+  2. Create a `New OAuth App` https://github.com/settings/applications/new
+  3. Fill in the following details
+
+   ```default
+   Application name:  Production
+   Homepage URL: https://YOUR-WEBSITE-NAME.azurewebsites.net
+   Authorization callback URL: https://YOUR-WEBSITE-NAME.azurewebsites.net/api/auth/callback/github
+   ```
+
+  > [!NOTE]
+  > After completing the above step, ensure that you set `AUTH_GITHUB_ID` and `AUTH_GITHUB_SECRET` to Azure Web App environment variables.
+
+### Retrive the Neon API Key
+  
+  1. From [Azure portal](https://portal.azure.com/), find the Neon Serverless Postgres Organization service and click on the Portal URL that brings you to the Neon Console.
+  2. Create [create a new API Key](https://neon.tech/docs/manage/api-keys#creating-api-keys) and add in the Azure Web App environment variables to the value of `NEON_API_KEY`.
+
+### [Optional] Review other services
+
+Check other services connection details are correctly set. At least [Azure OpenAI service](https://learn.microsoft.com/en-us/azure/ai-services/openai/quickstart?tabs=command-line%2Capi-key%2Cjavascript-keyless%2Ctypescript-keyless%2Cpython-new&pivots=programming-language-typescript#retrieve-resource-information) to test out AI Chat feature.
+
 
 ## Azure Deployment Costs
 

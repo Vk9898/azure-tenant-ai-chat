@@ -3,63 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "name": {
-      "value": ""
+      "value": "${AZURE_ENV_NAME}"
     },
     "location": {
-      "value": ""
-    },
-    "openAILocation": {},
-    "openAISku": {
-      "value": ""
-    },
-    "openAIApiVersion": {
-      "value": ""
-    },
-    "chatGptDeploymentCapacity": {
-      "value": 0
-    },
-    "chatGptDeploymentName": {
-      "value": ""
-    },
-    "chatGptModelName": {
-      "value": ""
-    },
-    "chatGptModelVersion": {
-      "value": ""
-    },
-    "embeddingDeploymentName": {
-      "value": ""
-    },
-    "embeddingDeploymentCapacity": {
-      "value": 0
-    },
-    "embeddingModelName": {
-      "value": ""
-    },
-    "dalleLocation": {},
-    "dalleDeploymentCapacity": {
-      "value": 0
-    },
-    "dalleDeploymentName": {
-      "value": ""
-    },
-    "dalleModelName": {
-      "value": ""
-    },
-    "dalleApiVersion": {
-      "value": ""
-    },
-    "formRecognizerSkuName": {
-      "value": ""
-    },
-    "storageServiceSku": {
-      "value": {}
-    },
-    "storageServiceImageContainerName": {
-      "value": ""
-    },
-    "resourceGroupName": {
-      "value": ""
+      "value": "${AZURE_LOCATION}"
     }
   }
 }

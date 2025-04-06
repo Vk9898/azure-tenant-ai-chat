@@ -1,5 +1,4 @@
-param name string = 'internal-ai-chat'
-param resourceToken string
+param name string
 
 param openai_api_version string
 param userPrincipalName string
@@ -34,21 +33,21 @@ param nextAuthHash string = uniqueString(newGuid())
 
 param tags object = {}
 
-var openai_name = toLower('${name}-aillm-${resourceToken}')
-var openai_dalle_name = toLower('${name}-aidalle-${resourceToken}')
+var openai_name = toLower('${name}-aillm')
+var openai_dalle_name = toLower('${name}-aidalle')
 
-var form_recognizer_name = toLower('${name}-form-${resourceToken}')
-var speech_service_name = toLower('${name}-speech-${resourceToken}')
-var webapp_name = toLower('${name}-webapp-${resourceToken}')
-var appservice_name = toLower('${name}-app-${resourceToken}')
+var form_recognizer_name = toLower('${name}-form')
+var speech_service_name = toLower('${name}-speech')
+var webapp_name = toLower('${name}-webapp')
+var appservice_name = toLower('${name}-app')
 // storage name must be < 24 chars, alphanumeric only. 'sto' is 3 and resourceToken is 13
 var clean_name = replace(replace(name, '-', ''), '_', '')
 var storage_prefix = take(clean_name, 8)
-var storage_name = toLower('${storage_prefix}sto${resourceToken}')
+var storage_name = toLower('${storage_prefix}storage')
 // keyvault name must be less than 24 chars - token is 13
 var kv_prefix = take(name, 7)
-var keyVaultName = toLower('${kv_prefix}-kv-${resourceToken}')
-var la_workspace_name = toLower('${name}-la-${resourceToken}')
+var keyVaultName = toLower('${kv_prefix}-kv')
+var la_workspace_name = toLower('${name}-la')
 var diagnostic_setting_name = 'AppServiceConsoleLogs'
 
 var keyVaultSecretsOfficerRole = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7')

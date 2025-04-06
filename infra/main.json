@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.33.93.31351",
-      "templateHash": "15772151611461082892"
+      "version": "0.34.44.8038",
+      "templateHash": "3716581310474092228"
     }
   },
   "parameters": {
@@ -120,6 +120,13 @@
       "type": "string",
       "defaultValue": "2023-12-01-preview"
     },
+    "userPrincipalName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Enter your Azure user principal name (e.g. jane.doe@contoso.com)"
+      }
+    },
     "neonPostgresName": {
       "type": "string",
       "defaultValue": "neon-postgres"
@@ -171,11 +178,11 @@
           "name": {
             "value": "[parameters('name')]"
           },
-          "resourceToken": {
-            "value": "[variables('resourceToken')]"
-          },
           "tags": {
             "value": "[variables('tags')]"
+          },
+          "userPrincipalName": {
+            "value": "[parameters('userPrincipalName')]"
           },
           "neonPostgresName": {
             "value": "[parameters('neonPostgresName')]"
@@ -244,19 +251,18 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.33.93.31351",
-              "templateHash": "11848578023168218100"
+              "version": "0.34.44.8038",
+              "templateHash": "10907545703102948873"
             }
           },
           "parameters": {
             "name": {
-              "type": "string",
-              "defaultValue": "internal-ai-chat"
-            },
-            "resourceToken": {
               "type": "string"
             },
             "openai_api_version": {
+              "type": "string"
+            },
+            "userPrincipalName": {
               "type": "string"
             },
             "neonPostgresName": {
@@ -332,18 +338,18 @@
             }
           },
           "variables": {
-            "openai_name": "[toLower(format('{0}-aillm-{1}', parameters('name'), parameters('resourceToken')))]",
-            "openai_dalle_name": "[toLower(format('{0}-aidalle-{1}', parameters('name'), parameters('resourceToken')))]",
-            "form_recognizer_name": "[toLower(format('{0}-form-{1}', parameters('name'), parameters('resourceToken')))]",
-            "speech_service_name": "[toLower(format('{0}-speech-{1}', parameters('name'), parameters('resourceToken')))]",
-            "webapp_name": "[toLower(format('{0}-webapp-{1}', parameters('name'), parameters('resourceToken')))]",
-            "appservice_name": "[toLower(format('{0}-app-{1}', parameters('name'), parameters('resourceToken')))]",
+            "openai_name": "[toLower(format('{0}-aillm', parameters('name')))]",
+            "openai_dalle_name": "[toLower(format('{0}-aidalle', parameters('name')))]",
+            "form_recognizer_name": "[toLower(format('{0}-form', parameters('name')))]",
+            "speech_service_name": "[toLower(format('{0}-speech', parameters('name')))]",
+            "webapp_name": "[toLower(format('{0}-webapp', parameters('name')))]",
+            "appservice_name": "[toLower(format('{0}-app', parameters('name')))]",
             "clean_name": "[replace(replace(parameters('name'), '-', ''), '_', '')]",
             "storage_prefix": "[take(variables('clean_name'), 8)]",
-            "storage_name": "[toLower(format('{0}sto{1}', variables('storage_prefix'), parameters('resourceToken')))]",
+            "storage_name": "[toLower(format('{0}storage', variables('storage_prefix')))]",
             "kv_prefix": "[take(parameters('name'), 7)]",
-            "keyVaultName": "[toLower(format('{0}-kv-{1}', variables('kv_prefix'), parameters('resourceToken')))]",
-            "la_workspace_name": "[toLower(format('{0}-la-{1}', parameters('name'), parameters('resourceToken')))]",
+            "keyVaultName": "[toLower(format('{0}-kv', variables('kv_prefix')))]",
+            "la_workspace_name": "[toLower(format('{0}-la', parameters('name')))]",
             "diagnostic_setting_name": "AppServiceConsoleLogs",
             "keyVaultSecretsOfficerRole": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7')]",
             "validStorageServiceImageContainerName": "[toLower(replace(parameters('storageServiceImageContainerName'), '-', ''))]",
@@ -632,12 +638,12 @@
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', variables('appservice_name'))]",
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
                 "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'AZURE-DOCUMENT-INTELLIGENCE-KEY')]",
                 "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'AZURE-OPENAI-API-KEY')]",
                 "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'AZURE-OPENAI-DALLE-API-KEY')]",
                 "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'AZURE-SPEECH-KEY')]",
                 "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'AZURE-STORAGE-ACCOUNT-KEY')]",
-                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
                 "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'NEXTAUTH-SECRET')]"
               ]
             },
@@ -664,7 +670,7 @@
                   "organizationName": "string"
                 },
                 "userDetails": {
-                  "upn": "string"
+                  "upn": "[parameters('userPrincipalName')]"
                 }
               }
             },

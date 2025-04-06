@@ -41,6 +41,7 @@ param dalleDeploymentName string = 'dall-e-3'
 param dalleModelName string = 'dall-e-3'
 param dalleApiVersion string = '2023-12-01-preview'
 
+@minLength(1)
 @description('Enter your Azure user principal name (e.g. jane.doe@contoso.com)')
 param userPrincipalName string
 param neonPostgresName string = 'neon-postgres'
@@ -67,7 +68,6 @@ module resources 'resources.bicep' = {
   scope: rg
   params: {
     name: name
-    resourceToken: resourceToken
     tags: tags
     userPrincipalName: userPrincipalName
     neonPostgresName: neonPostgresName
