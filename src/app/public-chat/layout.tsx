@@ -27,7 +27,7 @@ export default function PublicChatLayout({
           </div>
           <Link
             href="/auth/signin"
-            className="flex items-center gap-1 text-sm bg-primary-foreground text-primary px-3 py-1 rounded-md"
+            className="flex items-center gap-1 text-sm bg-primary-foreground text-primary px-3 py-1 rounded-xs"
           >
             Sign In <ArrowRight className="w-4 h-4" />
           </Link>

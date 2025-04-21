@@ -16,7 +16,7 @@ import {
   UserSquare
 } from "lucide-react";
 import { SheetClose } from "@/features/ui/sheet";
-import { ThemeToggle } from "../theme/theme-toggle";
+import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/features/ui/button";
 
 interface MobileDrawerMenuProps {

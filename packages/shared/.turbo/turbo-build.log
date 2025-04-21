@@ -1,0 +1,6 @@
+
+
+> shared@0.1.0 build
+> tsup src/index.ts --format cjs,esm --dts
+
+[1G[0K

@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   :root {
@@ -169,55 +167,53 @@
 }
 
 /* Design System Utility Classes */
-@layer utilities {
-  .ds-section-title {
-    @apply text-2xl sm:text-3xl font-black uppercase tracking-tight mb-2;
-  }
-  
-  .ds-section-subtitle {
-    @apply text-xl font-bold mb-4;
-  }
-  
-  .ds-accent-bar {
-    @apply h-1 w-16 bg-primary mb-4;
-  }
-  
-  .ds-card {
-    @apply bg-card border-2 border-border text-card-foreground rounded-xs transition-all duration-200;
-  }
-  
-  .ds-button-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 font-bold uppercase rounded-xs transition-all duration-200 min-h-11 md:min-h-10;
-  }
-  
-  .ds-button-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70 font-bold uppercase rounded-xs transition-all duration-200 min-h-11 md:min-h-10;
-  }
-  
-  .ds-button-outline {
-    @apply bg-transparent border-2 border-primary text-primary hover:bg-primary/10 active:bg-primary/20 font-bold uppercase rounded-xs transition-all duration-200 min-h-11 md:min-h-10;
-  }
-  
-  .ds-focus-ring {
-    @apply focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
-  }
-  
-  .ds-touch-target {
-    @apply min-h-11 min-w-11;
-  }
-  
-  .pb-safe {
-    @apply pb-[env(safe-area-inset-bottom)];
-  }
-  
-  .pt-safe {
-    @apply pt-[env(safe-area-inset-top)];
-  }
+@utility ds-section-title {
+  @apply text-2xl sm:text-3xl font-black uppercase tracking-tight mb-2;
+}
 
-  /* Container with responsive padding */
-  .container {
-    @apply mx-auto px-4 sm:px-6 lg:px-8;
-  }
+@utility ds-section-subtitle {
+  @apply text-xl font-bold mb-4;
+}
+
+@utility ds-accent-bar {
+  @apply h-1 w-16 bg-primary mb-4;
+}
+
+@utility ds-card {
+  @apply bg-card border-2 border-border text-card-foreground rounded-xs transition-all duration-200;
+}
+
+@utility ds-button-primary {
+  @apply bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 font-bold uppercase rounded-xs transition-all duration-200 min-h-11 md:min-h-10;
+}
+
+@utility ds-button-secondary {
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70 font-bold uppercase rounded-xs transition-all duration-200 min-h-11 md:min-h-10;
+}
+
+@utility ds-button-outline {
+  @apply bg-transparent border-2 border-primary text-primary hover:bg-primary/10 active:bg-primary/20 font-bold uppercase rounded-xs transition-all duration-200 min-h-11 md:min-h-10;
+}
+
+@utility ds-focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+}
+
+@utility ds-touch-target {
+  @apply min-h-11 min-w-11;
+}
+
+@utility pb-safe {
+  @apply pb-[env(safe-area-inset-bottom)];
+}
+
+@utility pt-safe {
+  @apply pt-[env(safe-area-inset-top)];
+}
+
+/* Container with responsive padding */
+@utility container {
+  @apply mx-auto px-4 sm:px-6 lg:px-8;
 }
 
 /* Maintain existing gradient for backward compatibility */

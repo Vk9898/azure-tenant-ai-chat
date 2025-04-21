@@ -24,7 +24,7 @@ export const EndpointHeaderRow: FC<Props> = (props) => {
       <Input
         id={`header-key-${props.header.id}`}
         placeholder="key"
-        className="flex-1"
+        className="flex-1 rounded-xs"
         name={`header-key[]`}
         required
         defaultValue={props.header.key}
@@ -33,7 +33,7 @@ export const EndpointHeaderRow: FC<Props> = (props) => {
         id={`header-value-${props.header.id}`}
         name={`header-value[]`}
         placeholder="value"
-        className="flex-1"
+        className="flex-1 rounded-xs"
         required
         defaultValue={props.header.value}
       />
@@ -47,6 +47,7 @@ export const EndpointHeaderRow: FC<Props> = (props) => {
           })
         }
         aria-label="Remove this header"
+        className="rounded-xs"
       >
         <Trash size={18} />
       </Button>
@@ -68,12 +69,12 @@ export const EndpointHeader = () => {
   const { extension } = useExtensionState();
   const { headers } = extension;
   return (
-    <div className="flex flex-col gap-4 bg-foreground/[0.02] border p-4 rounded-md ">
-      <div className="flex justify-between items-center gap-2 ">
+    <div className="flex flex-col gap-4 bg-foreground/[0.02] border-2 p-4 sm:p-6 rounded-xs shadow-xs" data-slot="endpoint-headers">
+      <div className="flex justify-between items-center gap-2">
         <SheetTitle>Headers</SheetTitle>
         <Button
           type="button"
-          className="flex gap-2"
+          className="flex gap-2 rounded-xs uppercase font-bold"
           variant={"outline"}
           onClick={() =>
             extensionStore.addEndpointHeader({
@@ -85,7 +86,7 @@ export const EndpointHeader = () => {
           <Plus size={18} /> Add Header
         </Button>
       </div>
-      <Alert className="text-xs">
+      <Alert className="text-xs rounded-xs">
         <KeyRound size={18} />
         <AlertTitle>Secure header values</AlertTitle>
         <AlertDescription className="text-xs">

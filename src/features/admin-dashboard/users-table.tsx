@@ -76,7 +76,7 @@ export function UsersTable({ users }: UsersTableProps) {
   );
 
   return (
-    <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+    <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-xs">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>

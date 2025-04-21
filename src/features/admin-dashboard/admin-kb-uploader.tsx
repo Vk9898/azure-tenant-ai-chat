@@ -137,7 +137,7 @@ export function AdminKnowledgeBaseUploader() {
               </Button>
               
               {uploadStatus && (
-                <div className={`p-3 rounded-md ${uploadStatus.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                <div className={`p-3 rounded-xs ${uploadStatus.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                   {uploadStatus.message}
                 </div>
               )}

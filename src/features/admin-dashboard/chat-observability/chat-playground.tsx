@@ -44,7 +44,7 @@ import {
 } from "lucide-react";
 import { generatePlaygroundResponse } from "./playground-service";
 import { logPrompt } from "./prompt-logging-service";
-import { Badge } from "@/features/ui/badge";
+import { Badge } from "@/ui/badge";
 import { ScrollArea } from "@/features/ui/scroll-area";
 
 // Define the schema for the playground form with required fields

@@ -23,22 +23,22 @@ export const PersonaDetail: FC<Props> = (props) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant={"outline"} size={"icon"} aria-label="Current Chat Persona Menu">
+        <Button variant={"outline"} size={"icon"} className="rounded-xs" aria-label="Current Chat Persona Menu">
           <VenetianMask size={16} />
         </Button>
       </SheetTrigger>
-      <SheetContent className="min-w-[480px] sm:w-[540px] flex flex-col">
+      <SheetContent className="min-w-[480px] sm:w-[540px] flex flex-col rounded-xs">
         <SheetHeader>
           <SheetTitle>Persona</SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex-1 -mx-6 flex" type="always">
-          <div className="pb-6 px-6 flex gap-8 flex-col  flex-1">
-            <div className="grid gap-2">
+          <div className="pb-6 px-6 flex gap-8 flex-col flex-1" data-slot="persona-details">
+            <div className="grid gap-2" data-slot="persona-name">
               <Label>Name</Label>
               <div>{persona}</div>
             </div>
 
-            <div className="grid gap-2 flex-1 ">
+            <div className="grid gap-2 flex-1" data-slot="persona-personality">
               <Label htmlFor="personaMessage">Personality</Label>
               <div className="whitespace-pre-wrap">{`${CHAT_DEFAULT_SYSTEM_PROMPT}`}</div>
               <div className="whitespace-pre-wrap">{`${personaMessage}`}</div>

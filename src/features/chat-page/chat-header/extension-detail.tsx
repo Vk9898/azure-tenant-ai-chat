@@ -35,23 +35,24 @@ export const ExtensionDetail: FC<Props> = (props) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant={"outline"} className="gap-2" disabled={props.disabled} aria-label="Current Chat Extensions Menu">
+        <Button variant={"outline"} className="gap-2 rounded-xs" disabled={props.disabled} aria-label="Current Chat Extensions Menu">
           <PocketKnife size={16} /> {installedCount} ({totalCount})
         </Button>
       </SheetTrigger>
-      <SheetContent className="min-w-[480px] sm:w-[540px] flex flex-col">
+      <SheetContent className="min-w-[480px] sm:w-[540px] flex flex-col rounded-xs">
         <SheetHeader>
           <SheetTitle>Extensions</SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex-1 -mx-6 flex" type="always">
-          <div className="pb-6 px-6 flex gap-4 flex-col  flex-1">
+          <div className="pb-6 px-6 flex gap-4 flex-col flex-1" data-slot="extensions-list">
             {props.extensions.map((extension) => {
               const isInstalled =
                 props.installedExtensionIds?.includes(extension.id) ?? false;
               return (
                 <div
-                  className="flex gap-2 p-4 items-center justify-between border rounded-md"
+                  className="flex gap-2 p-4 items-center justify-between border rounded-xs shadow-xs"
                   key={extension.id}
+                  data-slot="extension-item"
                 >
                   <div className="flex flex-col gap-2 flex-1">
                     <div>{extension.name}</div>
