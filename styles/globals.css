@@ -1,14 +1,10 @@
 @import 'tailwindcss';
 
-@config '../tailwind.config.ts';
 
 /*
   Dark mode custom variant
 */
-/* Replace custom variant with standard CSS selector */
-.dark * {
-  /* Dark mode styles will be applied here */
-}
+/* Standard CSS dark mode is implemented in the .dark class below */
 
 /*
   Root variables
@@ -340,9 +336,7 @@
 
 .ds-focus-ring:focus-visible {
   outline: none;
-  ring-width: 2px;
-  ring-color: var(--color-ring);
-  ring-offset-width: 2px;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--color-ring);
 }
 
 .ds-touch-target {
