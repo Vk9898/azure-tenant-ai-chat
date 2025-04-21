@@ -1,4 +1,4 @@
-import { Inter, Lora, Work_Sans, JetBrains_Mono } from "next/font/google";
+import { Inter, Lora, Work_Sans } from "next/font/google";
 import localFont from "next/font/local";
 
 export const inter = Inter({
@@ -7,21 +7,10 @@ export const inter = Inter({
   display: "swap",
 });
 
-// Use both paths for maximum compatibility
 export const cal = localFont({
-  src: [
-    {
-      path: "./CalSans-SemiBold.otf",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/CalSans-SemiBold.otf", 
-      weight: "600",
-      style: "normal",
-    }
-  ],
+  src: "./CalSans-SemiBold.otf",
   variable: "--font-cal",
+  weight: "600",
   display: "swap",
 });
 
@@ -43,12 +32,6 @@ export const work = Work_Sans({
   variable: "--font-title",
   subsets: ["latin"],
   weight: "600",
-  display: "swap",
-});
-
-export const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
   display: "swap",
 });
 
