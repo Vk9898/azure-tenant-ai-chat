@@ -1,9 +1,7 @@
 import { ChatReportingComponent } from "@/components/reporting-page/reporting-component";
 
-export default async function ReportingPage({
-  searchParams,
-}: {
-  searchParams: Record<string, string | string[] | undefined>;
+export default function ReportingPage({ searchParams }: {
+  searchParams?: { pageNumber?: string | string[] }
 }) {
   // Handle potential string array for pageNumber, default to 0
   const pageNumberParam = searchParams?.pageNumber;
