@@ -3,7 +3,7 @@ import { MainMenu } from "@/features/main-menu/main-menu";
 import { MobileNavigation } from "@/features/main-menu/mobile-navigation";
 import { AI_NAME } from "@/features/theme/theme-config";
 import { cn } from "@/ui/lib";
-import { getCurrentUser } from "@/features/auth-page/helpers";
+import { auth } from "@/features/auth-page/auth-api";
 
 export const dynamic = "force-dynamic";
 
@@ -17,8 +17,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
-  const isAdmin = user.isAdmin;
+  const session = await auth();
+  const isAdmin = session?.user?.isAdmin || false;
 
   return (
     <AuthenticatedProviders>

@@ -4,14 +4,8 @@ import { buttonVariants } from '@/features/ui/button';
 import { auth } from '@/features/auth-page/auth-api';
 
 export default async function Home() {
-  // Use the new auth() function instead of getServerSession
-  let session;
-  try {
-    session = await auth();
-  } catch (error) {
-    console.error("Error getting session:", error);
-    session = null;
-  }
+  // Use the new auth() function which properly awaits cookies() internally
+  const session = await auth();
 
   return (
     <main className="flex min-h-screen flex-col">

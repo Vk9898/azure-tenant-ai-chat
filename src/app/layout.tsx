@@ -2,7 +2,7 @@ import { AI_NAME } from "@/features/theme/theme-config";
 import { ThemeProvider } from "@/features/theme/theme-provider";
 import { Toaster } from "@/features/ui/toaster";
 import { cn } from "@/ui/lib";
-import { cal, inter } from "@/styles/fonts";
+import { cal, inter, jetbrainsMono } from "@/styles/fonts";
 import "./globals.css";
 
 export const metadata = {
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("h-full w-full overflow-hidden", inter.variable, cal.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn("h-full w-full overflow-hidden", inter.variable, cal.variable, jetbrainsMono.variable)} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>

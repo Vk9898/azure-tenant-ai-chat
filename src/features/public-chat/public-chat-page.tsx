@@ -53,7 +53,6 @@ export const PublicChatPage: FC = () => {
                     size="icon"
                     onClick={handleClearChat}
                     className="h-10 w-10 rounded-xs ds-touch-target"
-                    uppercase={false}
                     data-slot="clear-button"
                   >
                     <Trash2 className="h-5 w-5" />
