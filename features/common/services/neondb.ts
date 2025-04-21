@@ -197,7 +197,7 @@ const initializeDatabaseSchema = async (connectionString: string) => {
       );
     `;
 
-    await sql.unsafe(schemaCorrectionsTable); // Use unsafe for CREATE TABLE IF NOT EXISTS
+    await sql(schemaCorrectionsTable); // Execute raw SQL directly
     console.log("Schema corrections table initialized.");
 
     // Helper function to log schema corrections
@@ -374,7 +374,7 @@ const initializeDatabaseSchema = async (connectionString: string) => {
     // Execute each SQL statement sequentially and log it
     for (const statement of schemaSQLStatements) {
       console.log(`Executing SQL for table: ${statement.table}`);
-      await sql.unsafe(statement.sql); // Use unsafe for CREATE TABLE, etc.
+      await sql(statement.sql); // Execute raw SQL directly
       await logSchemaCorrection(
         "schema_init",
         statement.table, 
@@ -398,7 +398,7 @@ const initializeDatabaseSchema = async (connectionString: string) => {
 
      for (const statement of indexStatements) {
       console.log(`Executing SQL for index on: ${statement.table}`);
-      await sql.unsafe(statement.sql); // Use unsafe for CREATE INDEX IF NOT EXISTS
+      await sql(statement.sql); // Execute raw SQL directly
       await logSchemaCorrection(
         "index_creation",
         statement.table,
