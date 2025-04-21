@@ -1,10 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { User } from "./admin-services/admin-service";
 import { formatDistanceToNow } from "date-fns";
 
-type SortField = "name" | "email" | "chatCount" | "messageCount" | "lastActive";
+// Updated to match the data shape returned by GetTopActiveUsers
+export interface User {
+  userId: string;
+  userName: string;
+  chatCount: number;
+  messageCount: number;
+  lastActive: Date;
+}
+
+type SortField = "userName" | "chatCount" | "messageCount" | "lastActive";
 type SortDirection = "asc" | "desc";
 
 interface UsersTableProps {
@@ -28,17 +36,8 @@ export function UsersTable({ users }: UsersTableProps) {
     let comparison = 0;
 
     switch (sortField) {
-      case "name":
-        comparison = a.name.localeCompare(b.name);
-        break;
-      case "email":
-        if (a.email && b.email) {
-          comparison = a.email.localeCompare(b.email);
-        } else if (a.email) {
-          comparison = 1;
-        } else if (b.email) {
-          comparison = -1;
-        }
+      case "userName":
+        comparison = a.userName.localeCompare(b.userName);
         break;
       case "chatCount":
         comparison = a.chatCount - b.chatCount;
@@ -81,8 +80,7 @@ export function UsersTable({ users }: UsersTableProps) {
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <SortableHeader field="name" label="Name" />
-            <SortableHeader field="email" label="Email" />
+            <SortableHeader field="userName" label="Name" />
             <SortableHeader field="chatCount" label="Chats" />
             <SortableHeader field="messageCount" label="Messages" />
             <SortableHeader field="lastActive" label="Last Active" />
@@ -91,18 +89,15 @@ export function UsersTable({ users }: UsersTableProps) {
         <tbody className="bg-white divide-y divide-gray-200">
           {sortedUsers.length === 0 ? (
             <tr>
-              <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+              <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">
                 No users found
               </td>
             </tr>
           ) : (
             sortedUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
+              <tr key={user.userId} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {user.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {user.email || "N/A"}
+                  {user.userName}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {user.chatCount}

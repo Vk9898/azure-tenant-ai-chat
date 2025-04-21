@@ -264,6 +264,17 @@ export interface User {
   lastActive: string | null;
 }
 
+// Function to check if user has admin permission
+const hasAdminPermission = async (userId: string): Promise<boolean> => {
+  try {
+    const currentUser = await getCurrentUser();
+    return !!currentUser.isAdmin;
+  } catch (error) {
+    console.error("Error checking admin permission:", error);
+    return false;
+  }
+};
+
 export async function GetAllUsers(): Promise<User[]> {
   const currentUserId = await userHashedId();
   
@@ -278,27 +289,37 @@ export async function GetAllUsers(): Promise<User[]> {
   }
   
   try {
-    const users = await sql<User>`
+    const sql = await NeonDBInstance();
+    const query = `
       SELECT 
-        u.id,
-        u.name,
-        u.email,
-        COUNT(DISTINCT ct.id) AS "chatCount",
-        COUNT(cm.id) AS "messageCount",
-        MAX(cm.created_at) AS "lastActive"
+        t.user_id as id,
+        t.use_name as name,
+        NULL as email,
+        COUNT(DISTINCT t.id) AS "chatCount",
+        COUNT(m.id) AS "messageCount",
+        MAX(m.created_at) AS "lastActive"
       FROM 
-        users u
+        chat_threads t
       LEFT JOIN 
-        chat_threads ct ON u.id = ct.user_id
-      LEFT JOIN 
-        chat_messages cm ON ct.id = cm.thread_id
+        chat_messages m ON t.id = m.thread_id
+      WHERE 
+        t.type = $1
       GROUP BY 
-        u.id, u.name, u.email
+        t.user_id, t.use_name
       ORDER BY 
-        MAX(cm.created_at) DESC NULLS LAST
+        MAX(m.created_at) DESC NULLS LAST
     `;
     
-    return users;
+    const results = await sql(query, [CHAT_THREAD_ATTRIBUTE]);
+    
+    return results.map((row: any) => ({
+      id: row.id,
+      name: row.name,
+      email: row.email,
+      chatCount: parseInt(row.chatcount),
+      messageCount: parseInt(row.messagecount),
+      lastActive: row.lastactive
+    }));
   } catch (error) {
     console.error("Error fetching users:", error);
     throw new Error("Failed to fetch users");
