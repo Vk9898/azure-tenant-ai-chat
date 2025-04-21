@@ -100,7 +100,7 @@ export const authConfig: NextAuthConfig = {
         if (user.email) {
           // Use the sync hash function for stability across environments if needed,
           // or prefer the async one if edge compatibility is crucial and can wait.
-          // hashValueSync is generally safer here to avoid async issues during JWT creationa.
+          // hashValueSync is generally safer here to avoid async issues during JWT creation.
           token.hashedUserId = hashValueSync(user.email.toLowerCase());
         } else {
            // Handle cases where email might be missing (e.g., some OAuth providers might not return it)
@@ -121,10 +121,13 @@ export const authConfig: NextAuthConfig = {
             console.log(`[auth] Provisioned/retrieved Neon DB for user ${token.sub}`);
           } catch (err) {
             console.error(`[auth] Neon provisioning failed for user ${token.sub}:`, err);
-            // Decide how to handle failure: maybe prevent sign-in, or let them proceed without a DB?
-            // For now, log the error and continue without the connection string.
-            // Consider adding an error flag to the token/session if needed.
-             token.databaseConnectionString = null; // Explicitly set to null on failure
+            // Fallback to the default anonymous connection string if provisioning fails
+            console.warn(`[auth] Falling back to default database connection string for user ${token.sub}. Ensure DATABASE_URL is set.`);
+            token.databaseConnectionString = process.env.DATABASE_URL; // Use default DB URL
+            if (!token.databaseConnectionString) {
+              console.error("[auth] FATAL: Fallback failed. DATABASE_URL environment variable is not set.");
+              // Potentially prevent login or throw an error if default DB is essential
+            }
           }
         } else if (token.databaseConnectionString) {
              console.log(`[auth] Found existing databaseConnectionString for user ${token.sub}.`);
@@ -140,7 +143,13 @@ export const authConfig: NextAuthConfig = {
     async session({ session, token }) {
       // Ensure session.user exists
       if (!session.user) {
-        session.user = {};
+        session.user = {
+          id: token.sub || "",
+          email: token.email || "",
+          emailVerified: token.emailVerified || null,
+          name: token.name || "",
+          image: token.image || "",
+        };
       }
 
       // Add properties from the token to the session user object
@@ -155,7 +164,7 @@ export const authConfig: NextAuthConfig = {
        if (token.provider) {
          session.user.provider = token.provider as string;
        }
-       // IMPORTANT: Only attach connection string if it exists AND is not null
+       // IMPORTANT: Only attach connection string if it exists AND is not null/undefined
        if (token.databaseConnectionString) {
          session.user.databaseConnectionString = token.databaseConnectionString as string;
        }

@@ -30,10 +30,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import type { FieldValues } from "react-hook-form";
-import { z } from "zod";
 import { 
   BarChart3, 
   Clock, 
@@ -48,17 +45,7 @@ import { logPrompt } from "./prompt-logging-service";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-// Define the schema for the playground form with required fields
-const formSchema = z.object({
-  prompt: z.string().min(1, "Prompt is required"),
-  model: z.string(),
-  temperature: z.number(),
-  maxTokens: z.number(),
-  expectedResponse: z.string().optional(),
-  systemPrompt: z.string().optional(),
-});
-
-// Define the form values type manually instead of using z.infer
+// Define form values type directly without zod
 type FormValues = {
   prompt: string;
   model: string;
@@ -83,7 +70,6 @@ export function ChatPlayground() {
   const [result, setResult] = useState<PromptResult | null>(null);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: "",
       model: "gpt-4o",
