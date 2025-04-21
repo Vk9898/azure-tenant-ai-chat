@@ -11,8 +11,8 @@ const ChatThreadRow: React.FC<ChatThreadRowProps> = (props) => {
   const router = useRouter();
   
   // Format the date in a more readable format
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDate = (dateInput: Date | string) => {
+    const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
     const now = new Date();
     const isToday = date.toDateString() === now.toDateString();
     
