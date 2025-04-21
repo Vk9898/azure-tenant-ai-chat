@@ -8,8 +8,20 @@ import type { JWT } from "next-auth/jwt";
 import type { Session, User, Account } from "next-auth";
 import type { NextAuthConfig } from "next-auth";
 
-// Extend the next-auth types
+
 declare module "next-auth" {
+  /**
+   * The shape of the user object returned in the OAuth providers' `profile` callback,
+   * or the second parameter of the `session` callback, when using a database.
+   */
+  interface User {
+    id: string;
+    isAdmin: boolean;
+  }
+
+  /**
+   * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
+   */
   interface Session {
     user: {
       id: string;
@@ -20,9 +32,10 @@ declare module "next-auth" {
       hashedUserId?: string;
       provider?: string;
       databaseConnectionString?: string;
-    };
+    } & User
   }
 }
+
 
 declare module "next-auth/jwt" {
   interface JWT {
