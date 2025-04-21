@@ -20,7 +20,10 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/ui/*": ["./features/ui/*"]
+      "@/ui/*": ["./features/ui/*"],
+      "@/features/*": ["./features/*"],
+      "@/styles/*": ["./styles/*"],
+      "@/types/*": ["./types/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.ts"],

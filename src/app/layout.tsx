@@ -18,17 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("h-full w-full overflow-hidden", inter.variable, cal.variable, jetbrainsMono.variable)} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
-      <body
-        className={cn(
-          "h-full w-full flex bg-background text-foreground antialiased",
-          inter.className
-        )}
-        data-slot="root-layout"
-      >
+      <body className={cn(cal.variable, inter.variable)} data-slot="root-layout">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

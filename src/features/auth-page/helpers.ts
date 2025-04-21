@@ -14,6 +14,7 @@ export interface CustomUser {
   isAdmin?: boolean; // Changed to match NextAuth v5 type (no null)
   hashedUserId?: string | null; // Consistent hashed ID (based on email)
   provider?: string | null;
+  databaseConnectionString?: string; // Add this property
 }
 
 // For backwards compatibility

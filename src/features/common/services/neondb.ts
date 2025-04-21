@@ -7,10 +7,19 @@ import { getCurrentUser } from "@/features/auth-page/helpers";
 export const NeonDBInstance = async () => {
   try {
     const currentUser = await getCurrentUser();
-    if (!currentUser || !currentUser.databaseConnectionString) {
-      throw new Error("Database connection string is not available for the current user.");
+    
+    // Check if there's a user-specific connection string
+    if (currentUser?.databaseConnectionString) {
+      return neon(currentUser.databaseConnectionString);
     }
-    return neon(currentUser.databaseConnectionString);
+    
+    // Fall back to the environment-provided connection string
+    const defaultConnectionString = process.env.DATABASE_URL;
+    if (!defaultConnectionString) {
+      throw new Error("No database connection string available - neither user-specific nor default.");
+    }
+    
+    return neon(defaultConnectionString);
   } catch (error) {
     console.error("Error initializing NeonDBInstance:", error);
     throw error;

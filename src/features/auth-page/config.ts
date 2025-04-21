@@ -120,6 +120,10 @@ export const authConfig: NextAuthConfig = {
         if (user.email) {
           token.hashedUserId = hashValueSync(user.email.toLowerCase());
         }
+        
+        // For now, use the default connection string for all users
+        // This could be extended to provide user-specific database connections later
+        token.databaseConnectionString = process.env.DATABASE_URL;
       }
       return token;
     },
@@ -136,6 +140,9 @@ export const authConfig: NextAuthConfig = {
         }
         if (token.provider) {
           session.user.provider = token.provider;
+        }
+        if (token.databaseConnectionString) {
+          session.user.databaseConnectionString = token.databaseConnectionString;
         }
       }
       return session;
