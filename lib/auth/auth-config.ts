@@ -5,7 +5,8 @@ import AzureADB2CProvider from "next-auth/providers/azure-ad-b2c";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { hashValueSync } from "@/lib/auth/auth-utils";
-import { createNeonProjectForUser } from "@/features/common/services/neondb";
+// Import the function type, not the function itself at the top level
+import type { createNeonProjectForUser as CreateNeonProjectType } from "@/features/common/services/neondb";
 import type { NextAuthConfig } from "next-auth";
 
 /* ────────────────────────────────────────────────────────── */
@@ -67,11 +68,11 @@ export const authConfig: NextAuthConfig = {
               const username = (creds?.username as string) || "dev";
               const email = `${username}@localhost`.toLowerCase();
               return {
-                id: hashValueSync(email),
+                id: hashValueSync(email), // Use sync hash here as it's just for local dev ID
                 name: username,
                 email,
-                isAdmin: false,
-                image: "",
+                isAdmin: false, // Dev users are not admins by default
+                image: "", // No image for dev user
               };
             },
           }),
@@ -80,58 +81,105 @@ export const authConfig: NextAuthConfig = {
   ],
 
   session: { strategy: "jwt" as const },
-  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET, // Use AUTH_SECRET for Vercel deployment
 
   callbacks: {
     /* ---------------- JWT Callback ---------------------- */
-    async jwt({ token, account, user }) {
+    // This callback is called whenever a JWT is created (i.e. on sign in) or updated.
+    async jwt({ token, account, user, profile }) {
+      // Ensure user and account details are present on initial sign-in
       if (account && user) {
-        token.provider = account.provider;
+        token.provider = account.provider; // Store the provider used
 
-        // Admin flag
-        token.isAdmin =
-          !!(user.email && adminEmails.includes(user.email.toLowerCase()));
+        // Determine admin status based on email
+        token.isAdmin = !!(
+          user.email && adminEmails.includes(user.email.toLowerCase())
+        );
 
-        // Stable cross‑provider identifier
+        // Generate and store a consistent hashed user ID based on email
         if (user.email) {
+          // Use the sync hash function for stability across environments if needed,
+          // or prefer the async one if edge compatibility is crucial and can wait.
+          // hashValueSync is generally safer here to avoid async issues during JWT creation.
           token.hashedUserId = hashValueSync(user.email.toLowerCase());
+        } else {
+           // Handle cases where email might be missing (e.g., some OAuth providers might not return it)
+           // Use provider account ID as a fallback, less ideal for cross-provider consistency
+           token.hashedUserId = account.providerAccountId ?? token.sub;
+           console.warn(`[auth] User email missing for provider ${account.provider}. Using provider ID ${token.hashedUserId} as hashedUserId.`);
         }
 
-        // Provision Neon DB once
-        if (!token.databaseConnectionString) {
+
+        // Provision Neon DB *only if* the connection string isn't already in the token
+        if (!token.databaseConnectionString && token.sub) {
+           console.log(`[auth] No databaseConnectionString found for user ${token.sub}. Attempting to provision...`);
           try {
-            const uid = token.sub ?? account.providerAccountId ?? user.id;
-            token.databaseConnectionString =
-              await createNeonProjectForUser(uid);
+            // Dynamically import createNeonProjectForUser *inside* the callback
+            const { createNeonProjectForUser } = await import("@/features/common/services/neondb");
+            // Use token.sub (subject claim, usually provider's unique ID) for Neon project naming
+            token.databaseConnectionString = await createNeonProjectForUser(token.sub);
+            console.log(`[auth] Provisioned/retrieved Neon DB for user ${token.sub}`);
           } catch (err) {
-            console.error("[auth] Neon provisioning failed", err);
+            console.error(`[auth] Neon provisioning failed for user ${token.sub}:`, err);
+            // Decide how to handle failure: maybe prevent sign-in, or let them proceed without a DB?
+            // For now, log the error and continue without the connection string.
+            // Consider adding an error flag to the token/session if needed.
+             token.databaseConnectionString = null; // Explicitly set to null on failure
           }
+        } else if (token.databaseConnectionString) {
+             console.log(`[auth] Found existing databaseConnectionString for user ${token.sub}.`);
+        } else if (!token.sub) {
+            console.error(`[auth] Cannot provision Neon DB: token.sub is missing.`);
         }
       }
-      return token;
+      return token; // Return the updated token
     },
 
     /* --------------- Session Callback ------------------- */
+    // This callback is called whenever a session is checked.
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.sub || "";
-        session.user.isAdmin = !!token.isAdmin;
-        if (token.hashedUserId) session.user.hashedUserId = token.hashedUserId;
-        if (token.provider) session.user.provider = token.provider;
-        if (token.databaseConnectionString)
-          session.user.databaseConnectionString =
-            token.databaseConnectionString;
+      // Ensure session.user exists
+      if (!session.user) {
+        session.user = {};
       }
-      return session;
+
+      // Add properties from the token to the session user object
+      // These properties are now available on the client-side useSession() hook
+      session.user.id = token.sub || ""; // Use token.sub as the primary user ID
+      session.user.isAdmin = !!token.isAdmin; // Ensure boolean type
+
+      // Add custom properties if they exist on the token
+       if (token.hashedUserId) {
+         session.user.hashedUserId = token.hashedUserId as string;
+       }
+       if (token.provider) {
+         session.user.provider = token.provider as string;
+       }
+       // IMPORTANT: Only attach connection string if it exists AND is not null
+       if (token.databaseConnectionString) {
+         session.user.databaseConnectionString = token.databaseConnectionString as string;
+       }
+
+      return session; // Return the augmented session object
     },
 
     /* --------------- signIn guard ----------------------- */
-    async signIn({ user }) {
+    // This callback is called before the user is signed in.
+    async signIn({ user, account, profile }) {
+      // Example guard: Allow sign-in only if the user has an email address
       if (!user.email) {
-        console.warn("[auth] sign‑in rejected: missing email");
-        return false;
+        console.warn(`[auth] Sign-in rejected for user without email (provider: ${account?.provider})`);
+        // You could redirect to an error page here if desired
+        // return '/auth/error?error=EmailRequired';
+        return false; // Returning false prevents the sign-in
       }
-      return true;
+      console.log(`[auth] User ${user.email} signing in via ${account?.provider}`);
+      return true; // Allow the sign-in
     },
   },
+  // Add pages configuration if needed
+  // pages: {
+  //   signIn: '/auth/signin',
+  //   error: '/auth/error',
+  // }
 }; 
