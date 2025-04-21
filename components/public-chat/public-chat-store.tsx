@@ -271,8 +271,7 @@ class PublicChatState implements PublicChatStore {
   }
 }
 
-export const publicChatStore = proxy(new PublicChatState());
+export const usePublicChatStore = () => useSnapshot(state);
 
-export const usePublicChat = () => {
-  return useSnapshot(publicChatStore);
-}; 
+// Create the state object
+const state = proxy(new PublicChatState()); 

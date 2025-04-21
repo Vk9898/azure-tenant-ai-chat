@@ -1,15 +1,15 @@
 import { ChatReportingComponent } from "@/components/reporting-page/reporting-component";
 
-// Updated PageProps for Server Component
-interface PageProps {
-  searchParams?: { pageNumber?: string | string[] | undefined }; // searchParams are directly passed as an object
-}
-
-export default function ReportingPage({ searchParams }: PageProps) {
+export default async function ReportingPage({
+  searchParams,
+}: {
+  searchParams: Record<string, string | string[] | undefined>;
+}) {
   // Handle potential string array for pageNumber, default to 0
-  const pageNumberStr = Array.isArray(searchParams?.pageNumber)
-    ? searchParams.pageNumber[0]
-    : searchParams?.pageNumber;
+  const pageNumberParam = searchParams?.pageNumber;
+  const pageNumberStr = Array.isArray(pageNumberParam)
+    ? pageNumberParam[0]
+    : pageNumberParam;
     
   const page = pageNumberStr ? parseInt(pageNumberStr) : 0;
   
