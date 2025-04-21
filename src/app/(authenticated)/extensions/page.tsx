@@ -9,5 +9,5 @@ export default async function Home() {
     return <DisplayError errors={extensionResponse.errors} />;
   }
 
-  return <ExtensionPage extensions={extensionResponse.response} />;
+  return <ExtensionPage extensions={extensionResponse.response} showWebSearchTemplates={true} />;
 }
