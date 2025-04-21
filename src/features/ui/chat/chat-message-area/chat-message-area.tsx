@@ -16,6 +16,8 @@ export const ChatMessageArea = (props: {
   profileName?: string;
   role: "function" | "user" | "assistant" | "system" | "tool";
   onCopy: () => void;
+  className?: string;
+  "data-slot"?: string;
 }) => {
   const [isIconChecked, setIsIconChecked] = useState(false);
 
@@ -68,7 +70,7 @@ export const ChatMessageArea = (props: {
   }
 
   return (
-    <div className="flex flex-col p-4 sm:p-6" data-slot="chat-message">
+    <div className={cn("flex flex-col p-4 sm:p-6", props.className)} data-slot={props["data-slot"] || "chat-message"}>
       <div className="h-7 flex items-center justify-between mb-2">
         <div className="flex gap-3 items-center">
           <div data-slot="chat-message-avatar">

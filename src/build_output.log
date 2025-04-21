@@ -1,0 +1,23 @@
+
+> src@0.1.0 build
+> next build
+
+   ▲ Next.js 15.3.1
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 5.0s
+   Linting and checking validity of types ...
+Failed to compile.
+
+./features/chat-page/chat-services/images-api.ts:11:16
+Type error: Property 'status' does not exist on type 'Promise<ServerActionResponse<{ threadId: string; imgName: string; }>>'.
+
+[0m [90m  9 |[39m   [36mconst[39m response [33m=[39m [33mGetThreadAndImageFromUrl[39m(urlPath)[33m;[39m[0m
+[0m [90m 10 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 11 |[39m   [36mif[39m (response[33m.[39mstatus [33m!==[39m [32m"OK"[39m) {[0m
+[0m [90m    |[39m                [31m[1m^[22m[39m[0m
+[0m [90m 12 |[39m     [36mreturn[39m [36mnew[39m [33mResponse[39m(response[33m.[39merrors[[35m0[39m][33m.[39mmessage[33m,[39m { status[33m:[39m [35m404[39m })[33m;[39m[0m
+[0m [90m 13 |[39m   }[0m
+[0m [90m 14 |[39m[0m
+Next.js build worker exited with code: 1 and signal: null

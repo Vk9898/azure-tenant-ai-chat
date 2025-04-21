@@ -11,13 +11,15 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "update-typescript": "npm install typescript@latest --save-dev && npm install typescript@latest --workspace=* --save-dev"
   },
   "devDependencies": {
     "@types/uuid": "^10.0.0",
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
-    "turbo": "latest"
+    "turbo": "latest",
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=18.0.0"
