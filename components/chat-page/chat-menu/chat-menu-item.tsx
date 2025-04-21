@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LoadingIndicator } from "@/components/ui/loading";
-import { cn } from "@/ui/lib";
+import { cn } from "@/lib/utils";
 import { BookmarkCheck, MoreVertical, Pencil, Trash } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

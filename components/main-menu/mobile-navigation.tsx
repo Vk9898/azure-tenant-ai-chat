@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/ui/lib";
+import { cn } from "@/lib/utils";
 import { Home, MessageCircle, PocketKnife, VenetianMask, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

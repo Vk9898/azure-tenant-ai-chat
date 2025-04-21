@@ -2,7 +2,7 @@ import { AuthenticatedProviders } from "@/components/globals/providers";
 import { MainMenu } from "@/components/main-menu/main-menu";
 import { MobileNavigation } from "@/components/main-menu/mobile-navigation";
 import { AI_NAME } from "@/components/theme/theme-config";
-import { cn } from "@/ui/lib";
+import { cn } from "@/lib/utils";
 import { auth } from "@/components/auth-page/auth-api";
 
 export const dynamic = "force-dynamic";

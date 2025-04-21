@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/ui/lib";
+import { cn } from "@/lib/utils";
 import React from "react";
 import { useMenuSidebar } from "./menu-store";
 

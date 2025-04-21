@@ -2,7 +2,7 @@ import { ChatMenu } from "@/components/chat-page/chat-menu/chat-menu";
 import { ChatMenuHeader } from "@/components/chat-page/chat-menu/chat-menu-header";
 import { FindAllChatThreadForCurrentUser } from "@/components/chat-page/chat-services/chat-thread-service";
 import { MenuTray } from "@/components/main-menu/menu-tray";
-import { cn } from "@/ui/lib";
+import { cn } from "@/lib/utils";
 
 import { AI_NAME } from "@/components/theme/theme-config";
 import { DisplayError } from "@/components/ui/error/display-error";

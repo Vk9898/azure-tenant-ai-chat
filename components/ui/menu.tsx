@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "@/ui/lib";
+import { cn } from "@/lib/utils";
 import { LucideProps } from "lucide-react";
 import { Button, ButtonLinkVariant, ButtonProps } from "./button";
 import { TooltipProvider } from "./tooltip";
