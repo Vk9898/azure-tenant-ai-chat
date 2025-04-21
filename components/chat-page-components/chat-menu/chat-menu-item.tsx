@@ -34,41 +34,45 @@ export const ChatMenuItem: FC<ChatMenuItemProps> = (props) => {
   });
 
   return (
+    // Apply DS styles for container: flex, items-center, padding, text color, rounding, transitions, hover/active states
     <div className={cn(
-        "flex group items-center pr-2 text-muted-foreground rounded-xs transition-colors",
+        "flex group items-center justify-between pr-2 text-muted-foreground rounded-xs transition-colors h-10", // Added justify-between and height
         isActive ? "bg-accent text-accent-foreground" : "hover:bg-muted hover:text-foreground"
         )}
          data-slot="chat-menu-item-container"
         >
+      {/* Link styling */}
       <Link
         href={props.href}
         className={cn(
-          "flex-1 flex items-center gap-2 p-2 overflow-hidden text-sm", // Adjusted padding and text size
+          "flex-1 flex items-center gap-2 pl-2 py-2 overflow-hidden text-sm", // Adjusted padding
            isActive ? "font-semibold" : "font-medium"
         )}
         data-slot="chat-menu-item-link"
+        title={props.chatThread.name} // Add title for overflow
       >
-         {props.chatThread.bookmarked && <Bookmark size={14} className={cn("text-primary", !isActive && "text-muted-foreground group-hover:text-primary")}/>}
+         {props.chatThread.bookmarked && <Bookmark size={14} className={cn("flex-shrink-0", isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary")}/>}
         <span className="truncate">{props.children}</span>
       </Link>
+      {/* Dropdown trigger */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild disabled={isLoading}>
-           {/* Use Button for trigger consistency */}
+           {/* Use Button for trigger consistency: variant=ghost, size=icon, rounded-xs, touch target */}
           <Button
              variant="ghost"
              size="icon"
-             className="h-8 w-8 p-0 rounded-xs ds-touch-target flex-shrink-0" // Added flex-shrink-0
+             className="h-8 w-8 p-0 rounded-xs ds-touch-target flex-shrink-0" // Ensure size and shrink
              aria-label="Chat Menu Item Options"
           >
             {isLoading ? (
-              <LoadingIndicator isLoading={true} />
+              <LoadingIndicator isLoading={true} size={16} /> // Adjusted size
             ) : (
               <MoreVertical size={16} />
             )}
           </Button>
         </DropdownMenuTrigger>
-         {/* DropdownMenuContent should inherit DS styles (border-2, rounded-xs, shadow-xs) */}
-        <DropdownMenuContent side="right" align="start" className="rounded-xs border-2 shadow-xs w-48">
+         {/* DropdownMenuContent uses DS styles internally (border-2, rounded-xs, shadow-xs) */}
+        <DropdownMenuContent side="right" align="start" className="w-48">
           <DropdownMenuItemWithIcon
             onClick={async () => await handleAction("bookmark")}
           >
@@ -127,6 +131,7 @@ const useDropdownAction = (props: { chatThread: ChatThreadModel }) => {
     } catch (error) {
       console.error(`Error performing action ${action}:`, error);
       // Optionally show an error message to the user
+      alert(`An error occurred: ${error}`);
     } finally {
       setIsLoading(false);
     }
@@ -138,7 +143,7 @@ const useDropdownAction = (props: { chatThread: ChatThreadModel }) => {
   };
 };
 
-// Ensure DropdownMenuItem applies DS styles
+// Ensure DropdownMenuItem uses DS styles internally (rounded-xs, padding, font)
 export const DropdownMenuItemWithIcon: FC<{
   children?: React.ReactNode;
   onClick?: () => void;
@@ -146,7 +151,7 @@ export const DropdownMenuItemWithIcon: FC<{
 }> = (props) => {
   return (
     <DropdownMenuItem
-        className={cn("flex gap-2 cursor-pointer text-sm p-2 rounded-xs", props.className)} // Use rounded-xs and adjusted padding/text size
+        className={cn("flex gap-2 cursor-pointer text-sm p-2 items-center", props.className)} // Ensure internal DS styles applied
         onClick={props.onClick}
         >
       {props.children}

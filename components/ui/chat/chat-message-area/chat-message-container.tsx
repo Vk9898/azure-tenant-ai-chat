@@ -12,7 +12,8 @@ const ChatMessageContainer: ForwardRefRenderFunction<
   ChatMessageContainerProps
 > = (props, ref) => {
   return (
-    <ScrollArea ref={ref} className={cn("flex-1 h-full", props.className)} type="always">
+    // Removed flex-1 and h-full, as flex layout handles this now.
+    <ScrollArea ref={ref} className={cn("", props.className)} type="always">
       {props.children}
     </ScrollArea>
   );

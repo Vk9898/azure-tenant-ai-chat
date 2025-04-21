@@ -13,8 +13,8 @@ const ChatMessageContentArea: ForwardRefRenderFunction<
   return (
     <div
       ref={ref}
-      // Removed min-h-screen, relative. Adjusted py-6. Kept gap-8.
-      className={cn("container max-w-3xl py-6 flex flex-col gap-8", props.className)}
+      // Apply container constraints, responsive padding, and vertical gap
+      className={cn("container max-w-3xl py-6 flex flex-col gap-6", props.className)} // Use gap-6 consistent with DS
       data-slot="chat-message-content-area"
     >
       {props.children}

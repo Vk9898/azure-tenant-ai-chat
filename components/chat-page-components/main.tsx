@@ -6,6 +6,7 @@ import { ChatMessageArea } from "@/components/ui/chat/chat-message-area/chat-mes
 import ChatMessageContainer from "@/components/ui/chat/chat-message-area/chat-message-container";
 import ChatMessageContentArea from "@/components/ui/chat/chat-message-area/chat-message-content";
 import { useChatScrollAnchor } from "@/components/ui/chat/chat-message-area/use-chat-scroll-anchor";
+import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { FC, useEffect, useRef } from "react";
 import { ExtensionModel } from "../extensions-page/extension-services/models";
@@ -16,7 +17,6 @@ import {
   ChatThreadModel,
 } from "./chat-services/models";
 import MessageContent from "./message-content";
-import { cn } from "@/lib/utils";
 
 interface ChatPageProps {
   messages: Array<ChatMessageModel>;
@@ -44,24 +44,16 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
 
   useChatScrollAnchor({ ref: scrollRef });
 
-  // Calculate the approximate height of the input area (adjust based on actual rendered height)
-  // Input container py-3 (12px * 2 = 24px)
-  // Input form p-[2px] (2px * 2 = 4px)
-  // Text area p-4 (16px * 2 = 32px) - initial single row height assumed ~24px
-  // Action area p-2 (8px * 2 = 16px) + button heights (~40px)
-  // Total approx initial: 24 + 4 + 24 + 16 + 40 = 108px. Let's use 120px for safety.
-  const inputAreaHeight = "pb-[120px]"; // Adjust this value as needed
-
   return (
-    // Removed relative positioning
-    <main className="flex flex-1 flex-col h-full overflow-hidden" data-slot="chat-page">
+    // Use flex column layout for the entire page height
+    <main className="flex flex-1 flex-col h-full max-h-full overflow-hidden" data-slot="chat-page">
       <ChatHeader
         chatThread={props.chatThread}
         chatDocuments={props.chatDocuments}
         extensions={props.extensions}
       />
-      {/* Simplified ChatMessageContainer className, added paddingBottom based on input area height */}
-      <ChatMessageContainer ref={scrollRef} className={cn("flex-1", inputAreaHeight)}>
+      {/* Message container takes up remaining space and handles scrolling */}
+      <ChatMessageContainer ref={scrollRef} className="flex-1 overflow-y-auto">
         {/* Content area handles container, max-width, internal padding and gap */}
         <ChatMessageContentArea>
           {messages.map((message) => (
@@ -77,7 +69,7 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
                   ? session?.user?.image
                   : undefined // Assistant/Tool uses default icons handled internally
               }
-              // Removed instance-specific styling (bg, border, shadow, mb) - handled by component/content area gap
+              // Style consistency handled by the component itself
               data-slot={`message-${message.role}`}
             >
               <MessageContent message={message} />
@@ -87,10 +79,10 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
         </ChatMessageContentArea>
       </ChatMessageContainer>
 
-      {/* Fixed Input Area */}
+      {/* Fixed Input Area at the bottom */}
       <div className="shrink-0 border-t-2 border-border bg-background/80 backdrop-blur-md" data-slot="chat-input-outer-container">
-         {/* Adjusted padding */}
-        <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-2 pb-safe" data-slot="chat-input-inner-container">
+        {/* Container for input with responsive padding and safe area handling */}
+        <div className="container max-w-3xl mx-auto px-4 py-2 pb-safe" data-slot="chat-input-inner-container">
           <ChatInput />
         </div>
       </div>

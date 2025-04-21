@@ -19,27 +19,30 @@ export const DocumentDetail: FC<Props> = (props) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        {/* Added rounded-xs */}
-        <Button variant={"outline"} className="gap-2 rounded-xs" aria-label="Current Chat Documents Menu" disabled={props.chatDocuments.length === 0}>
+        {/* Ensure button uses DS styles: rounded-xs, variant, sizing */}
+        <Button variant={"outline"} className="gap-2 rounded-xs h-9 px-3 text-sm" aria-label="Current Chat Documents Menu" disabled={props.chatDocuments.length === 0}>
           <File size={16} /> {props.chatDocuments.length}
         </Button>
       </SheetTrigger>
-       {/* SheetContent should inherit DS styles (border-2, rounded-xs, shadow-xs) */}
-      <SheetContent className="min-w-[480px] sm:w-[540px] flex flex-col rounded-xs border-2 shadow-xs">
+      {/* SheetContent uses DS styles internally */}
+      <SheetContent className="min-w-[400px] sm:w-[480px] flex flex-col">
         <SheetHeader>
           <SheetTitle>Documents</SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex-1 -mx-6 flex" type="always">
-          <div className="pb-6 px-6 flex gap-3 flex-col flex-1"> {/* Increased gap */}
+          {/* Use consistent padding and gap */}
+          <div className="pb-6 px-6 flex gap-3 flex-col flex-1">
             {props.chatDocuments.length > 0 ? (
               props.chatDocuments.map((doc) => (
-                <div className="flex gap-2 items-center p-3 border rounded-xs bg-muted/50" key={doc.id}> {/* Added styling */}
-                  <File size={16} className="text-muted-foreground" />
-                  <div className="text-sm font-medium">{doc.name}</div>
+                // Apply DS card-like styling: rounded-xs, border-2, shadow-xs, padding
+                <div className="flex gap-3 items-center p-3 border-2 border-border rounded-xs bg-muted/50 shadow-xs" key={doc.id} data-slot="document-item">
+                  <File size={16} className="text-muted-foreground flex-shrink-0" />
+                  <div className="text-sm font-medium truncate">{doc.name}</div>
                 </div>
               ))
             ) : (
-               <div className="text-center text-muted-foreground text-sm p-6">
+               // Empty state styling
+               <div className="text-center text-muted-foreground text-sm p-6 border-2 border-dashed border-border rounded-xs mt-4">
                   No documents uploaded for this chat.
                </div>
             )}

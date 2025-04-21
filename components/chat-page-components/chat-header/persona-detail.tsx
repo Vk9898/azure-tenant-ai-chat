@@ -23,25 +23,33 @@ export const PersonaDetail: FC<Props> = (props) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant={"outline"} size={"icon"} className="rounded-xs" aria-label="Current Chat Persona Menu">
+        {/* Ensure button uses DS styles: rounded-xs, variant=outline, size=icon */}
+        <Button variant={"outline"} size={"icon"} className="rounded-xs h-9 w-9" aria-label="Current Chat Persona Menu">
           <VenetianMask size={16} />
         </Button>
       </SheetTrigger>
-      <SheetContent className="min-w-[480px] sm:w-[540px] flex flex-col rounded-xs">
+      {/* SheetContent uses DS styles internally */}
+      <SheetContent className="min-w-[400px] sm:w-[480px] flex flex-col">
         <SheetHeader>
           <SheetTitle>Persona</SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex-1 -mx-6 flex" type="always">
-          <div className="pb-6 px-6 flex gap-8 flex-col flex-1" data-slot="persona-details">
+          {/* Use consistent padding and gap */}
+          <div className="pb-6 px-6 flex gap-6 flex-col flex-1" data-slot="persona-details">
+             {/* Section for Persona Name */}
             <div className="grid gap-2" data-slot="persona-name">
-              <Label>Name</Label>
-              <div>{persona}</div>
+              <Label className="text-sm font-medium">Name</Label>
+              <div className="text-sm text-foreground p-3 border-2 border-border rounded-xs bg-muted/50 shadow-xs">{persona || "Default"}</div>
             </div>
 
+             {/* Section for Persona Personality */}
             <div className="grid gap-2 flex-1" data-slot="persona-personality">
-              <Label htmlFor="personaMessage">Personality</Label>
-              <div className="whitespace-pre-wrap">{`${CHAT_DEFAULT_SYSTEM_PROMPT}`}</div>
-              <div className="whitespace-pre-wrap">{`${personaMessage}`}</div>
+              <Label className="text-sm font-medium" htmlFor="personaMessage">Personality</Label>
+              {/* Use consistent styling for displaying pre-formatted text */}
+              <div className="text-sm text-foreground p-3 border-2 border-border rounded-xs bg-muted/50 shadow-xs min-h-[100px] whitespace-pre-wrap">{CHAT_DEFAULT_SYSTEM_PROMPT}</div>
+              {personaMessage && (
+                <div className="text-sm text-foreground p-3 border-2 border-border rounded-xs bg-muted/50 shadow-xs min-h-[100px] whitespace-pre-wrap">{personaMessage}</div>
+              )}
             </div>
           </div>
         </ScrollArea>

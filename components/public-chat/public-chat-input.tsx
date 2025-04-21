@@ -1,14 +1,14 @@
 "use client";
 
-import { FC, KeyboardEvent, useRef, FormEvent, useState, ChangeEvent } from "react";
-import { usePublicChatStore } from "./public-chat-store";
-import { cn } from "@/lib/utils";
+import { FC, KeyboardEvent, useRef, FormEvent } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Send } from "lucide-react";
+import { usePublicChatStore } from "./public-chat-store"; // Correct import
 
 export const PublicChatInput: FC = () => {
-  const store = usePublicChatStore();
-  const [localInput, setLocalInput] = useState("");
+  const { input, loading, updateInput, submitChat } = usePublicChatStore(); // Use the imported hook
   const formRef = useRef<HTMLFormElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -16,29 +16,10 @@ export const PublicChatInput: FC = () => {
       handleSubmit(e);
     }
   };
-
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    setLocalInput(value);
-    store.updateInput(value);
-  };
-
+  
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (localInput.trim() === "" || store.loading === "loading") return;
-    
-    // Call the submit function directly without trying to clone the event
-    if (formRef.current) {
-      store.submitChat(e as unknown as FormEvent<HTMLFormElement>);
-      setLocalInput("");
-      
-      // Focus textarea after submitting
-      setTimeout(() => {
-        if (textareaRef.current) {
-          textareaRef.current.focus();
-        }
-      }, 10);
-    }
+    submitChat(e);
   };
 
   return (
@@ -48,38 +29,29 @@ export const PublicChatInput: FC = () => {
       className="w-full"
     >
       <div className="flex gap-3 items-end">
-        <div className="flex-1 rounded-md border-2 border-gray-300 dark:border-gray-700 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
-          <textarea
-            ref={textareaRef}
+        <div className="flex-1 rounded-xs border-2 border-input focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 ds-focus-ring">
+          <Textarea
             placeholder="Send a message..."
-            value={localInput}
-            onChange={handleChange}
+            value={input}
+            onChange={(e) => updateInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            rows={Math.min(Math.max(localInput.split('\n').length, 1), 5)}
-            className={cn(
-              "w-full min-h-[44px] py-3 px-4 bg-transparent outline-none resize-none",
-              "focus:outline-none focus:ring-0 rounded-md"
-            )}
-            data-slot="public-chat-textarea"
+            rows={Math.min(Math.max(input.split('\n').length, 1), 5)}
+            className="min-h-[44px] border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xs"
+            data-slot="chat-textarea"
           />
         </div>
-        <button
+        <Button
           type="submit"
-          className={cn(
-            "h-11 w-11 rounded-md flex items-center justify-center",
-            "bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          )}
-          disabled={localInput.trim().length === 0 || store.loading === "loading"}
-          data-slot="public-chat-send-button"
+          size="icon"
+          className={`${buttonVariants({ variant: "default" })} h-11 w-11 rounded-xs min-h-11 min-w-11`}
+          disabled={input.trim().length === 0 || loading === "loading"}
+          data-slot="send-button"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m22 2-7 20-4-9-9-4Z" />
-            <path d="M22 2 11 13" />
-          </svg>
+          <Send className="h-5 w-5" strokeWidth={2.5} />
           <span className="sr-only">Send message</span>
-        </button>
+        </Button>
       </div>
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+      <p className="text-xs text-muted-foreground mt-3">
         Public chat messages are stored in your browser&apos;s local storage and are not permanently saved to a server.
       </p>
     </form>
