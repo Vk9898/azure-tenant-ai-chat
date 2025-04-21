@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/lib/auth/auth-helpers";
-import { FindAllChatMessagesForAdmin } from "@/components/reporting-page/reporting-services/reporting-service";
+import { FindAllChatMessagesForAdmin } from "@/components/reporting-page-components/reporting-services/reporting-service";
 import { Button } from "@/components/ui/button";
 import { DisplayError } from "@/components/ui/error/display-error";
 import { Hero } from "@/components/ui/hero";

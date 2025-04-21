@@ -61,7 +61,7 @@ export const ChatMenuItem: FC<ChatMenuItemProps> = (props) => {
              aria-label="Chat Menu Item Options"
           >
             {isLoading ? (
-              <LoadingIndicator isLoading={isLoading} size={16}/>
+              <LoadingIndicator isLoading={true} />
             ) : (
               <MoreVertical size={16} />
             )}

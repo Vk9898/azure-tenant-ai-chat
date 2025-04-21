@@ -1,15 +1,15 @@
 import { FC } from "react";
 
-import { DisplayError } from "../../../components/ui/error/display-error";
-import { ScrollArea } from "../../../components/ui/scroll-area";
-import { AddPromptSlider } from "../../../components/prompt-page/add-new-prompt";
-import { PromptCard } from "../../../components/prompt-page/prompt-card";
-import { PromptHero } from "../../../components/prompt-page/prompt-hero/prompt-hero";
-import { FindAllPrompts } from "../../../components/prompt-page/prompt-service";
+import { DisplayError } from "@/components/ui/error/display-error";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { AddPromptSlider } from "@/components/prompt-page-components/add-new-prompt";
+import { PromptCard } from "@/components/prompt-page-components/prompt-card";
+import { PromptHero } from "@/components/prompt-page-components/prompt-hero/prompt-hero";
+import { FindAllPrompts } from "@/components/prompt-page-components/prompt-service";
 import { PlusCircle, Search } from "lucide-react";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Card } from "../../../components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 interface ChatSamplePromptProps {
   prompts: Array<{

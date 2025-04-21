@@ -1,4 +1,4 @@
-import { ChatReportingComponent } from "@/components/reporting-page/reporting-component";
+import { ChatReportingComponent } from "@/components/reporting-page-components/reporting-component";
 
 // Add a minimal type annotation for the props
 export default function ReportingPage(props: any) {

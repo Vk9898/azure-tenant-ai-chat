@@ -9,6 +9,7 @@ declare module '@hookform/resolvers/zod' {
 // Add missing zod types
 declare module 'zod' {
   export type ZodSchema<T = any> = {
+    safeParse(model: z.infer<ZodSchema<{ id: string; name: any; description: any; createdAt: any; isPublished: any; userId: string; type: any; }>>): unknown;
     _output: T;
   };
   
