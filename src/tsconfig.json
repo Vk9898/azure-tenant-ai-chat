@@ -23,7 +23,9 @@
       "@/ui/*": ["./features/ui/*"],
       "@/features/*": ["./features/*"],
       "@/styles/*": ["./styles/*"],
-      "@/types/*": ["./types/*"]
+      "@/types/*": ["./types/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/hooks/*": ["./hooks/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.ts"],
