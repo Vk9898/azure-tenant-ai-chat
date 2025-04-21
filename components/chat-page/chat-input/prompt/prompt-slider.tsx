@@ -13,7 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Book } from "lucide-react";
-import { FC } from "react";
+import { FC, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from "react";
 import { inputPromptStore, useInputPromptState } from "./input-prompt-store";
 
 interface SliderProps {}
@@ -49,7 +49,7 @@ export const PromptSlider: FC<SliderProps> = (props) => {
               {!isLoading && prompts.length === 0 ? "There are no prompts" : ""}
             </SheetDescription>
             <LoadingIndicator isLoading={isLoading} />
-            {prompts.map((prompt) => (
+            {prompts.map((prompt: { id: Key | null | undefined; name: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; description: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }) => (
               <Card
                 key={prompt.id}
                 className="flex flex-col cursor-pointer hover:bg-secondary/80 mt-2"
