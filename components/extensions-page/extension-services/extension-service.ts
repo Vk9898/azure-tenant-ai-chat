@@ -568,8 +568,8 @@ const validateSchema = (model: ExtensionModel): ServerActionResponse => {
 
   if (!validatedFields.success) {
     return {
-      status: "ERROR",
-      errors: zodErrorsToServerActionErrors(validatedFields.error.errors),
+      status: "ERROR", 
+      errors: zodErrorsToServerActionErrors(validatedFields.error?.errors ?? []),
     };
   }
 
