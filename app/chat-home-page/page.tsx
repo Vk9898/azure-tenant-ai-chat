@@ -1,15 +1,15 @@
 import { AddExtension } from "@/components/extensions-page/add-extension/add-new-extension";
 import { ExtensionCard } from "@/components/extensions-page/extension-card/extension-card";
 import { ExtensionModel } from "@/components/extensions-page/extension-services/models";
-import { PersonaCard } from "@/components/persona-page/persona-card/persona-card";
-import { PersonaModel } from "@/components/persona-page/persona-services/models";
+import { PersonaCard } from "@/components/persona-page-components/persona-card/persona-card";
+import { PersonaModel } from "@/components/persona-page-components/persona-services/models";
 import { AI_DESCRIPTION, AI_NAME } from "@/components/theme/theme-config";
 import { Hero } from "@/components/ui/hero";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
-import { FindAllPersonaForCurrentUser } from "@/components/persona-page/persona-services/persona-service";
+import { FindAllPersonaForCurrentUser } from "@/components/persona-page-components/persona-services/persona-service";
 import { FindAllExtensionsForCurrentUser } from "@/components/extensions-page/extension-services/extension-service";
 import { auth } from "@/lib/auth/auth-api";
 import { redirect } from "next/navigation";

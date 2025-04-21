@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { ScrollArea } from "../../../components/ui/scroll-area";
-import { AddNewPersona } from "../../../components/persona-page/add-new-persona";
-import { PersonaCard } from "../../../components/persona-page/persona-card/persona-card";
-import { PersonaHero } from "../../../components/persona-page/persona-hero/persona-hero";
-import { PersonaModel } from "../../../components/persona-page/persona-services/models";
-import { FindAllPersonasForAdmin } from "../../../components/persona-page/persona-services/persona-service";
+import { AddNewPersona } from "../../../components/persona-page-components/add-new-persona";
+import { PersonaCard } from "../../../components/persona-page-components/persona-card/persona-card";
+import { PersonaHero } from "../../../components/persona-page-components/persona-hero/persona-hero";
+import { PersonaModel } from "../../../components/persona-page-components/persona-services/models";
+import { FindAllPersonasForAdmin } from "../../../components/persona-page-components/persona-services/persona-service";
 import { DisplayError } from "../../../components/ui/error/display-error";
 
 interface ChatPersonaProps {

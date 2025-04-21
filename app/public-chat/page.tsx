@@ -1,4 +1,4 @@
-import PublicChatContent from "@/components/public-chat/public-chat-page";
+import PublicChatContent from "@/components/public-chat-components/public-chat-page";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
