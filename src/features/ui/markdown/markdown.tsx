@@ -1,5 +1,5 @@
 import Markdoc from "@markdoc/markdoc";
-import React, { FC } from "react";
+import React, { FC, type JSX } from "react";
 import { Citation } from "./citation";
 import { CodeBlock } from "./code-block";
 import { citationConfig } from "./config";

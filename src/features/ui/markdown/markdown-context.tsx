@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, createContext, useContext } from "react";
+import { FC, PropsWithChildren, createContext, useContext, type JSX } from "react";
 
 interface ContextProps {
   onCitationClick?: (

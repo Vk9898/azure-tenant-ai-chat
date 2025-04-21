@@ -60,7 +60,7 @@ const Slot = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }
 >(({ children, ...props }, ref) => {
-  const child = React.Children.only(children) as React.ReactElement
+  const child = React.Children.only(children) as React.ReactElement<any>
   return React.cloneElement(child, { ...props, ref })
 })
 Slot.displayName = "Slot" 
