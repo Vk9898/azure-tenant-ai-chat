@@ -22,6 +22,7 @@ import {
   EXTENSION_ATTRIBUTE,
   ExtensionModel,
   ExtensionModelSchema,
+  HeaderModel,
 } from "@/components/extensions-page/extension-services/models";
 
 const KEY_VAULT_MASK = "**********";
@@ -97,13 +98,13 @@ export const CreateExtension = async (
       type: EXTENSION_ATTRIBUTE,
     };
 
-    modelToSave.functions.forEach((func) => {
+    modelToSave.functions.forEach((func: FunctionModel) => {
       if (!func.id) {
         func.id = uniqueId();
       }
     });
 
-    modelToSave.headers.forEach((header) => {
+    modelToSave.headers.forEach((header: HeaderModel) => {
       if (!header.id) {
         header.id = uniqueId();
       }
@@ -341,14 +342,14 @@ export const CreateChatWithExtension = async (
 const secureHeaderValues = async (extension: ExtensionModel) => {
   const vault = AzureKeyVaultInstance();
 
-  const headers = extension.headers.map(async (h) => {
+  const headers = extension.headers.map(async (h: HeaderModel) => {
     if (h.value !== KEY_VAULT_MASK) {
       await vault.setSecret(h.id, h.value);
       h.value = KEY_VAULT_MASK;
     }
 
-    return h;
-  });
+      return h;
+    });
 
   await Promise.all(headers);
 

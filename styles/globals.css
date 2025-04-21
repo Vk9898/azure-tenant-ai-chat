@@ -297,8 +297,6 @@
 .ds-button-primary {
   background-color: var(--color-primary);
   color: var(--color-primary-foreground);
-  hover:bg-primary/90;
-  active:bg-primary/80;
   font-weight: bold;
   text-transform: uppercase;
   border-radius: var(--radius-xs);
@@ -306,32 +304,46 @@
   min-height: 2.75rem;
   min-width: 2.75rem;
 }
+.ds-button-primary:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 90%, transparent);
+}
+.ds-button-primary:active {
+  background-color: color-mix(in srgb, var(--color-primary) 80%, transparent);
+}
 
 .ds-button-secondary {
   background-color: var(--color-secondary);
   color: var(--color-secondary-foreground);
-  hover:bg-secondary/90;
-  active:bg-secondary/80;
   font-weight: bold;
   text-transform: uppercase;
   border-radius: var(--radius-xs);
   transition: all 0.2s ease;
   min-height: 2.75rem;
   min-width: 2.75rem;
+}
+.ds-button-secondary:hover {
+  background-color: color-mix(in srgb, var(--color-secondary) 90%, transparent);
+}
+.ds-button-secondary:active {
+  background-color: color-mix(in srgb, var(--color-secondary) 80%, transparent);
 }
 
 .ds-button-outline {
   background-color: transparent;
   border: 2px solid var(--color-primary);
   color: var(--color-primary);
-  hover:bg-primary/10;
-  active:bg-primary/20;
   font-weight: bold;
   text-transform: uppercase;
   border-radius: var(--radius-xs);
   transition: all 0.2s ease;
   min-height: 2.75rem;
   min-width: 2.75rem;
+}
+.ds-button-outline:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+.ds-button-outline:active {
+  background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 
 .ds-focus-ring:focus-visible {
