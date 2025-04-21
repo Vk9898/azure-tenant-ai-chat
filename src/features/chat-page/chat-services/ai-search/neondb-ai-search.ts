@@ -210,13 +210,24 @@ export const IndexDocuments = async (
   chatThreadId: string
 ): Promise<Array<ServerActionResponse<boolean>>> => {
   try {
+    const hashedId = await userHashedId();
+    
+    if (!hashedId) {
+      return [{
+        status: "UNAUTHORIZED",
+        errors: [{
+          message: "User identification required",
+        }],
+      }];
+    }
+    
     const documentsToIndex: NeonSearchDocument[] = [];
     const sql = await NeonDBInstance();
     for (const doc of docs) {
       documentsToIndex.push({
         id: uniqueId(),
         chatThreadId,
-        userId: await userHashedId(),
+        userId: hashedId,
         pageContent: doc,
         metadata: fileName,
         embedding: [],

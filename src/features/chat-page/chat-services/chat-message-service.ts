@@ -10,6 +10,17 @@ export const FindTopChatMessagesForCurrentUser = async (
   top: number = 30
 ): Promise<ServerActionResponse<Array<ChatMessageModel>>> => {
   try {
+    const hashedId = await userHashedId();
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [{
+          message: "User identification required",
+        }],
+      };
+    }
+    
     const query = `
       SELECT *
       FROM chat_messages
@@ -20,7 +31,7 @@ export const FindTopChatMessagesForCurrentUser = async (
     const values = [
       MESSAGE_ATTRIBUTE,
       chatThreadID,
-      await userHashedId(),
+      hashedId,
       false,
       top,
     ];
@@ -59,6 +70,17 @@ export const FindAllChatMessagesForCurrentUser = async (
   chatThreadID: string
 ): Promise<ServerActionResponse<Array<ChatMessageModel>>> => {
   try {
+    const hashedId = await userHashedId();
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [{
+          message: "User identification required",
+        }],
+      };
+    }
+    
     const query = `
       SELECT *
       FROM chat_messages
@@ -68,7 +90,7 @@ export const FindAllChatMessagesForCurrentUser = async (
     const values = [
       MESSAGE_ATTRIBUTE,
       chatThreadID,
-      await userHashedId(),
+      hashedId,
       false,
     ];
 
@@ -116,6 +138,16 @@ export const CreateChatMessage = async ({
   multiModalImage?: string;
 }): Promise<ServerActionResponse<ChatMessageModel>> => {
   const userId = await userHashedId();
+  
+  if (!userId) {
+    return {
+      status: "UNAUTHORIZED",
+      errors: [{
+        message: "User identification required",
+      }],
+    };
+  }
+  
   const modelToSave: ChatMessageModel = {
     id: uniqueId(),
     createdAt: new Date(),

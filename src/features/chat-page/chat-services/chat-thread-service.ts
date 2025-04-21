@@ -218,6 +218,20 @@ export const UpsertChatThread = async (
   chatThread: ChatThreadModel
 ): Promise<ServerActionResponse<ChatThreadModel>> => {
   try {
+    // If userId is not provided, get current user's hashedId
+    if (!chatThread.userId) {
+      const hashedId = await userHashedId();
+      if (!hashedId) {
+        return {
+          status: "UNAUTHORIZED",
+          errors: [{
+            message: "User identification required",
+          }],
+        };
+      }
+      chatThread.userId = hashedId;
+    }
+    
     const query = `
       INSERT INTO chat_threads (id, created_at, last_message_at, name, user_id, type, is_deleted, bookmarked, persona_message, persona_message_title, extension)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -239,7 +253,7 @@ export const UpsertChatThread = async (
       chatThread.createdAt || new Date(),
       new Date(),
       chatThread.name,
-      chatThread.userId || (await userHashedId()),
+      chatThread.userId,
       CHAT_THREAD_ATTRIBUTE,
       chatThread.isDeleted || false,
       chatThread.bookmarked || false,
@@ -275,10 +289,22 @@ export const CreateChatThread = async (): Promise<
   ServerActionResponse<ChatThreadModel>
 > => {
   try {
+    const session = await userSession();
+    const hashedId = await userHashedId();
+    
+    if (!session || !hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [{
+          message: "User identification required",
+        }],
+      };
+    }
+    
     const modelToSave: ChatThreadModel = {
       name: NEW_CHAT_NAME,
-      useName: (await userSession())!.name,
-      userId: await userHashedId(),
+      useName: session.name,
+      userId: hashedId,
       id: uniqueId(),
       createdAt: new Date(),
       lastMessageAt: new Date(),

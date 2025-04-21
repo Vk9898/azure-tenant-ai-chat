@@ -19,13 +19,17 @@ export const ChatApiRAG = async (props: {
   signal: AbortSignal;
 }): Promise<ChatCompletionStreamingRunner> => {
   const { chatThread, userMessage, history, signal } = props;
-
   const openAI = OpenAIInstance();
+  
+  const hashedId = await userHashedId();
+  if (!hashedId) {
+    throw new Error("User identification required");
+  }
 
   const documentResponse = await SimilaritySearch(
     userMessage,
     10,
-    await userHashedId(),
+    hashedId,
     chatThread.id
   );
   

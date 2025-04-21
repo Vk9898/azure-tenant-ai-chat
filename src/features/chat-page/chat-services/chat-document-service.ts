@@ -140,10 +140,21 @@ export const CreateChatDocument = async (
   chatThreadID: string
 ): Promise<ServerActionResponse<ChatDocumentModel>> => {
   try {
+    const hashedId = await userHashedId();
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [{
+          message: "User identification required",
+        }],
+      };
+    }
+    
     const modelToSave: ChatDocumentModel = {
       chatThreadId: chatThreadID,
       id: uniqueId(),
-      userId: await userHashedId(),
+      userId: hashedId,
       createdAt: new Date(),
       type: CHAT_DOCUMENT_ATTRIBUTE,
       isDeleted: false,

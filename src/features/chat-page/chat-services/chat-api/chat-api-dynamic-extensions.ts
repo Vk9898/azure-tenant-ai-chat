@@ -89,7 +89,7 @@ async function executeFunction(props: {
     headerItems.push({
       id: "authorization",
       key: "authorization",
-      value: await userHashedId(),
+      value: (await userHashedId()) || '',
     });
     // map the headers to a dictionary
     const headers: { [key: string]: string } = headerItems.reduce(
