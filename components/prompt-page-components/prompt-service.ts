@@ -383,7 +383,7 @@ export const UpsertPrompt = async (
 const validateSchema = (model: PromptModel): ServerActionResponse => {
   const validatedFields = PromptModelSchema.safeParse(model);
 
-  if (!validatedFields.success) {
+  if (!(validatedFields as any).success) {
     return {
       status: "ERROR",
       errors: zodErrorsToServerActionErrors((validatedFields as any).error.errors),

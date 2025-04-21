@@ -12,9 +12,9 @@ import { DisplayError } from "@/components/ui/error/display-error";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { FindAllChatThreadsForAdmin } from "@/components/reporting-page/reporting-services/reporting-service";
+import { FindAllChatThreadsForAdmin } from "@/components/reporting-page-components/reporting-services/reporting-service";
 import { Hero } from "@/components/ui/hero";
-import ChatThreadRow from "@/components/reporting-page/table-row";
+import ChatThreadRow from "@/components/reporting-page-components/table-row";
 
 const SEARCH_PAGE_SIZE = 100;
 
