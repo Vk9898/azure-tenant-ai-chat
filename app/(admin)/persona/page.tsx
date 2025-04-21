@@ -1,9 +1,9 @@
 import { FC } from "react";
-import { ScrollArea } from "../ui/scroll-area";
-import { AddNewPersona } from "./add-new-persona";
-import { PersonaCard } from "./persona-card/persona-card";
-import { PersonaHero } from "./persona-hero/persona-hero";
-import { PersonaModel } from "./persona-services/models";
+import { ScrollArea } from "../../../components/ui/scroll-area";
+import { AddNewPersona } from "../../../components/persona-page/add-new-persona";
+import { PersonaCard } from "../../../components/persona-page/persona-card/persona-card";
+import { PersonaHero } from "../../../components/persona-page/persona-hero/persona-hero";
+import { PersonaModel } from "../../../components/persona-page/persona-services/models";
 
 interface ChatPersonaProps {
   personas: PersonaModel[];

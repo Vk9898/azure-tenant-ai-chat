@@ -1,4 +1,4 @@
-import { ChatHome } from "@/components/chat-home-page/chat-home";
+import { ChatHome } from "@/app/chat-home-page/page";
 import { FindAllExtensionsForCurrentUser } from "@/components/extensions-page/extension-services/extension-service";
 import { FindAllPersonaForCurrentUser } from "@/components/persona-page/persona-services/persona-service";
 import { DisplayError } from "@/components/ui/error/display-error";

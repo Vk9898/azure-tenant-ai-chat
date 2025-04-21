@@ -1,4 +1,4 @@
-import { ChatSamplePromptPage } from "@/components/prompt-page/prompt-page";
+import { ChatSamplePromptPage } from "@/app/(admin)/prompt/page";
 
 export default async function Home() {
   return <ChatSamplePromptPage />;

@@ -1,22 +1,22 @@
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import Link from "next/link";
 import { FC, Suspense } from "react";
-import { Button } from "../ui/button";
-import { DisplayError } from "../ui/error/display-error";
-import { PageLoader } from "../ui/page-loader";
-import { ScrollArea } from "../ui/scroll-area";
-import { Input } from "../ui/input";
+import { Button } from "../../../components/ui/button";
+import { DisplayError } from "../../../components/ui/error/display-error";
+import { PageLoader } from "../../../components/ui/page-loader";
+import { ScrollArea } from "../../../components/ui/scroll-area";
+import { Input } from "../../../components/ui/input";
 import {
   Table,
   TableBody,
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
-import { ReportingHero } from "./reporting-hero";
-import { FindAllChatThreadsForAdmin } from "./reporting-services/reporting-service";
-import ChatThreadRow from "./table-row";
-import { Card, CardContent, CardHeader } from "../ui/card";
+} from "../../../components/ui/table";
+import { ReportingHero } from "../../../components/reporting-page/reporting-hero";
+import { FindAllChatThreadsForAdmin } from "../../../components/reporting-page/reporting-services/reporting-service";
+import ChatThreadRow from "../../../components/reporting-page/table-row";
+import { Card, CardContent, CardHeader } from "../../../components/ui/card";
 
 const SEARCH_PAGE_SIZE = 100;
 

@@ -13,8 +13,6 @@
         "@/stack/*": ["./stack/*"],
         "@/artifacts/*": ["./artifacts/*"],
         "@/hooks/*": ["./hooks/*"],
-        "@/store/*": ["./store/*"],
-        "@/resend-server/*": ["./resend-server/*"],
         "@/features/*": ["./features/*"]
       }
     }

@@ -1,4 +1,4 @@
-import { ChatReportingPage } from "@/components/reporting-page/reporting-page";
+import { ChatReportingPage } from "@/app/(admin)/reporting/page";
 
 interface Props {
   params: Promise<{}>;

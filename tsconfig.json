@@ -21,13 +21,7 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/stack/*": ["./stack-server/*"],
-      "@/styles/*": ["./styles/*"],
-      "@/features/*": ["./features/*"],
-      "@/components/*": ["./components/*"],
-      "@/lib/*": ["./lib/*"],
-      "@/utils/*": ["./utils/*"],
-      "@/types/*": ["./types/*"]
+      "@/styles/*": ["./styles/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

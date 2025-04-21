@@ -1,4 +1,4 @@
-import { ChatPersonaPage } from "@/components/persona-page/persona-page";
+import { ChatPersonaPage } from "@/app/(admin)/persona/page";
 import { FindAllPersonasForAdmin } from "@/components/persona-page/persona-services/persona-service";
 import { DisplayError } from "@/components/ui/error/display-error";
 
