@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/features/ui/card";
-import { Checkbox } from "@/features/ui/checkbox";
+import { Checkbox, CheckedState } from "../ui/checkbox";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
 import { Textarea } from "@/features/ui/textarea";
@@ -30,8 +30,8 @@ export function ExtensionForm({
 }: ExtensionFormProps) {
   const [name, setName] = useState(extension?.name || "");
   const [description, setDescription] = useState(extension?.description || "");
-  const [isActive, setIsActive] = useState(extension?.isActive || true);
-  const [isAdminExtension, setIsAdminExtension] = useState(extension?.isAdmin || false);
+  const [isActive, setIsActive] = useState<boolean>(extension?.isActive ?? true);
+  const [isAdminExtension, setIsAdminExtension] = useState<boolean>(extension?.isAdmin ?? false);
   const [jsonContent, setJsonContent] = useState('{\n  "name": "example_function",\n  "parameters": {\n    "type": "object",\n    "properties": {\n      "query": {\n        "type": "object",\n        "description": "Query parameters",\n        "properties": {\n          "search_term": {\n            "type": "string",\n            "description": "The search term"\n          }\n        },\n        "required": ["search_term"]\n      }\n    },\n    "required": ["query"]\n  },\n  "description": "Description of the function"\n}');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -115,7 +115,7 @@ export function ExtensionForm({
               <Checkbox
                 id="isActive"
                 checked={isActive}
-                onCheckedChange={(checked) => setIsActive(!!checked)}
+                onCheckedChange={(checked: CheckedState) => setIsActive(checked === true)}
                 className="rounded-xs data-[state=checked]:bg-primary"
                 data-slot="extension-active"
               />
@@ -132,7 +132,7 @@ export function ExtensionForm({
                 <Checkbox
                   id="isAdmin"
                   checked={isAdminExtension}
-                  onCheckedChange={(checked) => setIsAdminExtension(!!checked)}
+                  onCheckedChange={(checked: CheckedState) => setIsAdminExtension(checked === true)}
                   className="rounded-xs data-[state=checked]:bg-primary"
                   data-slot="extension-admin"
                 />

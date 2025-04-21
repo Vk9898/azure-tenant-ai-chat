@@ -187,6 +187,44 @@ Menu components implement the design system effectively:
 - User Profile dropdown uses proper styling and typography
 - Proper active states and hover effects
 
+### App Pages
+
+The following app pages have been updated to adhere to the design system guidelines:
+
+#### Home Page (`src/app/page.tsx`)
+
+✅ Implementation highlights:
+- Uses responsive typography with mobile-first approach (`text-3xl sm:text-4xl md:text-5xl`)
+- Implements accent bar under headings
+- Uses proper spacing that scales with breakpoints (`mb-8 sm:mb-16`)
+- Uses container with appropriate padding (`px-4 sm:px-6 lg:px-8`)
+- Implements responsive grid for feature cards (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`)
+- Feature cards use border-2, rounded-xs, and shadow-xs
+- Button links implement ds-button-primary and ds-button-outline classes
+- Full-width buttons on mobile (`w-full sm:w-auto`)
+- Uses data-slot attributes for styling hooks
+
+#### Auth Pages
+
+✅ Implementation highlights:
+- Layout uses border-2 and proper spacing
+- Implements container with responsive padding
+- Proper typography with ds-section-title and accent bar
+- Card components use ds-card with shadow-xs
+- Login buttons have proper touch targets on mobile (min-h-11)
+- Uses data-slot attributes for styling hooks
+
+#### Public Chat Pages
+
+✅ Implementation highlights:
+- Section headers use ds-section-title and accent bar
+- Info box uses border-2, rounded-xs, and shadow-xs
+- Chat input container uses responsive padding (`p-4 sm:p-6`)
+- Textarea input uses border-2 and proper focus styles
+- Send button has proper touch target size (`h-11 w-11 min-h-11 min-w-11`)
+- Uses pb-safe utility for mobile safe area
+- Implements data-slot attributes for styling hooks
+
 ## 4. Layout Patterns
 
 The implementation of layout patterns follows design system guidelines:

@@ -1,13 +1,12 @@
 "use client";
 
-import { FC, KeyboardEvent, useState } from "react";
+import { FC, KeyboardEvent, useEffect, useState } from "react";
 import { Textarea } from "@/features/ui/textarea";
 import { Button, dsButtonPrimary } from "@/features/ui/button";
 import { Send } from "lucide-react";
-import { usePublicChat } from "./public-chat-store";
+import { nanoid } from "nanoid";
 
 export const PublicChatInput: FC = () => {
-  const { sendMessage } = usePublicChat();
   const [message, setMessage] = useState("");
   const [inputRows, setInputRows] = useState(1);
 
@@ -27,10 +26,57 @@ export const PublicChatInput: FC = () => {
     setInputRows(calculatedRows);
   };
 
-  const handleSubmit = () => {
-    const trimmedMessage: string = message.trim();
+  const handleSubmit = async () => {
+    const trimmedMessage = message.trim();
     if (trimmedMessage.length > 0) {
-      sendMessage(trimmedMessage);
+      // Direct implementation without using store methods
+      // This simulates what the store would do
+      const STORAGE_KEY = "public-chat-messages";
+      
+      // Add user message
+      const userMessage = {
+        id: nanoid(),
+        role: "user",
+        name: "You",
+        content: trimmedMessage,
+        timestamp: Date.now(),
+      };
+      
+      // Get existing messages
+      let messages = [];
+      try {
+        const savedMessages = localStorage.getItem(STORAGE_KEY);
+        if (savedMessages) {
+          messages = JSON.parse(savedMessages);
+        }
+      } catch (error) {
+        console.error("Error loading messages:", error);
+      }
+      
+      // Add user message
+      messages.push(userMessage);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+      
+      // Force a reload to update the UI
+      window.dispatchEvent(new Event('storage'));
+      
+      // Wait 1 second then add AI response
+      setTimeout(() => {
+        const aiMessage = {
+          id: nanoid(),
+          role: "assistant",
+          name: "Azure AI",
+          content: `You said: "${trimmedMessage}"\n\nThis is a demo chat that shows your messages echoed back to you. Sign in for a full chat experience with Azure OpenAI.`,
+          timestamp: Date.now(),
+        };
+        
+        messages.push(aiMessage);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+        
+        // Force a reload to update the UI
+        window.dispatchEvent(new Event('storage'));
+      }, 1000);
+      
       setMessage("");
       setInputRows(1);
     }
