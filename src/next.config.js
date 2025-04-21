@@ -4,4 +4,5 @@ const nextConfig = {
   serverExternalPackages: ["@azure/storage-blob"],
 };
 
-module.exports = nextConfig;
+export default nextConfig;
+
