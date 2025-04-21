@@ -1,6 +1,5 @@
-import { handlers } from "@/features/auth-page/auth-api";
+// ⤵️  app/(authenticated)/api/auth/[...nextauth]/route.ts
+import NextAuth from "next-auth";
+import { authConfig } from "@/lib/auth/config";   // move your options out of the route file
 
-export {
-  handlers as GET,
-  handlers as POST
-};
+export const { handlers: { GET, POST } } = NextAuth(authConfig);

@@ -3,7 +3,7 @@ import NextAuth from "next-auth";
 
 // ─── Providers ──────────────────────────────────────────────────────────────
 import GitHubProvider from "next-auth/providers/github";
-import MicrosoftEntraID from "@auth/microsoft-entra-id-provider"; // Import from separate package
+import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id"; // Import from separate package
 import AzureADB2CProvider from "next-auth/providers/azure-ad-b2c";              // Consumer / CIAM  [oai_citation_attribution:1‡Auth.js | Authentication for the Web](https://authjs.dev/reference/core/providers/azure-ad-b2c)
 import CredentialsProvider from "next-auth/providers/credentials";
 
