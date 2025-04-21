@@ -6,7 +6,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { hashValueSync } from "@/lib/auth/auth-utils";
 // Import the function type, not the function itself at the top level
-import type { createNeonProjectForUser as CreateNeonProjectType } from "@/features/common/services/neondb";
+import type { createNeonProjectForUser as CreateNeonProjectType } from "@/components/common/services/neondb";
 import type { NextAuthConfig } from "next-auth";
 import type { AdapterUser } from "next-auth/adapters"; // Import AdapterUser type
 import { CustomUser } from "./auth-helpers"; // Import CustomUser for explicit typing

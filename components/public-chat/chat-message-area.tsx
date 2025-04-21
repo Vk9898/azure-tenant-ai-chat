@@ -1,9 +1,7 @@
 "use client";
+
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { CheckIcon, ClipboardIcon, PocketKnife, UserCircle } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 
 export interface PublicChatMessageAreaProps {
   children?: React.ReactNode;
@@ -22,77 +20,71 @@ export const PublicChatMessageArea = ({
   role,
   onCopy,
   className,
-  "data-slot": dataSlot = "chat-message",
+  "data-slot": dataSlot = "public-chat-message",
   ...props
 }: PublicChatMessageAreaProps) => {
-  const [isIconChecked, setIsIconChecked] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const handleButtonClick = () => {
+  const handleCopy = () => {
     onCopy();
-    setIsIconChecked(true);
+    setCopied(true);
   };
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsIconChecked(false);
-    }, 2000);
-
-    return () => clearTimeout(timeout);
-  }, [isIconChecked]);
-
-  let profile = null;
-
-  if (profilePicture) {
-    profile = (
-      <Avatar>
-        <AvatarImage src={profilePicture} alt={profileName || role} />
-      </Avatar>
-    );
-  } else {
-    profile = (
-      <UserCircle
-        size={28}
-        strokeWidth={1.4}
-        className="text-muted-foreground"
-      />
-    );
-  }
+    if (copied) {
+      const timeout = setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [copied]);
 
   return (
-    <div className={cn("flex flex-col p-4 sm:p-6", className)} data-slot={dataSlot} {...props}>
-      <div className="h-7 flex items-center justify-between mb-2">
-        <div className="flex gap-3 items-center">
-          <div data-slot="chat-message-avatar">
-            {profile}
+    <div 
+      className={cn(
+        "flex flex-col p-4 sm:p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm",
+        role === "assistant" ? "bg-gray-50 dark:bg-gray-850" : "",
+        className
+      )} 
+      data-slot={dataSlot} 
+      {...props}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+            {profilePicture ? (
+              <img src={profilePicture} alt={profileName || role} className="w-full h-full object-cover" />
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 dark:text-gray-400">
+                <circle cx="12" cy="8" r="5" />
+                <path d="M20 21a8 8 0 0 0-16 0" />
+              </svg>
+            )}
           </div>
-          <div
-            className="text-primary capitalize font-bold"
-            data-slot="chat-message-profile-name"
-          >
+          <div className="font-semibold text-gray-900 dark:text-gray-100">
             {profileName}
           </div>
         </div>
-        <div className="h-7 flex items-center justify-between">
-          <div>
-            <Button
-              variant="ghost"
-              size="icon"
-              title="Copy text"
-              className="rounded-xs min-h-10 min-w-10"
-              onClick={handleButtonClick}
-              data-slot="chat-message-copy-button"
-            >
-              {isIconChecked ? (
-                <CheckIcon size={20} />
-              ) : (
-                <ClipboardIcon size={20} />
-              )}
-            </Button>
-          </div>
-        </div>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          aria-label="Copy message"
+        >
+          {copied ? (
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+            </svg>
+          )}
+        </button>
       </div>
-      <div className="flex flex-col gap-2 flex-1 ps-10" data-slot="chat-message-content">
-        <div className="prose prose-slate dark:prose-invert whitespace-break-spaces prose-p:leading-relaxed prose-pre:p-0 max-w-none">
+      <div className="pl-11">
+        <div className="prose prose-sm max-w-none dark:prose-invert">
           {children}
         </div>
       </div>

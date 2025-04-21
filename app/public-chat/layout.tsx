@@ -16,7 +16,7 @@ export default function PublicChatLayout({
   return (
     <div className="flex flex-1 min-h-screen flex-col">
       <header className="bg-primary/5 border-b-2 border-border">
-        <div className="container py-4 px-4 sm:px-6 flex justify-between items-center">
+        <div className="container pya-4 px-4 sm:px-6 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Image 
               src="/ai-icon.png" 

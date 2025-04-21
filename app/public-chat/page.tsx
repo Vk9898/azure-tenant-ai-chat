@@ -1,4 +1,4 @@
-import { PublicChatPage } from "@/components/public-chat/public-chat-page";
+import PublicChatContent from "@/components/public-chat/public-chat-page";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function PublicChatRoute() {
-  return <PublicChatPage />;
+  return <PublicChatContent />;
 } 

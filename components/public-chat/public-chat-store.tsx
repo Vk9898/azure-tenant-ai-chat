@@ -96,7 +96,10 @@ class PublicChatState implements PublicChatStore {
         createdAt: new Date(),
       }
     ];
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
   }
 
   // Load messages from localStorage
@@ -145,10 +148,12 @@ class PublicChatState implements PublicChatStore {
     
     if (!this.input.trim()) return;
     
+    const userInput = this.input.trim();
+    
     const userMessage: PublicChatMessageModel = {
       id: uuidv4(),
       role: "user",
-      content: this.input.trim(),
+      content: userInput,
       name: this.userName,
       createdAt: new Date(),
     };
@@ -167,7 +172,7 @@ class PublicChatState implements PublicChatStore {
       this.saveToLocalStorage();
       
       // Get AI response
-      const aiResponse = await this.generateAIResponse(userMessage.content);
+      const aiResponse = await this.generateAIResponse(userInput);
       
       // Create AI message
       const aiMessage: PublicChatMessageModel = {
@@ -271,18 +276,23 @@ class PublicChatState implements PublicChatStore {
   }
 }
 
-// Create the state instance
+// Create a new state instance
 const chatState = new PublicChatState();
 
-// Create the proxy with proper binding
+// Create the proxy with properly bound methods
 const state = proxy<PublicChatStore>({
-  ...chatState,
-  updateLoading: chatState.updateLoading.bind(chatState),
-  initChatSession: chatState.initChatSession.bind(chatState),
-  clearChatHistory: chatState.clearChatHistory.bind(chatState),
-  updateInput: chatState.updateInput.bind(chatState),
-  updateAutoScroll: chatState.updateAutoScroll.bind(chatState),
-  submitChat: chatState.submitChat.bind(chatState),
+  messages: chatState.messages,
+  loading: chatState.loading,
+  input: chatState.input,
+  autoScroll: chatState.autoScroll,
+  userName: chatState.userName,
+  updateLoading: (value: chatStatus) => chatState.updateLoading(value),
+  initChatSession: (userName?: string) => chatState.initChatSession(userName),
+  clearChatHistory: () => chatState.clearChatHistory(),
+  updateInput: (value: string) => chatState.updateInput(value),
+  updateAutoScroll: (value: boolean) => chatState.updateAutoScroll(value),
+  submitChat: (e: FormEvent<HTMLFormElement>) => chatState.submitChat(e),
 });
 
+// Export the hook for accessing the store
 export const usePublicChatStore = () => useSnapshot(state); 

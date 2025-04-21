@@ -5,7 +5,7 @@ import { usePublicChatStore } from "./public-chat-store";
 import { cn } from "@/lib/utils";
 
 export const PublicChatInput: FC = () => {
-  const { loading, updateInput, submitChat } = usePublicChatStore();
+  const store = usePublicChatStore();
   const [localInput, setLocalInput] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -20,22 +20,25 @@ export const PublicChatInput: FC = () => {
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setLocalInput(value);
-    updateInput(value);
+    store.updateInput(value);
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (localInput.trim() === "" || loading === "loading") return;
+    if (localInput.trim() === "" || store.loading === "loading") return;
     
-    submitChat(e as FormEvent<HTMLFormElement>);
-    setLocalInput("");
-    
-    // Focus textarea after submitting
-    setTimeout(() => {
-      if (textareaRef.current) {
-        textareaRef.current.focus();
-      }
-    }, 0);
+    // Call the submit function directly without trying to clone the event
+    if (formRef.current) {
+      store.submitChat(e as unknown as FormEvent<HTMLFormElement>);
+      setLocalInput("");
+      
+      // Focus textarea after submitting
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus();
+        }
+      }, 10);
+    }
   };
 
   return (
@@ -45,7 +48,7 @@ export const PublicChatInput: FC = () => {
       className="w-full"
     >
       <div className="flex gap-3 items-end">
-        <div className="flex-1 rounded-md border-2 border-gray-300 dark:border-gray-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+        <div className="flex-1 rounded-md border-2 border-gray-300 dark:border-gray-700 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
           <textarea
             ref={textareaRef}
             placeholder="Send a message..."
@@ -64,9 +67,9 @@ export const PublicChatInput: FC = () => {
           type="submit"
           className={cn(
             "h-11 w-11 rounded-md flex items-center justify-center",
-            "bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            "bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           )}
-          disabled={localInput.trim().length === 0 || loading === "loading"}
+          disabled={localInput.trim().length === 0 || store.loading === "loading"}
           data-slot="public-chat-send-button"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
