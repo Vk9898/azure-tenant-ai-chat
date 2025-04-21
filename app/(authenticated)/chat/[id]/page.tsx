@@ -1,4 +1,4 @@
-import { ChatPage } from "@/components/chat-page/chat-page";
+import { ChatPage } from "@/components/chat-page/main";
 import { FindAllChatDocuments } from "@/components/chat-page/chat-services/chat-document-service";
 import { FindAllChatMessagesForCurrentUser } from "@/components/chat-page/chat-services/chat-message-service";
 import { FindChatThreadForCurrentUser } from "@/components/chat-page/chat-services/chat-thread-service";
