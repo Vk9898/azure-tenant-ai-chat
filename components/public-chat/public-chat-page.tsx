@@ -1,10 +1,10 @@
 "use client";
 
 import { FC, useEffect, useRef } from "react";
-import { usePublicChatStore } from "@/components/public-chat/public-chat-store";
-import MessageContent from "@/components/public-chat/message-content";
-import { PublicChatMessageArea } from "@/components/public-chat/chat-message-area";
-import { PublicChatInput } from "@/components/public-chat/public-chat-input";
+import { usePublicChatStore } from "@/components/public-chat-components/public-chat-store";
+import MessageContent from "@/components/public-chat-components/message-content";
+import { PublicChatMessageArea } from "@/components/public-chat-components/chat-message-area";
+import { PublicChatInput } from "@/components/public-chat-components/public-chat-input";
 
 // Renamed to match Next.js App Router conventions
 export default function PublicChatContent() {
