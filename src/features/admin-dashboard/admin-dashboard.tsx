@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui
 import { DisplayError } from "../ui/error/display-error";
 import { UsersTable } from "./users-table";
 import { RecentActivityTable } from "./recent-activity-table";
+import { AdminKnowledgeBaseUploader } from "./admin-kb-uploader";
 
 interface AdminDashboardProps {
   page: number;
@@ -99,6 +100,10 @@ async function DashboardContent(props: AdminDashboardProps) {
             <RecentActivityTable activities={recentActivities} />
           </CardContent>
         </Card>
+      </div>
+      
+      <div className="mb-6">
+        <AdminKnowledgeBaseUploader />
       </div>
     </div>
   );

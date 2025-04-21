@@ -1,7 +1,7 @@
 "use server";
 import { NeonDBInstance } from "@/features/common/services/neondb";
 
-import { userHashedId } from "@/features/auth-page/helpers";
+import { getCurrentUser, userHashedId } from "@/features/auth-page/helpers";
 import { ServerActionResponse } from "@/features/common/server-action-response";
 import { OpenAIEmbeddingInstance } from "@/features/common/services/openai";
 import { uniqueId } from "@/features/common/util";
@@ -17,6 +17,7 @@ export interface NeonSearchDocument {
   userId: string;
   chatThreadId: string;
   metadata: string;
+  isAdminKb?: boolean;
 }
 
 export type DocumentSearchResponse = {
@@ -30,7 +31,7 @@ export const SimpleSearch = async (
 ): Promise<ServerActionResponse<Array<DocumentSearchResponse>>> => {
   try {
     const query = `
-      SELECT id, page_content AS "pageContent", user, chat_thread_id AS "chatThreadId", metadata, embedding
+      SELECT id, page_content AS "pageContent", user_id, chat_thread_id AS "chatThreadId", metadata, embedding, is_admin_kb AS "isAdminKb"
       FROM documents
       WHERE ($1::text IS NULL OR page_content ILIKE '%' || $1 || '%')
       AND ($2::text IS NULL OR metadata = $2);
@@ -61,6 +62,7 @@ export const SimilaritySearch = async (
   k: number,
   userId: string,
   chatThreadId: string,
+  adminRatio: number = 0.7 // 70% admin documents by default
 ): Promise<ServerActionResponse<Array<DocumentSearchResponse>>> => {
   try {
     const openai = OpenAIEmbeddingInstance();
@@ -70,34 +72,67 @@ export const SimilaritySearch = async (
     });
 
     const embeddingVector = embeddings.data[0].embedding;
+    
+    // Calculate the number of documents to retrieve from each source
+    const adminK = Math.max(1, Math.floor(k * adminRatio));
+    const userK = Math.max(1, k - adminK);
 
-    const query = `
-        SELECT id, 
-               page_content AS "pageContent", 
-               user_id, 
-               chat_thread_id AS "chatThreadId", 
-               metadata, 
-               embedding,
-               (embedding <-> $1::vector) AS distance
-        FROM documents
-        WHERE user_id = $2 AND chat_thread_id = $3
-        ORDER BY distance ASC
-        LIMIT $4;
+    const sql = await NeonDBInstance();
+    
+    // Query admin documents first
+    const adminQuery = `
+      SELECT id, 
+             page_content AS "pageContent", 
+             user_id, 
+             chat_thread_id AS "chatThreadId", 
+             metadata, 
+             embedding,
+             is_admin_kb AS "isAdminKb",
+             (embedding <-> $1::vector) AS distance
+      FROM documents
+      WHERE is_admin_kb = TRUE
+      ORDER BY distance ASC
+      LIMIT $2;
     `;
 
-    const values = [
+    const adminValues = [
+      `[${embeddingVector.join(", ")}]`,
+      adminK,
+    ];
+    
+    const adminRows = await sql(adminQuery, adminValues);
+
+    // Then query user's personal documents
+    const userQuery = `
+      SELECT id, 
+             page_content AS "pageContent", 
+             user_id, 
+             chat_thread_id AS "chatThreadId", 
+             metadata, 
+             embedding,
+             is_admin_kb AS "isAdminKb",
+             (embedding <-> $1::vector) AS distance
+      FROM documents
+      WHERE user_id = $2 AND chat_thread_id = $3 AND is_admin_kb = FALSE
+      ORDER BY distance ASC
+      LIMIT $4;
+    `;
+
+    const userValues = [
       `[${embeddingVector.join(", ")}]`,
       userId,
       chatThreadId,
-      k,
+      userK,
     ];
 
-    const sql = await NeonDBInstance();
-    const rows = await sql(query, values);
+    const userRows = await sql(userQuery, userValues);
+    
+    // Combine results and sort by distance
+    const combinedRows = [...adminRows, ...userRows].sort((a, b) => a.distance - b.distance);
 
     return {
       status: "OK",
-      response: rows.map((row: Record<string, any>) => ({
+      response: combinedRows.map((row: Record<string, any>) => ({
         score: 1 / (1 + row.distance), // Convert distance to similarity score
         document: {
           id: row.id,
@@ -106,6 +141,7 @@ export const SimilaritySearch = async (
           chatThreadId: row.chatThreadId,
           metadata: row.metadata,
           embedding: row.embedding,
+          isAdminKb: row.isAdminKb,
         },
       })),
     };
@@ -207,7 +243,8 @@ export const ExtensionSimilaritySearch = async (props: {
 export const IndexDocuments = async (
   fileName: string,
   docs: string[],
-  chatThreadId: string
+  chatThreadId: string,
+  isAdminKb: boolean = false
 ): Promise<Array<ServerActionResponse<boolean>>> => {
   try {
     const hashedId = await userHashedId();
@@ -221,6 +258,19 @@ export const IndexDocuments = async (
       }];
     }
     
+    // If trying to add admin documents, check admin status
+    if (isAdminKb) {
+      const currentUser = await getCurrentUser();
+      if (!currentUser || !currentUser.isAdmin) {
+        return [{
+          status: "UNAUTHORIZED",
+          errors: [{
+            message: "Admin access required to update the central knowledge base",
+          }],
+        }];
+      }
+    }
+    
     const documentsToIndex: NeonSearchDocument[] = [];
     const sql = await NeonDBInstance();
     for (const doc of docs) {
@@ -231,6 +281,7 @@ export const IndexDocuments = async (
         pageContent: doc,
         metadata: fileName,
         embedding: [],
+        isAdminKb: isAdminKb,
       });
     }
 
@@ -243,10 +294,10 @@ export const IndexDocuments = async (
           if (!Array.isArray(doc.embedding) || doc.embedding.length !== 1536) {
             throw new Error('Embedding must be a 1536-dimensional vector');
           }
-          // Insert into the database
+          // Insert into the database with the is_admin_kb flag
           return sql(
-            `INSERT INTO documents (id, page_content, user_id, chat_thread_id, metadata, embedding)
-             VALUES ($1, $2, $3, $4, $5, $6);`,
+            `INSERT INTO documents (id, page_content, user_id, chat_thread_id, metadata, embedding, is_admin_kb)
+             VALUES ($1, $2, $3, $4, $5, $6, $7);`,
             [
               doc.id,
               doc.pageContent,
@@ -254,6 +305,7 @@ export const IndexDocuments = async (
               doc.chatThreadId,
               doc.metadata,
               `[${doc.embedding.join(', ')}]`, // Pass valid vector
+              doc.isAdminKb || false, // Include the admin KB flag
             ]
           );
         });

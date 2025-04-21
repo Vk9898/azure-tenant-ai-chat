@@ -17,8 +17,9 @@ export const ChatApiRAG = async (props: {
   userMessage: string;
   history: ChatCompletionMessageParam[];
   signal: AbortSignal;
+  adminKbRatio?: number;
 }): Promise<ChatCompletionStreamingRunner> => {
-  const { chatThread, userMessage, history, signal } = props;
+  const { chatThread, userMessage, history, signal, adminKbRatio = 0.7 } = props;
   const openAI = OpenAIInstance();
   
   const hashedId = await userHashedId();
@@ -30,7 +31,8 @@ export const ChatApiRAG = async (props: {
     userMessage,
     10,
     hashedId,
-    chatThread.id
+    chatThread.id,
+    adminKbRatio
   );
   
   const documents: ChatCitationModel[] = [];
@@ -52,16 +54,19 @@ export const ChatApiRAG = async (props: {
       const parsedContent = JSON.parse(result.content);
       const document = parsedContent.document
       const content = document.pageContent;
-      const context = `[${index}]. file name: ${document.metadata} \n file id: ${result.id} \n ${content}`;
+      const sourceType = document.isAdminKb ? "[ADMIN]" : "[USER]";
+      const context = `[${index}]. ${sourceType} file name: ${document.metadata} \n file id: ${result.id} \n ${content}`;
       return context;
     })
     .join("\n------\n");
   // Augment the user prompt
   const _userMessage = `\n
-- Review the following content from documents uploaded by the user and create a final answer.
+- Review the following content from documents and create a final answer.
 - If you don't know the answer, just say that you don't know. Don't try to make up an answer.
 - You must always include a citation at the end of your answer and don't include full stop after the citations.
 - Use the format for your citation {% citation items=[{name:"filename 1",id:"file id"}, {name:"filename 2",id:"file id"}] /%}
+- Documents marked with [ADMIN] are from the organization's knowledge base and should be given priority.
+- Documents marked with [USER] are from the user's personal document collection.
 ----------------
 content: 
 ${content}

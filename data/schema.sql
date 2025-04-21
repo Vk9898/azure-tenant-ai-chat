@@ -73,8 +73,16 @@ CREATE TABLE documents (
     chat_thread_id TEXT NOT NULL, -- String-based chat thread ID
     embedding VECTOR(1536), -- Embeddings column
     user_id TEXT NOT NULL, -- String-based user ID
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    is_admin_kb BOOLEAN NOT NULL DEFAULT FALSE -- Flag for admin knowledge base documents
 );
+
+-- Create an index to optimize queries for admin knowledge base documents
+CREATE INDEX idx_admin_kb ON documents (is_admin_kb) WHERE is_admin_kb = TRUE;
+-- Create an index to optimize embedding similarity search for admin KB documents
+CREATE INDEX idx_admin_embedding ON documents USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100) WHERE is_admin_kb = TRUE;
+-- Create an index to optimize embedding similarity search for user documents
+CREATE INDEX idx_user_embedding ON documents USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100) WHERE is_admin_kb = FALSE;
 
 CREATE TABLE chat_messages (
     id CHAR(64) PRIMARY KEY,           -- String-based ID (64-character hexadecimal)

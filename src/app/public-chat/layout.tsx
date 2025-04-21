@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: `Public Chat - ${AI_NAME}`,
-  description: "Try our AI assistant without signing in. For full features, please login.",
+  description: "Try our AI assistant without signing in. Your chats are stored only in your browser, not in a database.",
 };
 
 export default function PublicChatLayout({

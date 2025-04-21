@@ -5,6 +5,8 @@ import { AI_NAME } from "@/features/theme/theme-config";
 import { proxy, useSnapshot } from "valtio";
 import { FormEvent } from "react";
 
+// Define the public chat message model - note this data is ONLY stored client-side
+// and NOT saved to a database unlike the authenticated chat which uses NeonDB
 export type PublicChatMessageModel = {
   id: string;
   role: "user" | "assistant";
@@ -14,6 +16,9 @@ export type PublicChatMessageModel = {
 };
 
 type chatStatus = "idle" | "loading";
+
+// LocalStorage key for saving public chat history
+const LOCAL_STORAGE_KEY = "public_chat_history";
 
 class PublicChatState {
   public messages: Array<PublicChatMessageModel> = [];
@@ -26,17 +31,83 @@ class PublicChatState {
     this.loading = value;
   }
 
+  // Initialize chat session, optionally loading from localStorage
   public initChatSession(userName: string = "Guest") {
     this.userName = userName;
+    
+    // Try to load messages from localStorage
+    const savedMessages = this.loadFromLocalStorage();
+    
+    if (savedMessages && savedMessages.length > 0) {
+      this.messages = savedMessages;
+    } else {
+      // Start with a welcome message if no history exists
+      this.messages = [
+        {
+          id: uniqueId(),
+          role: "assistant",
+          content: "Welcome to the public chat! How can I help you today?",
+          name: AI_NAME,
+          createdAt: new Date(),
+        }
+      ];
+    }
+  }
+
+  // Save current chat history to localStorage
+  private saveToLocalStorage() {
+    try {
+      // Only keep the last 20 messages to prevent localStorage limits
+      const messagesToSave = this.messages.slice(-20);
+      
+      // Serialize dates for proper JSON storage
+      const serializedMessages = messagesToSave.map(msg => ({
+        ...msg,
+        createdAt: msg.createdAt.toISOString()
+      }));
+      
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(serializedMessages));
+    } catch (error) {
+      console.error("Failed to save chat history to localStorage:", error);
+    }
+  }
+
+  // Load chat history from localStorage
+  private loadFromLocalStorage(): PublicChatMessageModel[] | null {
+    try {
+      const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (!savedData) return null;
+      
+      const parsedData = JSON.parse(savedData);
+      
+      // Restore dates from ISO strings
+      return parsedData.map((msg: any) => ({
+        ...msg,
+        createdAt: new Date(msg.createdAt)
+      }));
+    } catch (error) {
+      console.error("Failed to load chat history from localStorage:", error);
+      return null;
+    }
+  }
+
+  // Clear chat history both in memory and localStorage
+  public clearChatHistory() {
     this.messages = [
       {
         id: uniqueId(),
         role: "assistant",
-        content: "Welcome to the public chat! How can I help you today?",
+        content: "Chat history cleared. How can I help you today?",
         name: AI_NAME,
         createdAt: new Date(),
       }
     ];
+    
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    } catch (error) {
+      console.error("Failed to clear localStorage:", error);
+    }
   }
 
   public updateInput(value: string) {
@@ -104,6 +175,11 @@ class PublicChatState {
         }
       } else if (input.includes("login") || input.includes("sign in") || input.includes("account")) {
         botResponse = "To access the full features of Tenant AI Chat, please click the 'Sign In' button at the top of the page or use this link: [Sign In](/auth/signin)";
+      } else if (input.includes("clear") || input.includes("reset") || input.includes("start over")) {
+        this.clearChatHistory();
+        botResponse = "Chat history cleared. How can I help you today?";
+      } else if (input.includes("save") || input.includes("store") || input.includes("persist")) {
+        botResponse = "Your public chat history is temporarily stored in your browser's local storage. It's not saved to a database and will be lost if you clear your browser data. For persistent chat history, please sign in.";
       }
 
       const botMessage: PublicChatMessageModel = {
@@ -115,6 +191,9 @@ class PublicChatState {
       };
 
       this.messages.push(botMessage);
+      
+      // Save to localStorage after each interaction
+      this.saveToLocalStorage();
       
     } catch (error) {
       showError("" + error);

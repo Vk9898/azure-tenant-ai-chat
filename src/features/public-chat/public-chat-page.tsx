@@ -8,6 +8,14 @@ import ChatMessageContentArea from "@/features/ui/chat/chat-message-area/chat-me
 import { PublicChatInput } from "./public-chat-input";
 import { publicChatStore, usePublicChat } from "./public-chat-store";
 import MessageContent from "./message-content";
+import { Button } from "@/features/ui/button";
+import { Trash2, Info } from "lucide-react";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/features/ui/tooltip";
 
 export const PublicChatPage: FC = () => {
   const { messages, loading } = usePublicChat();
@@ -20,13 +28,44 @@ export const PublicChatPage: FC = () => {
 
   useChatScrollAnchor({ ref: current });
 
+  const handleClearChat = () => {
+    if (window.confirm("Are you sure you want to clear the chat history?")) {
+      publicChatStore.clearChatHistory();
+    }
+  };
+
   return (
     <main className="flex flex-1 relative flex-col">
-      <div className="p-4 border-b bg-primary/5 text-center">
-        <h1 className="text-xl font-semibold">Public Chat Demo</h1>
-        <p className="text-sm text-muted-foreground">
-          Try our AI assistant without signing in. For full features, please login.
-        </p>
+      <div className="p-4 border-b bg-primary/5">
+        <div className="flex justify-between items-center mb-2">
+          <h1 className="text-xl font-semibold">Public Chat Demo</h1>
+          <div className="flex items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleClearChat}
+                    className="h-8 w-8"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="sr-only">Clear Chat</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Clear chat history</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-background/50 p-2 rounded-md">
+          <Info className="h-4 w-4 text-blue-500 flex-shrink-0" />
+          <p>
+            This is a demo with limited functionality. Public chats are stored only in your browser and not saved to a database. For full features and persistent chats, please login.
+          </p>
+        </div>
       </div>
       <ChatMessageContainer ref={current}>
         <ChatMessageContentArea>
