@@ -2,7 +2,7 @@ import { ChatPage } from "@/features/chat-page/chat-page";
 import { FindAllChatDocuments } from "@/features/chat-page/chat-services/chat-document-service";
 import { FindAllChatMessagesForCurrentUser } from "@/features/chat-page/chat-services/chat-message-service";
 import { FindChatThreadForCurrentUser } from "@/features/chat-page/chat-services/chat-thread-service";
-import { FindAllExtensionForCurrentUser } from "@/features/extensions-page/extension-services/extension-service";
+import { FindAllExtensionsForCurrentUser } from "@/features/extensions-page/extension-services/extension-service";
 import { AI_NAME } from "@/features/theme/theme-config";
 import { DisplayError } from "@/features/ui/error/display-error";
 
@@ -24,7 +24,7 @@ export default async function Home(props: HomeParams) {
       FindAllChatMessagesForCurrentUser(id),
       FindChatThreadForCurrentUser(id),
       FindAllChatDocuments(id),
-      FindAllExtensionForCurrentUser(),
+      FindAllExtensionsForCurrentUser(),
     ]);
 
   if (docsResponse.status !== "OK") {

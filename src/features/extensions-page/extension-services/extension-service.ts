@@ -289,11 +289,23 @@ export const CreateChatWithExtension = async (
 
     if (extensionResponse.status === "OK") {
       const extension = extensionResponse.response;
+      
+      const session = await userSession();
+      if (!session) {
+        return {
+          status: "UNAUTHORIZED",
+          errors: [
+            {
+              message: "User session required",
+            },
+          ],
+        };
+      }
 
       const modelToSave: ChatThreadModel = {
         id: uniqueId(),
         name: extension.name,
-        useName: (await userSession())!.name,
+        useName: session.name,
         userId: hashedId,
         createdAt: new Date(),
         lastMessageAt: new Date(),
@@ -346,24 +358,35 @@ const secureHeaderValues = async (extension: ExtensionModel) => {
 export const EnsureExtensionOperation = async (
   id: string
 ): Promise<ServerActionResponse<ExtensionModel>> => {
-  const extensionResponse = await FindExtensionByID(id);
-  const currentUser = await getCurrentUser();
-  const hashedId = await userHashedId();
+  try {
+    const extensionResponse = await FindExtensionByID(id);
+    const currentUser = await getCurrentUser();
+    const hashedId = await userHashedId();
 
-  if (extensionResponse.status === "OK") {
-    if (currentUser.isAdmin || (hashedId && extensionResponse.response.userId === hashedId)) {
-      return extensionResponse;
+    if (extensionResponse.status === "OK") {
+      if (currentUser.isAdmin || (hashedId && extensionResponse.response.userId === hashedId)) {
+        return extensionResponse;
+      }
     }
-  }
 
-  return {
-    status: "UNAUTHORIZED",
-    errors: [
-      {
-        message: `Extension not found with id: ${id}`,
-      },
-    ],
-  };
+    return {
+      status: "UNAUTHORIZED",
+      errors: [
+        {
+          message: `Extension not found with id: ${id}`,
+        },
+      ],
+    };
+  } catch (error) {
+    return {
+      status: "ERROR",
+      errors: [
+        {
+          message: `Error accessing extension: ${error}`,
+        },
+      ],
+    };
+  }
 };
 
 export const FindSecureHeaderValue = async (
@@ -495,8 +518,6 @@ export const FindAllExtensionsForCurrentUser = async (): Promise<
     };
   }
 };
-
-export const FindAllExtensionForCurrentUser = FindAllExtensionsForCurrentUser;
 
 export const FindAllExtensionsForAdmin = async (): Promise<
   ServerActionResponse<Array<ExtensionModel>>
