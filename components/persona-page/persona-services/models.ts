@@ -1,5 +1,3 @@
-import { refineFromEmpty } from "@/components/common/schema-validation";
-
 export const PERSONA_ATTRIBUTE = "PERSONA";
 
 // Define types using TypeScript interfaces
@@ -16,44 +14,49 @@ export interface PersonaModel {
 
 // Simple validation schema for TypeScript
 export const PersonaModelSchema = {
-  safeParse: (data: any) => {
-    try {
-      // Simple validation logic
-      if (!data.name || data.name.trim() === '') {
-        return { 
-          success: false, 
-          error: { 
-            errors: [{ path: ['name'], message: 'Title cannot be empty' }] 
-          } 
-        };
-      }
-      
-      if (!data.description || data.description.trim() === '') {
-        return { 
-          success: false, 
-          error: { 
-            errors: [{ path: ['description'], message: 'Description cannot be empty' }] 
-          } 
-        };
-      }
+  safeParse: (input: any) => {
+    const errors: Array<{
+      code: string;
+      path: string[];
+      message: string;
+    }> = [];
 
-      if (!data.persona_message || data.persona_message.trim() === '') {
-        return { 
-          success: false, 
-          error: { 
-            errors: [{ path: ['persona_message'], message: 'System message cannot be empty' }] 
-          } 
-        };
-      }
-      
-      return { success: true, data };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: { 
-          errors: [{ path: [], message: `Validation error: ${error}` }] 
-        } 
+    if (!input.name || input.name.trim() === "") {
+      errors.push({
+        code: "custom",
+        path: ["name"],
+        message: "Name is required"
+      });
+    }
+
+    if (!input.description || input.description.trim() === "") {
+      errors.push({
+        code: "custom",
+        path: ["description"],
+        message: "Description is required"
+      });
+    }
+
+    if (!input.persona_message || input.persona_message.trim() === "") {
+      errors.push({
+        code: "custom",
+        path: ["persona_message"],
+        message: "Persona message is required"
+      });
+    }
+
+    if (errors.length > 0) {
+      return {
+        success: false,
+        error: {
+          errors: errors
+        }
       };
     }
+
+    return {
+      success: true,
+      data: input
+    };
   }
 };
