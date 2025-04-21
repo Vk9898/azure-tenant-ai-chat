@@ -16,7 +16,7 @@ import {
   PERSONA_ATTRIBUTE,
   PersonaModel,
   PersonaModelSchema,
-} from "./models";
+} from "@/components/persona-page/persona-services/models";
 
 interface PersonaInput {
   name: string;

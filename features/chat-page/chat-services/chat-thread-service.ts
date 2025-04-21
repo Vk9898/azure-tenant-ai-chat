@@ -17,7 +17,7 @@ import {
   CHAT_THREAD_ATTRIBUTE,
   ChatDocumentModel,
   ChatThreadModel,
-} from "./models";
+} from "@/components/chat-page/chat-services/models";
 
 
 export const FindAllChatThreadForCurrentUser = async (): Promise<
