@@ -10,7 +10,8 @@ const requireAuth: string[] = [
   "/prompt"
 ];
 const requireAdmin: string[] = ["/reporting", "/prompt", "/persona", "/extensions"];
-const publicRoutes: string[] = ["/", "/login", "/admin-auth"];
+const publicRoutes: string[] = ["/", "/login", "/admin-auth", "/public-chat"];
+const publicApiRoutes: string[] = ["/api/chat/public"];
 
 export async function middleware(request: NextRequest) {
   const res = NextResponse.next();
@@ -18,6 +19,11 @@ export async function middleware(request: NextRequest) {
 
   // Allow public routes without authentication check
   if (publicRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`))) {
+    return res;
+  }
+  
+  // Allow public API endpoints without authentication
+  if (publicApiRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`))) {
     return res;
   }
 
@@ -56,6 +62,7 @@ export const config = {
     "/admin-auth",
     "/prompt/:path*",
     "/persona/:path*",
-    "/extensions/:path*"
+    "/extensions/:path*",
+    "/public-chat/:path*"
   ],
 };

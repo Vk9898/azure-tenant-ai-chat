@@ -19,31 +19,24 @@ import { v4 as uuidv4 } from 'uuid';
 import { proxy, useSnapshot } from "valtio";
 import { FormEvent } from "react";
 
-// Define constants that were previously imported
-const AI_NAME = "Azure Tenant AI";
+// Define constants for the public chat
+const AI_NAME = "Multi-user RAG Chat in Azure";
 
-// Simple error display function instead of imported showError
-const showError = (message: string) => {
-  console.error(message);
-  // Optionally show an error toast/alert in the UI
-};
+// Types
+export type chatStatus = "idle" | "loading" | "error";
 
-// Define the public chat message model - note this data is ONLY stored client-side
-// and NOT saved to a database unlike the authenticated chat which uses NeonDB
-export type PublicChatMessageModel = {
+export interface PublicChatMessageModel {
   id: string;
   role: "user" | "assistant";
-  content: string;
   name: string;
+  content: string;
   createdAt: Date;
-};
-
-type chatStatus = "idle" | "loading";
+}
 
 // LocalStorage key for saving public chat history
 const LOCAL_STORAGE_KEY = "public_chat_history";
 
-// Define the store interface to solve TypeScript errors
+// Define the store interface
 export interface PublicChatStore {
   messages: Array<PublicChatMessageModel>;
   loading: chatStatus;
@@ -62,7 +55,7 @@ class PublicChatState implements PublicChatStore {
   public messages: Array<PublicChatMessageModel> = [];
   public loading: chatStatus = "idle";
   public input: string = "";
-  public autoScroll: boolean = false;
+  public autoScroll: boolean = true;
   public userName: string = "Guest";
 
   public updateLoading(value: chatStatus) {
@@ -92,59 +85,49 @@ class PublicChatState implements PublicChatStore {
     }
   }
 
-  // Save current chat history to localStorage
-  private saveToLocalStorage() {
-    try {
-      // Only keep the last 20 messages to prevent localStorage limits
-      const messagesToSave = this.messages.slice(-20);
-      
-      // Serialize dates for proper JSON storage
-      const serializedMessages = messagesToSave.map(msg => ({
-        ...msg,
-        createdAt: msg.createdAt.toISOString()
-      }));
-      
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(serializedMessages));
-    } catch (error) {
-      console.error("Failed to save chat history to localStorage:", error);
-    }
+  // Clear chat history
+  public clearChatHistory() {
+    this.messages = [
+      {
+        id: uuidv4(),
+        role: "assistant",
+        content: "Chat history has been cleared. How can I help you?",
+        name: AI_NAME,
+        createdAt: new Date(),
+      }
+    ];
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
   }
 
-  // Load chat history from localStorage
+  // Load messages from localStorage
   private loadFromLocalStorage(): PublicChatMessageModel[] | null {
+    if (typeof window === "undefined") return null;
+    
     try {
       const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (!savedData) return null;
       
       const parsedData = JSON.parse(savedData);
       
-      // Restore dates from ISO strings
+      // Convert string dates back to Date objects
       return parsedData.map((msg: any) => ({
         ...msg,
-        createdAt: new Date(msg.createdAt)
+        createdAt: new Date(msg.createdAt),
       }));
     } catch (error) {
-      console.error("Failed to load chat history from localStorage:", error);
+      console.error("Failed to load chat from localStorage:", error);
       return null;
     }
   }
 
-  // Clear chat history both in memory and localStorage
-  public clearChatHistory() {
-    this.messages = [
-      {
-        id: uuidv4(),
-        role: "assistant",
-        content: "Chat history cleared. How can I help you today?",
-        name: AI_NAME,
-        createdAt: new Date(),
-      }
-    ];
+  // Save messages to localStorage
+  private saveToLocalStorage() {
+    if (typeof window === "undefined") return;
     
     try {
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.messages));
     } catch (error) {
-      console.error("Failed to clear localStorage:", error);
+      console.error("Failed to save chat to localStorage:", error);
     }
   }
 
@@ -156,104 +139,140 @@ class PublicChatState implements PublicChatStore {
     this.autoScroll = value;
   }
 
-  private reset() {
-    this.input = "";
-  }
-
-  private async chat() {
-    this.updateAutoScroll(true);
-    this.loading = "loading";
-
-    const newUserMessage: PublicChatMessageModel = {
+  // Submit chat message
+  public async submitChat(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    
+    if (!this.input.trim()) return;
+    
+    const userMessage: PublicChatMessageModel = {
       id: uuidv4(),
       role: "user",
-      content: this.input,
+      content: this.input.trim(),
       name: this.userName,
       createdAt: new Date(),
     };
-
-    this.messages.push(newUserMessage);
-    this.reset();
-
+    
+    // Add user message to the chat
+    this.messages = [...this.messages, userMessage];
+    
+    // Clear input
+    this.input = "";
+    
+    // Set loading state
+    this.loading = "loading";
+    
     try {
-      // Simulate a response delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Save the current state to localStorage
+      this.saveToLocalStorage();
       
-      // Create a simple bot response based on input
-      let botResponse = "I'm a limited public chat bot. I can only respond to basic questions. For more advanced features, please log in.";
+      // Get AI response
+      const aiResponse = await this.generateAIResponse(userMessage.content);
       
-      const input = this.input.toLowerCase();
-      
-      if (input.includes("hello") || input.includes("hi") || input.includes("hey")) {
-        botResponse = `Hello ${this.userName}! How can I help you today?`;
-      } else if (input.includes("help")) {
-        botResponse = "I can provide basic information. For more advanced features, please log in to access the full chat experience. You can ask me about:\n\n- Basic information\n- Current time\n- Simple calculations\n- Limited definitions";
-      } else if (input.includes("weather")) {
-        botResponse = "I'm sorry, I don't have access to current weather information. This is a limited public chat demonstration. Please log in for access to external data.";
-      } else if (input.includes("time")) {
-        botResponse = `The current time is ${new Date().toLocaleTimeString()}.`;
-      } else if (input.includes("who are you") || input.includes("what are you")) {
-        botResponse = "I'm a limited version of the Tenant AI Chat assistant. I can answer basic questions in this public demo. For full capabilities including web searches, document analysis, and more, please sign in.";
-      } else if (input.includes("feature") || input.includes("capabilities") || input.includes("what can you do")) {
-        botResponse = "In this public demo, I have limited capabilities. The full version includes:\n\n- Web search integration\n- Document processing\n- Custom extensions\n- Long context memory\n- Personalized experiences\n\nTo access these features, please sign in.";
-      } else if (input.includes("calculate") || input.includes("math") || input.match(/[0-9+\-*/()]/)) {
-        // Simple math operations
-        try {
-          // Fix null check for regex match
-          const mathMatch = input.match(/\d+\s*[\+\-\*\/]\s*\d+/);
-          if (mathMatch && mathMatch[0]) {
-            // Extract the mathematical expression
-            const expression = mathMatch[0];
-            // Use Function constructor to safely evaluate the expression
-            const result = new Function(`return ${expression}`)();
-            botResponse = `The result of ${expression} is ${result}.`;
-          } else {
-            botResponse = "I can do simple calculations. Try something like '2 + 2' or '10 * 5'.";
-          }
-        } catch (error) {
-          botResponse = "I had trouble with that calculation. I can only perform simple operations in this demo mode.";
-        }
-      } else if (input.includes("login") || input.includes("sign in") || input.includes("account")) {
-        botResponse = "To access the full features of Tenant AI Chat, please click the 'Sign In' button at the top of the page or use this link: [Sign In](/auth/signin)";
-      } else if (input.includes("clear") || input.includes("reset") || input.includes("start over")) {
-        this.clearChatHistory();
-        botResponse = "Chat history cleared. How can I help you today?";
-      } else if (input.includes("save") || input.includes("store") || input.includes("persist")) {
-        botResponse = "Your public chat history is temporarily stored in your browser's local storage. It's not saved to a database and will be lost if you clear your browser data. For persistent chat history, please sign in.";
-      }
-
-      const botMessage: PublicChatMessageModel = {
+      // Create AI message
+      const aiMessage: PublicChatMessageModel = {
         id: uuidv4(),
         role: "assistant",
-        content: botResponse,
+        content: aiResponse,
         name: AI_NAME,
         createdAt: new Date(),
       };
-
-      this.messages.push(botMessage);
       
-      // Save to localStorage after each interaction
+      // Add AI response to the chat
+      this.messages = [...this.messages, aiMessage];
+      
+      // Save the updated state to localStorage
       this.saveToLocalStorage();
       
-    } catch (error) {
-      showError("" + error);
-    } finally {
+      // Reset loading state
       this.loading = "idle";
+    } catch (error) {
+      console.error("Error processing chat:", error);
+      this.loading = "error";
+      
+      // Add error message
+      this.messages = [
+        ...this.messages,
+        {
+          id: uuidv4(),
+          role: "assistant",
+          content: "Sorry, there was an error processing your request. Please try again.",
+          name: AI_NAME,
+          createdAt: new Date(),
+        }
+      ];
+      
+      // Save the error state to localStorage
+      this.saveToLocalStorage();
     }
   }
 
-  public async submitChat(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (this.input === "" || this.loading !== "idle") {
-      return;
+  // Generate AI response - with API call or fallback
+  private async generateAIResponse(userMessage: string): Promise<string> {
+    try {
+      // Make a fetch request to the local API endpoint
+      const response = await fetch('/api/chat/public', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data.message;
+    } catch (error) {
+      console.error('Error generating AI response:', error);
+      
+      // Fallback mode - generate a simple response locally
+      return this.generateOfflineResponse(userMessage);
     }
-
-    this.chat();
+  }
+  
+  // Generate a simple response without API call (fallback mode)
+  private generateOfflineResponse(userMessage: string): string {
+    const input = userMessage.toLowerCase();
+    
+    if (input.includes("hello") || input.includes("hi") || input.includes("hey")) {
+      return `Hello ${this.userName}! How can I help you today?`;
+    } 
+    
+    if (input.includes("help")) {
+      return "I can provide basic information in this offline mode. For full features, please check your internet connection or try again later.";
+    } 
+    
+    if (input.includes("weather")) {
+      return "I'm sorry, I don't have access to current weather information in this offline mode.";
+    } 
+    
+    if (input.includes("time")) {
+      return `The current time is ${new Date().toLocaleTimeString()}.`;
+    } 
+    
+    if (input.includes("who are you") || input.includes("what are you")) {
+      return "I'm a limited version of the AI Chat assistant available in this public demo. I'm currently in offline mode due to connection issues.";
+    } 
+    
+    if (input.includes("feature") || input.includes("capabilities")) {
+      return "In this public demo, I have limited capabilities. The full version includes many more features that require a connection to our servers.";
+    }
+    
+    if (input.includes("login") || input.includes("sign in")) {
+      return "You can sign in using the button at the top of the page for a more complete experience.";
+    }
+    
+    return "I'm currently in offline mode due to connection issues. I can only respond to basic queries in this mode.";
   }
 }
 
 export const publicChatStore = proxy(new PublicChatState());
 
 export const usePublicChat = () => {
-  return useSnapshot(publicChatStore, { sync: true });
+  return useSnapshot(publicChatStore);
 }; 

@@ -13,9 +13,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import PublicChatMessageContainer from "./chat-message-container";
-import PublicChatMessageContentArea from "./chat-message-content";
-import { PublicChatMessageArea } from "./chat-message-area";
+import { ChatMessageArea } from "@/components/ui/chat/chat-message-area/chat-message-area";
+import ChatMessageContainer from "@/components/ui/chat/chat-message-area/chat-message-container";
+import ChatMessageContentArea from "@/components/ui/chat/chat-message-area/chat-message-content";
 
 export const PublicChatPage: FC = () => {
   const { messages, loading } = usePublicChat();
@@ -23,16 +23,17 @@ export const PublicChatPage: FC = () => {
 
   useEffect(() => {
     // Initialize chat session with Guest username
-    // Use any type to bypass TypeScript errors
-    (publicChatStore as any).initChatSession("Guest");
+    const initialize = async () => {
+      publicChatStore.initChatSession("Guest");
+    };
+    initialize();
   }, []);
 
   useChatScrollAnchor({ ref: current });
 
   const handleClearChat = () => {
     if (window.confirm("Are you sure you want to clear the chat history?")) {
-      // Use any type to bypass TypeScript errors
-      (publicChatStore as any).clearChatHistory();
+      publicChatStore.clearChatHistory();
     }
   };
 
@@ -73,10 +74,10 @@ export const PublicChatPage: FC = () => {
           </p>
         </div>
       </div>
-      <PublicChatMessageContainer ref={current} className="flex-1 py-4 sm:py-6 pb-32 sm:pb-24">
-        <PublicChatMessageContentArea className="container max-w-3xl px-4 sm:px-6 mx-auto space-y-8 sm:space-y-10">
-          {messages.map((message: any) => (
-            <PublicChatMessageArea
+      <ChatMessageContainer ref={current} className="flex-1 py-4 sm:py-6 pb-32 sm:pb-24">
+        <ChatMessageContentArea className="container max-w-3xl px-4 sm:px-6 mx-auto space-y-8 sm:space-y-10">
+          {messages.map((message) => (
+            <ChatMessageArea
               key={message.id}
               profileName={message.name}
               role={message.role}
@@ -92,11 +93,11 @@ export const PublicChatPage: FC = () => {
               data-slot={`message-${message.role}`}
             >
               <MessageContent message={message} />
-            </PublicChatMessageArea>
+            </ChatMessageArea>
           ))}
           {loading === "loading" && <ChatLoading />}
-        </PublicChatMessageContentArea>
-      </PublicChatMessageContainer>
+        </ChatMessageContentArea>
+      </ChatMessageContainer>
       <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t border-border pb-safe" data-slot="chat-input-container">
         <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-4">
           <PublicChatInput />
