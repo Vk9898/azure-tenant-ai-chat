@@ -29,29 +29,41 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
   const { data: session } = useSession();
 
   useEffect(() => {
+    // Ensure userName is not null/undefined, provide a fallback
+    const userName = session?.user?.name ?? "User";
     chatStore.initChatSession({
       chatThread: props.chatThread,
       messages: props.messages,
-      userName: session?.user?.name!,
+      userName: userName,
     });
-  }, [props.messages, session?.user?.name, props.chatThread]);
+  }, [props.chatThread, props.messages, session?.user?.name]); // Dependency array order doesn't matter, but list all dependencies
 
   const { messages, loading } = useChat();
 
-  const current = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  useChatScrollAnchor({ ref: current });
+  useChatScrollAnchor({ ref: scrollRef });
+
+  // Calculate the approximate height of the input area (adjust based on actual rendered height)
+  // Input container py-3 (12px * 2 = 24px)
+  // Input form p-[2px] (2px * 2 = 4px)
+  // Text area p-4 (16px * 2 = 32px) - initial single row height assumed ~24px
+  // Action area p-2 (8px * 2 = 16px) + button heights (~40px)
+  // Total approx initial: 24 + 4 + 24 + 16 + 40 = 108px. Let's use 120px for safety.
+  const inputAreaHeight = "pb-[120px]"; // Adjust this value as needed
 
   return (
-    <main className="flex flex-1 relative flex-col" data-slot="chat-page">
+    // Removed relative positioning
+    <main className="flex flex-1 flex-col h-full overflow-hidden" data-slot="chat-page">
       <ChatHeader
         chatThread={props.chatThread}
         chatDocuments={props.chatDocuments}
         extensions={props.extensions}
       />
-      {/* Adjusted container padding/spacing */}
-      <ChatMessageContainer ref={current} className={cn("flex-1", "py-4 sm:py-6", "pb-[150px]")}> {/* Reduced bottom padding */}
-        <ChatMessageContentArea className="container max-w-3xl px-4 sm:px-6 mx-auto"> {/* Removed space-y, gap is handled by content area */}
+      {/* Simplified ChatMessageContainer className, added paddingBottom based on input area height */}
+      <ChatMessageContainer ref={scrollRef} className={cn("flex-1", inputAreaHeight)}>
+        {/* Content area handles container, max-width, internal padding and gap */}
+        <ChatMessageContentArea>
           {messages.map((message) => (
             <ChatMessageArea
               key={message.id}
@@ -65,7 +77,7 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
                   ? session?.user?.image
                   : undefined // Assistant/Tool uses default icons handled internally
               }
-              className="bg-card text-card-foreground border-2 border-border shadow-xs mb-4 sm:mb-6" // Added card-like styling and margin bottom
+              // Removed instance-specific styling (bg, border, shadow, mb) - handled by component/content area gap
               data-slot={`message-${message.role}`}
             >
               <MessageContent message={message} />
@@ -74,9 +86,11 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
           {loading === "loading" && <ChatLoading />}
         </ChatMessageContentArea>
       </ChatMessageContainer>
-      {/* Updated border to border-t-2 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t-2 border-border pb-safe z-10" data-slot="chat-input-outer-container">
-        <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-3" data-slot="chat-input-inner-container"> {/* Adjusted padding */}
+
+      {/* Fixed Input Area */}
+      <div className="shrink-0 border-t-2 border-border bg-background/80 backdrop-blur-md" data-slot="chat-input-outer-container">
+         {/* Adjusted padding */}
+        <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-2 pb-safe" data-slot="chat-input-inner-container">
           <ChatInput />
         </div>
       </div>

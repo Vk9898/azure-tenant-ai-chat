@@ -22,24 +22,33 @@ export default async function RootLayout({
 }) {
   const chatHistoryResponse = await FindAllChatThreadForCurrentUser();
 
-  if (chatHistoryResponse.status !== "OK") {
+  // Handle potential unauthorized or other errors gracefully
+  if (chatHistoryResponse.status === "UNAUTHORIZED") {
+     // TODO: Redirect to login or show an unauthorized message
+     // For now, showing a generic error
+     return <DisplayError errors={[{ message: "Unauthorized access to chat history." }]} />;
+  } else if (chatHistoryResponse.status !== "OK") {
     return <DisplayError errors={chatHistoryResponse.errors} />;
   }
 
   return (
-    <div className={cn("flex flex-1 items-stretch")} data-slot="chat-layout">
-      <div className="flex-1 flex">
+    <div className={cn("flex flex-1 items-stretch h-full")} data-slot="chat-layout"> {/* Ensure h-full */}
+      <div className="flex-1 flex h-full"> {/* Ensure h-full */}
         <MenuTray>
           <div className="flex flex-col h-full">
             <ChatMenuHeader />
             <ScrollArea className="flex-1">
-              <nav className="p-4 sm:p-6">
+              {/* Adjusted padding to p-2 for tighter menu */}
+              <nav className="p-2">
                 <ChatMenu menuItems={chatHistoryResponse.response} />
               </nav>
             </ScrollArea>
           </div>
         </MenuTray>
-        {children}
+        {/* Ensure children container takes remaining space and allows scrolling if needed */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+           {children}
+        </div>
       </div>
     </div>
   );

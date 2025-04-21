@@ -27,29 +27,44 @@ export default async function Home(props: HomeParams) {
       FindAllExtensionsForCurrentUser(),
     ]);
 
+   // Prioritize checking chat thread existence and authorization
+  if (chatThreadResponse.status === "NOT_FOUND") {
+     return <DisplayError errors={[{ message: "Chat not found." }]} />;
+  }
+  if (chatThreadResponse.status === "UNAUTHORIZED") {
+     return <DisplayError errors={[{ message: "Unauthorized to view this chat." }]} />;
+  }
+   if (chatThreadResponse.status !== "OK") {
+    return <DisplayError errors={chatThreadResponse.errors} />;
+  }
+
   if (docsResponse.status !== "OK") {
-    return <DisplayError errors={docsResponse.errors} />;
+    // Log error but don't block chat rendering if docs fail
+    console.error("Failed to load chat documents:", docsResponse.errors);
+    // return <DisplayError errors={docsResponse.errors} />; // Optional: block if docs are critical
   }
 
   if (chatResponse.status !== "OK") {
+     // If messages fail, log but maybe show chat anyway? Or error.
+     console.error("Failed to load chat messages:", chatResponse.errors);
     return <DisplayError errors={chatResponse.errors} />;
   }
 
   if (extensionResponse.status !== "OK") {
-    return <DisplayError errors={extensionResponse.errors} />;
+     // Log error but don't block chat rendering if extensions fail
+     console.error("Failed to load extensions:", extensionResponse.errors);
+    // return <DisplayError errors={extensionResponse.errors} />; // Optional: block if extensions are critical
   }
 
-  if (chatThreadResponse.status !== "OK") {
-    return <DisplayError errors={chatThreadResponse.errors} />;
-  }
 
+  // Ensure the main container fills the available space within the chat layout
   return (
-    <div className="flex flex-col min-h-screen" data-slot="chat-thread-page">
+    <div className="flex flex-1 flex-col" data-slot="chat-thread-page"> {/* Use flex-1 */}
       <ChatPage
         messages={chatResponse.response}
         chatThread={chatThreadResponse.response}
-        chatDocuments={docsResponse.response}
-        extensions={extensionResponse.response}
+        chatDocuments={docsResponse.status === "OK" ? docsResponse.response : []} // Pass empty array on error
+        extensions={extensionResponse.status === "OK" ? extensionResponse.response : []} // Pass empty array on error
       />
     </div>
   );

@@ -7,7 +7,7 @@ import {
   UserCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Avatar, AvatarImage, AvatarFallback } from "../../avatar"; // Added AvatarFallback
+import { Avatar, AvatarImage, AvatarFallback } from "../../avatar";
 import { Button } from "../../button";
 
 export const ChatMessageArea = (props: {
@@ -83,8 +83,12 @@ export const ChatMessageArea = (props: {
   }
 
   return (
-    // Added rounded-xs to the main container
-    <div className={cn("flex flex-col p-4 sm:p-6 rounded-xs", props.className)} data-slot={props["data-slot"] || "chat-message"}>
+    // Added core DS styles: bg-card, border-2, shadow-xs, rounded-xs. Kept padding.
+    <div className={cn(
+        "flex flex-col p-4 sm:p-6 rounded-xs bg-card text-card-foreground border-2 border-border shadow-xs",
+         props.className)}
+         data-slot={props["data-slot"] || "chat-message"}
+         >
       <div className="h-7 flex items-center justify-between mb-2">
         <div className="flex gap-3 items-center">
           <div data-slot="chat-message-avatar">
@@ -104,7 +108,6 @@ export const ChatMessageArea = (props: {
         </div>
         <div className="h-7 flex items-center justify-between">
           <div>
-            {/* Button component should handle rounded-xs and touch target */}
             <Button
               variant="ghost"
               size="icon"
@@ -123,7 +126,6 @@ export const ChatMessageArea = (props: {
         </div>
       </div>
       <div className="flex flex-col gap-2 flex-1 ps-10" data-slot="chat-message-content">
-        {/* Ensure prose styles align with DS if necessary, though defaults might be fine */}
         <div className="prose prose-slate dark:prose-invert whitespace-break-spaces prose-p:leading-relaxed prose-pre:p-0 max-w-none">
           {props.children}
         </div>
