@@ -131,17 +131,13 @@
   Tailwind v4 automatically reads the --color-* variables.
 */
 
-/* Base styles - apply border-border globally */
-* {
-  @apply border-border;
-}
-
+/* Base styles */
 html {
   font-family: var(--font-inter), system-ui, sans-serif;
 }
 
 body {
-  @apply bg-background text-foreground;
+  /* Removed @apply bg-background text-foreground; - applied via layout.tsx */
   font-feature-settings: "ss01" on, "ss02" on, "ss03" on, "ss04" on, "ss05" on;
 }
 
@@ -166,10 +162,13 @@ p {
   @apply leading-relaxed;
 }
 
-/* Focus outline uses ring color */
+/* Focus outline REMOVED */
+/* Styles should be applied component-level, e.g. using `ds-focus-ring` utility or directly */
+/*
 * {
   @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
 }
+*/
 
 /* Keyframes for accordion animations (if needed directly) */
 @keyframes accordion-down {
