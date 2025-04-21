@@ -1,85 +1,50 @@
+//  lib/auth/auth-config.ts
 import NextAuth from "next-auth";
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
 import AzureADB2CProvider from "next-auth/providers/azure-ad-b2c";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { hashValueSync } from "@/lib/auth/auth-utils";
-import type { JWT } from "next-auth/jwt";
-import type { Session, User, Account } from "next-auth";
+import { createNeonProjectForUser } from "@/features/common/services/neondb";
 import type { NextAuthConfig } from "next-auth";
 
+/* ────────────────────────────────────────────────────────── */
+/*  Helpers                                                  */
+/* ────────────────────────────────────────────────────────── */
+const adminEmails = (process.env.ADMIN_EMAIL_ADDRESS || "")
+  .toLowerCase()
+  .split(",")
+  .map((e) => e.trim())
+  .filter(Boolean);
 
-declare module "next-auth" {
-  /**
-   * The shape of the user object returned in the OAuth providers' `profile` callback,
-   * or the second parameter of the `session` callback, when using a database.
-   */
-  interface User {
-    id: string;
-    isAdmin: boolean;
-  }
-
-  /**
-   * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
-   */
-  interface Session {
-    user: {
-      id: string;
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-      isAdmin: boolean;
-      hashedUserId?: string;
-      provider?: string;
-      databaseConnectionString?: string;
-    } & User
-  }
-}
-
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    isAdmin?: boolean;
-    hashedUserId?: string;
-    provider?: string;
-    databaseConnectionString?: string;
-  }
-}
-
-// Define the configuration for NextAuth
+/* ────────────────────────────────────────────────────────── */
+/*  Provider Configuration                                   */
+/* ────────────────────────────────────────────────────────── */
 export const authConfig: NextAuthConfig = {
   providers: [
-    // ───── B2B / Workforce / guests ──────────
+    /* ---------------- Workforce / B2B ------------------- */
     MicrosoftEntraID({
       clientId: process.env.MT_CLIENT_ID ?? "",
       clientSecret: process.env.MT_CLIENT_SECRET ?? "",
-      /**
-       * 'common' lets ANY Entra tenant (including guests) sign in.
-       * Use https://login.microsoftonline.com/organizations if you
-       * want only work/school accounts, or set `issuer` to lock to
-       * your own tenant.
-       */
-      issuer: "https://login.microsoftonline.com/common/v2.0",
+      issuer: process.env.MT_TENANT_ID
+        ? `https://login.microsoftonline.com/${process.env.MT_TENANT_ID}/v2.0`
+        : "https://login.microsoftonline.com/common/v2.0",
     }),
 
-    // ───── B2C / Consumer  ──────────
+    /* ---------------- Consumer / B2C -------------------- */
     AzureADB2CProvider({
-      // For NextAuth v5, we need to use issuer format instead of tenantId
-      issuer: process.env.B2C_TENANT && process.env.B2C_POLICY
-        ? `https://${process.env.B2C_TENANT}.b2clogin.com/${process.env.B2C_TENANT}.onmicrosoft.com/${process.env.B2C_POLICY}/v2.0`
-        : undefined,
+      issuer:
+        process.env.B2C_TENANT && process.env.B2C_POLICY
+          ? `https://${process.env.B2C_TENANT}.b2clogin.com/${process.env.B2C_TENANT}.onmicrosoft.com/${process.env.B2C_POLICY}/v2.0`
+          : undefined,
       clientId: process.env.B2C_CLIENT_ID ?? "",
       clientSecret: process.env.B2C_CLIENT_SECRET ?? "",
-      authorization: { 
-        params: { scope: "offline_access openid" } 
-      },
+      authorization: { params: { scope: "offline_access openid" } },
       checks: ["pkce"],
-      client: {
-        token_endpoint_auth_method: 'none'
-      },
+      client: { token_endpoint_auth_method: "client_secret_post" },
     }),
 
-    // ───── GitHub ──────────
+    /* ---------------- GitHub ---------------------------- */
     ...(process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET
       ? [
           GitHubProvider({
@@ -89,7 +54,7 @@ export const authConfig: NextAuthConfig = {
         ]
       : []),
 
-    // ───── Development Only ──────────
+    /* ---------------- Dev Credentials ------------------- */
     ...(process.env.NODE_ENV === "development"
       ? [
           CredentialsProvider({
@@ -98,15 +63,15 @@ export const authConfig: NextAuthConfig = {
               username: { label: "Username", type: "text", placeholder: "dev" },
               password: { label: "Password", type: "password" },
             },
-            async authorize(credentials: Record<string, unknown> | undefined, req: any) {
-              const username = credentials?.username || "dev";
+            async authorize(creds) {
+              const username = (creds?.username as string) || "dev";
               const email = `${username}@localhost`.toLowerCase();
               return {
                 id: hashValueSync(email),
-                name: username as string,
+                name: username,
                 email,
-                image: "",
                 isAdmin: false,
+                image: "",
               };
             },
           }),
@@ -114,60 +79,59 @@ export const authConfig: NextAuthConfig = {
       : []),
   ],
 
-  // Specify 'jwt' as a literal type for NextAuth v5
   session: { strategy: "jwt" as const },
   secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
-  
+
   callbacks: {
+    /* ---------------- JWT Callback ---------------------- */
     async jwt({ token, account, user }) {
-      // Initial sign-in
       if (account && user) {
-        // Store the provider ID
         token.provider = account.provider;
-        
-        // Apply admin role if email is in admin list
-        const adminEmails = process.env.ADMIN_EMAIL_ADDRESS?.toLowerCase().split(",").map((e) => e.trim()) || [];
-        token.isAdmin = user.email ? adminEmails.includes(user.email.toLowerCase()) : false;
-        
-        // Create a consistent hashed user ID for cross-provider identification
+
+        // Admin flag
+        token.isAdmin =
+          !!(user.email && adminEmails.includes(user.email.toLowerCase()));
+
+        // Stable cross‑provider identifier
         if (user.email) {
           token.hashedUserId = hashValueSync(user.email.toLowerCase());
         }
-        
-        // For now, use the default connection string for all users
-        // This could be extended to provide user-specific database connections later
-        token.databaseConnectionString = process.env.DATABASE_URL;
+
+        // Provision Neon DB once
+        if (!token.databaseConnectionString) {
+          try {
+            const uid = token.sub ?? account.providerAccountId ?? user.id;
+            token.databaseConnectionString =
+              await createNeonProjectForUser(uid);
+          } catch (err) {
+            console.error("[auth] Neon provisioning failed", err);
+          }
+        }
       }
       return token;
     },
-    
+
+    /* --------------- Session Callback ------------------- */
     async session({ session, token }) {
       if (session.user) {
-        // Copy claims from token to session
         session.user.id = token.sub || "";
         session.user.isAdmin = !!token.isAdmin;
-        
-        // Add custom properties to session.user
-        if (token.hashedUserId) {
-          session.user.hashedUserId = token.hashedUserId;
-        }
-        if (token.provider) {
-          session.user.provider = token.provider;
-        }
-        if (token.databaseConnectionString) {
-          session.user.databaseConnectionString = token.databaseConnectionString;
-        }
+        if (token.hashedUserId) session.user.hashedUserId = token.hashedUserId;
+        if (token.provider) session.user.provider = token.provider;
+        if (token.databaseConnectionString)
+          session.user.databaseConnectionString =
+            token.databaseConnectionString;
       }
       return session;
     },
-    
-    // Only allow sign-in with email
+
+    /* --------------- signIn guard ----------------------- */
     async signIn({ user }) {
       if (!user.email) {
-        console.warn(`Sign-in denied for user ID ${user.id}: Missing email address.`);
+        console.warn("[auth] sign‑in rejected: missing email");
         return false;
       }
       return true;
-    }
+    },
   },
 }; 

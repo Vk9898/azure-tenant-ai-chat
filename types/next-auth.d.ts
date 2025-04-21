@@ -1,22 +1,22 @@
 import { DefaultSession } from "next-auth";
-
-// https://next-auth.js.org/getting-started/typescript#module-augmentation
+import "@auth/core/jwt";
 
 declare module "next-auth" {
   interface Session {
     user: {
       isAdmin: boolean;
+      hashedUserId?: string;
+      provider?: string;
       databaseConnectionString?: string;
     } & DefaultSession["user"];
   }
+}
 
-  interface Token {
-    isAdmin: boolean;
-    databaseConnectionString?: string; 
-  }
-
-  interface User {
-    isAdmin: boolean;
+declare module "@auth/core/jwt" {
+  interface JWT {
+    isAdmin?: boolean;
+    hashedUserId?: string;
+    provider?: string;
     databaseConnectionString?: string; 
   }
 }
