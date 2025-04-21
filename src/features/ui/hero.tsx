@@ -10,9 +10,9 @@ interface HeroProps {
 
 export const Hero: FC<HeroProps> = ({ title, description, children, icon }) => {
   return (
-    <section className="bg-muted py-8 md:py-12 border-b-2 border-border">
+    <section className="bg-muted py-6 sm:py-8 md:py-12 border-b-2 border-border">
       <div className="container px-4 sm:px-6 max-w-6xl">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6">
           <div className="flex items-start gap-3">
             {icon && (
               <div className="bg-primary/10 p-2 rounded-xs">
@@ -20,11 +20,11 @@ export const Hero: FC<HeroProps> = ({ title, description, children, icon }) => {
               </div>
             )}
             <div className="max-w-xl">
-              <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight">
                 {title}
               </h1>
               {description && (
-                <p className="text-muted-foreground mt-1">
+                <p className="text-muted-foreground mt-1 sm:mt-2">
                   {description}
                 </p>
               )}
@@ -53,7 +53,7 @@ export const HeroButton: FC<HeroButtonProps> = (props) => {
   return (
     <Button
       variant="outline"
-      className="h-auto py-3 justify-start gap-3 border-2"
+      className="h-auto min-h-11 md:min-h-10 py-3 justify-start gap-3 border-2 ds-focus-ring"
       onClick={props.onClick}
       uppercase={false}
     >

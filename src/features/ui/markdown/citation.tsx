@@ -33,15 +33,15 @@ export const Citation: FC<Props> = (props: Props) => {
   }, {} as Record<string, Citation[]>);
 
   return (
-    <div className="interactive-citation p-4 border mt-4 flex flex-col rounded-md gap-2">
+    <div className="interactive-citation p-4 border mt-4 flex flex-col rounded-xs gap-2" data-slot="citation">
       {Object.entries(citations).map(([name, items], index: number) => {
         return (
-          <div key={index} className="flex flex-col gap-2">
+          <div key={index} className="flex flex-col gap-2" data-slot="citation-group">
             <div className="font-semibold text-sm">{name}</div>
             <div className="flex gap-2">
               {items.map((item, index: number) => {
                 return (
-                  <div key={index}>
+                  <div key={index} data-slot="citation-item">
                     <CitationSlider
                       index={index + 1}
                       name={item.name}
