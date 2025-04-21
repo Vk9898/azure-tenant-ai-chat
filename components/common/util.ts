@@ -1,6 +1,6 @@
 import { customAlphabet } from "nanoid";
 
-import { ChatThreadModel } from "../chat-page/chat-services/models";
+import { ChatThreadModel } from "../chat-page-components/chat-services/models";
 
 export const uniqueId = () => {
   const alphabet =

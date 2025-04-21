@@ -1,5 +1,5 @@
-import { ChatAPIEntry } from "@/components/chat-page/chat-services/chat-api/chat-api";
-import { UserPrompt } from "@/components/chat-page/chat-services/models";
+import { ChatAPIEntry } from "@/components/chat-page-components/chat-services/chat-api/chat-api";
+import { UserPrompt } from "@/components/chat-page-components/chat-services/models";
 
 export async function POST(req: Request) {
   const formData = await req.formData();

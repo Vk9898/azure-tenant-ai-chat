@@ -2,11 +2,11 @@
 import { NeonDBInstance } from "@/lib/db/neondb";
 
 import { getCurrentUser, userHashedId } from "@/lib/auth/auth-helpers";
-import { UpsertChatThread } from "@/components/chat-page/chat-services/chat-thread-service";
+import { UpsertChatThread } from "@/components/chat-page-components/chat-services/chat-thread-service";
 import {
   CHAT_THREAD_ATTRIBUTE,
   ChatThreadModel,
-} from "@/components/chat-page/chat-services/models";
+} from "@/components/chat-page-components/chat-services/models";
 import {
   ServerActionResponse,
   zodErrorsToServerActionErrors,

@@ -2,7 +2,7 @@
 
 import { MoreVertical, Pencil, Trash } from "lucide-react";
 import { FC, useState } from "react";
-import { DropdownMenuItemWithIcon } from "../chat-page/chat-menu/chat-menu-item";
+import { DropdownMenuItemWithIcon } from "../chat-page-components/chat-menu/chat-menu-item";
 import { RevalidateCache } from "../common/navigation-helpers";
 import {
   DropdownMenu,

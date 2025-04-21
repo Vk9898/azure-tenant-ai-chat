@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileUpIcon, Loader2, UploadIcon } from "lucide-react";
 import { IndexDocuments } from "@/lib/db/neondb-ai-search";
-import { LoadFile } from "@/components/chat-page/chat-services/chat-document-service";
+import { LoadFile } from "@/components/chat-page-components/chat-services/chat-document-service";
 import { uniqueId } from "@/components/common/util";
 
 export function AdminKnowledgeBaseUploader() {

@@ -1,7 +1,7 @@
-import { ChatPage } from "@/components/chat-page/main";
-import { FindAllChatDocuments } from "@/components/chat-page/chat-services/chat-document-service";
-import { FindAllChatMessagesForCurrentUser } from "@/components/chat-page/chat-services/chat-message-service";
-import { FindChatThreadForCurrentUser } from "@/components/chat-page/chat-services/chat-thread-service";
+import { ChatPage } from "@/components/chat-page-components/main";
+import { FindAllChatDocuments } from "@/components/chat-page-components/chat-services/chat-document-service";
+import { FindAllChatMessagesForCurrentUser } from "@/components/chat-page-components/chat-services/chat-message-service";
+import { FindChatThreadForCurrentUser } from "@/components/chat-page-components/chat-services/chat-thread-service";
 import { FindAllExtensionsForCurrentUser } from "@/components/extensions-page/extension-services/extension-service";
 import { AI_NAME } from "@/components/theme/theme-config";
 import { DisplayError } from "@/components/ui/error/display-error";

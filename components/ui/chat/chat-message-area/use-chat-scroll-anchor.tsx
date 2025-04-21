@@ -1,4 +1,4 @@
-import { chatStore, useChat } from "@/components/chat-page/chat-store";
+import { chatStore, useChat } from "@/components/chat-page-components/chat-store";
 import { RefObject, useEffect } from "react";
 
 export const useChatScrollAnchor = (props: {

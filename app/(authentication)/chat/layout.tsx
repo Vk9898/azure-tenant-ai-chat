@@ -1,6 +1,6 @@
-import { ChatMenu } from "@/components/chat-page/chat-menu/chat-menu";
-import { ChatMenuHeader } from "@/components/chat-page/chat-menu/chat-menu-header";
-import { FindAllChatThreadForCurrentUser } from "@/components/chat-page/chat-services/chat-thread-service";
+import { ChatMenu } from "@/components/chat-page-components/chat-menu/chat-menu";
+import { ChatMenuHeader } from "@/components/chat-page-components/chat-menu/chat-menu-header";
+import { FindAllChatThreadForCurrentUser } from "@/components/chat-page-components/chat-services/chat-thread-service";
 import { MenuTray } from "@/components/main-menu/menu-tray";
 import { cn } from "@/lib/utils";
 

@@ -4,7 +4,7 @@ import {
   CHAT_THREAD_ATTRIBUTE,
   ChatThreadModel,
   MESSAGE_ATTRIBUTE,
-} from "@/components/chat-page/chat-services/models";
+} from "@/components/chat-page-components/chat-services/models";
 import { ServerActionResponse } from "@/components/common/server-action-response";
 import { NeonDBInstance } from "@/lib/db/neondb";
 import { userHashedId } from "@/lib/auth/auth-helpers";

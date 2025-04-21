@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { ChatThreadModel } from "../chat-page/chat-services/models";
+import { ChatThreadModel } from "../chat-page-components/chat-services/models";
 import { TableCell, TableRow } from "../ui/table";
 import { ChevronRight } from "lucide-react";
 

@@ -5,7 +5,7 @@ import {
   onKeyDown,
   onKeyUp,
   useChatInputDynamicHeight,
-} from "@/components/chat-page/chat-input/use-chat-input-dynamic-height";
+} from "@/components/chat-page-components/chat-input/use-chat-input-dynamic-height";
 
 import { AttachFile } from "@/components/ui/chat/chat-input-area/attach-file";
 import {

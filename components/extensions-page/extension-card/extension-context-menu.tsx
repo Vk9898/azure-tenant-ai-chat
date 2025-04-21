@@ -1,6 +1,6 @@
 "use client";
 
-import { DropdownMenuItemWithIcon } from "@/components/chat-page/chat-menu/chat-menu-item";
+import { DropdownMenuItemWithIcon } from "@/components/chat-page-components/chat-menu/chat-menu-item";
 import { RevalidateCache } from "@/components/common/navigation-helpers";
 import { LoadingIndicator } from "@/components/ui/loading";
 import { MoreVertical, Pencil, Trash } from "lucide-react";

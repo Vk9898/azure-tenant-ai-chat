@@ -3,11 +3,11 @@
 import {
   ChatDocumentModel,
   ChatMessageModel,
-} from "@/components/chat-page/chat-services/models";
+} from "@/components/chat-page-components/chat-services/models";
 import { ChatMessageArea } from "@/components/ui/chat/chat-message-area/chat-message-area";
 import ChatMessageContainer from "@/components/ui/chat/chat-message-area/chat-message-container";
 import ChatMessageContentArea from "@/components/ui/chat/chat-message-area/chat-message-content";
-import MessageContent from "../chat-page/message-content";
+import MessageContent from "../chat-page-components/message-content";
 
 interface ReportingChatPageProps {
   messages: Array<ChatMessageModel>;

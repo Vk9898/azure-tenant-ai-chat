@@ -1,6 +1,6 @@
 "use client";
-import { ChatInput } from "@/components/chat-page/chat-input/chat-input";
-import { chatStore, useChat } from "@/components/chat-page/chat-store";
+import { ChatInput } from "@/components/chat-page-components/chat-input/chat-input";
+import { chatStore, useChat } from "@/components/chat-page-components/chat-store";
 import { ChatLoading } from "@/components/ui/chat/chat-message-area/chat-loading";
 import { ChatMessageArea } from "@/components/ui/chat/chat-message-area/chat-message-area";
 import ChatMessageContainer from "@/components/ui/chat/chat-message-area/chat-message-container";
