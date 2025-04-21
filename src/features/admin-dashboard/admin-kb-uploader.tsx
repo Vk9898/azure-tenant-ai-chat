@@ -57,7 +57,13 @@ export function AdminKnowledgeBaseUploader() {
       const failedIndexes = indexResponse.filter(res => res.status !== "OK");
       
       if (failedIndexes.length > 0) {
-        throw new Error(failedIndexes[0].errors[0]?.message || "Failed to index some documents");
+        // Handle the case where errors might not exist or have a different structure
+        const errorMessage = failedIndexes[0].status === "ERROR" && 
+                             failedIndexes[0].errors && 
+                             failedIndexes[0].errors[0]?.message
+                           ? failedIndexes[0].errors[0].message
+                           : "Failed to index some documents";
+        throw new Error(errorMessage);
       }
 
       setUploadStatus({

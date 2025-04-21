@@ -24,6 +24,7 @@
   },
   "packageManager": "npm@10.2.3",
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.503.0",
     "uuid": "^11.1.0",
