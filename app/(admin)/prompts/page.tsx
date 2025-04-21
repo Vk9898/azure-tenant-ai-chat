@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { Hero } from "@/components/ui/hero";
 import { BarChart, Database, SparklesIcon } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getPromptLogs, getPromptMetrics } from "@/components/admin-dashboard/chat-observability/prompt-logging-service";
+import { getPromptLogs, getPromptMetrics } from "@/components/admin-dashboard-components/chat-observability/prompt-logging-service";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default async function PromptLogsPage() {

@@ -1,6 +1,6 @@
 "use client";
 
-import { LogIn } from "@/components/auth-page/login";
+import { LogIn } from "@/components/auth-page-components/login";
 import { useRedirectIfAuthenticated } from "@/lib/auth/auth-client";
 import { useEffect, useState } from "react";
 

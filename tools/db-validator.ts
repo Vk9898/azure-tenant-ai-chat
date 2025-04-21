@@ -11,7 +11,7 @@
 
 import { neon } from "@neondatabase/serverless";
 import dotenv from "dotenv";
-import { getSchemaCorrections } from "../features/common/services/neondb";
+import { getSchemaCorrections } from "../lib/db/neondb";
 
 // Load environment variables
 dotenv.config();

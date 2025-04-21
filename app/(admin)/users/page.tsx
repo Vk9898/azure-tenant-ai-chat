@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UsersTable, User as UsersTableUser } from "@/components/admin-dashboard/users-table";
-import { GetAllUsers, User as AdminServiceUser } from "@/components/admin-dashboard/admin-services/admin-service";
+import { UsersTable, User as UsersTableUser } from "@/components/admin-dashboard-components/users-table";
+import { GetAllUsers, User as AdminServiceUser } from "@/components/admin-dashboard-components/admin-services/admin-service";
 import { redirect } from "next/navigation";
 
 export default function UsersPage() {

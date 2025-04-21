@@ -1,7 +1,7 @@
 "use client";
 
 import { useRedirectIfAuthenticated } from "@/lib/auth/auth-client";
-import { LogIn } from "@/components/auth-page/login";
+import { LogIn } from "@/components/auth-page-components/login";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 

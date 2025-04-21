@@ -1,4 +1,4 @@
-import { AdminDashboard } from "@/components/admin-dashboard/admin-dashboard";
+import { AdminDashboard } from "@/components/admin-dashboard-components/admin-dashboard";
 
 export default async function AdminPage(
   props: {

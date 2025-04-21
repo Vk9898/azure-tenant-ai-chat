@@ -2,8 +2,8 @@ import { FC } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, TerminalSquare } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChatObservabilityDashboard } from "@/components/admin-dashboard/chat-observability/chat-observability-dashboard";
-import { ChatPlayground } from "@/components/admin-dashboard/chat-observability/chat-playground";
+import { ChatObservabilityDashboard } from "@/components/admin-dashboard-components/chat-observability/chat-observability-dashboard";
+import { ChatPlayground } from "@/components/admin-dashboard-components/chat-observability/chat-playground";
 
 const ChatObservabilityPage: FC = () => {
   return (

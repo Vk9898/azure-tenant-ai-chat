@@ -3,7 +3,7 @@ import { getCurrentUser } from "@/lib/auth/auth-helpers";
 import { redirect } from "next/navigation";
 import { Hero } from "@/components/ui/hero";
 import { SparklesIcon } from "lucide-react";
-import { ChatPlayground } from "@/components/admin-dashboard/chat-observability/chat-playground";
+import { ChatPlayground } from "@/components/admin-dashboard-components/chat-observability/chat-playground";
 
 export default async function ChatPlaygroundPage() {
   const user = await getCurrentUser();
