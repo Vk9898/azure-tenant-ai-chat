@@ -4,7 +4,6 @@ import { Toaster } from "@/features/ui/sonner";
 import { cn } from "@/lib/utils";
 import { cal, inter } from "@/styles/fonts";
 import "@/styles/globals.css";
-    },
 import { Metadata } from "next";
 
 export const metadata = {
