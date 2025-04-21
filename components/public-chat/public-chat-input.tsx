@@ -52,7 +52,7 @@ export const PublicChatInput: FC = () => {
         </Button>
       </div>
       <p className="text-xs text-muted-foreground mt-3">
-        Public chat messages are stored in your browser's local storage and are not permanently saved to a server.
+        Public chat messages are stored in your browser&apos;s local storage and are not permanently saved to a server.
       </p>
     </form>
   );

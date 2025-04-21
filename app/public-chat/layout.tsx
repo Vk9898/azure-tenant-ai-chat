@@ -1,4 +1,6 @@
 import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { AuthenticatedProviders } from "@/components/globals/providers";
 
 export const metadata: Metadata = {
@@ -16,19 +18,21 @@ export default function PublicChatLayout({
       <header className="bg-primary/5 border-b-2 border-border">
         <div className="container py-4 px-4 sm:px-6 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <img 
+            <Image 
               src="/ai-icon.png" 
               alt="AI Chat" 
+              width={32}
+              height={32}
               className="w-8 h-8 rounded-xs" 
             />
             <h1 className="text-xl font-bold">Public Chat Demo</h1>
           </div>
-          <a 
+          <Link 
             href="/api/auth/signin" 
             className="ds-button-primary px-4 py-2 text-sm"
           >
             Sign In
-          </a>
+          </Link>
         </div>
       </header>
       

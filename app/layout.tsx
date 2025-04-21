@@ -1,11 +1,11 @@
 import { AI_NAME } from "@/components/theme/theme-config";
 import { AuthenticatedProviders } from "@/components/globals/providers";
 import { cn } from "@/lib/utils";
-import { cal, inter } from "@/styles/fonts";
+import { cal, calTitle, inter } from "@/styles/fonts"; // Import all fonts being used
 import "@/styles/globals.css";
 import { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = { // Use Metadata type
   title: AI_NAME,
   description: AI_NAME,
 };
@@ -22,7 +22,8 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
-      <body className={cn(cal.variable, inter.variable)}>
+      {/* Apply all font variables to the body or html tag */}
+      <body className={cn(inter.variable, cal.variable, calTitle.variable)}>
         <AuthenticatedProviders>
           {children}
         </AuthenticatedProviders>

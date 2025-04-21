@@ -189,7 +189,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="model"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium">Model</FormLabel>
                           <Select 
@@ -218,7 +218,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="temperature"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <div className="flex items-center justify-between">
                             <FormLabel className="text-sm font-medium">Temperature</FormLabel>
@@ -247,7 +247,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="maxTokens"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <div className="flex items-center justify-between">
                             <FormLabel className="text-sm font-medium">Max Tokens</FormLabel>
@@ -276,7 +276,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="systemPrompt"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium">System Prompt</FormLabel>
                           <FormControl>
@@ -299,7 +299,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="prompt"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium">User Prompt</FormLabel>
                           <FormControl>
@@ -320,7 +320,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="expectedResponse"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium">Expected Response (Optional)</FormLabel>
                           <FormControl>
