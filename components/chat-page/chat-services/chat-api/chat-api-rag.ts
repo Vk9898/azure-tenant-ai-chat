@@ -8,7 +8,7 @@ import {
   ChatCompletionStreamParams,
 } from "openai/resources/beta/chat/completions";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
-import { SimilaritySearch } from "../ai-search/neondb-ai-search";
+import { SimilaritySearch } from "../../../../lib/db/neondb-ai-search";
 import { CreateCitations, FormatCitations } from "../citation-service";
 import { ChatCitationModel, ChatThreadModel } from "../models";
 

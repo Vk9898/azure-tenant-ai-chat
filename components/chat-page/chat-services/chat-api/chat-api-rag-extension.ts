@@ -1,4 +1,4 @@
-import { ExtensionSimilaritySearch } from "../ai-search/neondb-ai-search";
+import { ExtensionSimilaritySearch } from "../../../../lib/db/neondb-ai-search";
 import { CreateCitations, FormatCitations } from "../citation-service";
 
 export const SearchAzureAISimilarDocuments = async (req: Request) => {

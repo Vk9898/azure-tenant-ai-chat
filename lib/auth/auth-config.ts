@@ -6,7 +6,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { hashValueSync } from "@/lib/auth/auth-utils";
 // Import the function type, not the function itself at the top level
-
+import type { createNeonProjectForUser as CreateNeonProjectType } from "@/lib/db/neondb";
 import type { NextAuthConfig } from "next-auth";
 import type { AdapterUser } from "next-auth/adapters"; // Import AdapterUser type
 import { CustomUser } from "./auth-helpers"; // Import CustomUser for explicit typing
@@ -143,7 +143,7 @@ export const authConfig: NextAuthConfig = {
            console.log(`[auth] No databaseConnectionString found for user ${token.sub}. Attempting to provision...`);
           try {
             // Dynamically import the function only when needed
-            const { createNeonProjectForUser } = await import("@/features/common/services/neondb");
+            const { createNeonProjectForUser } = await import("@/lib/db/neondb");
             token.databaseConnectionString = await createNeonProjectForUser(token.sub);
             console.log(`[auth] Provisioned/retrieved Neon DB for user ${token.sub}`);
           } catch (err) {

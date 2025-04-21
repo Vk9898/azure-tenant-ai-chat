@@ -2,7 +2,7 @@ import { NeonDBInstance } from "@/lib/db/neondb";
 import { userHashedId } from "@/lib/auth/auth-helpers";
 import { ServerActionResponse } from "@/components/common/server-action-response";
 import { uniqueId } from "@/components/common/util";
-import { DocumentSearchResponse } from "./ai-search/neondb-ai-search";
+import { DocumentSearchResponse } from "../../../lib/db/neondb-ai-search";
 import { CHAT_CITATION_ATTRIBUTE, ChatCitationModel } from "./models";
 
 export const CreateCitation = async (

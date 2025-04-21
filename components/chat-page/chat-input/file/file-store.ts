@@ -6,7 +6,7 @@ import {
   showSuccess,
 } from "@/components/globals/global-message-store";
 import { proxy, useSnapshot } from "valtio";
-import { IndexDocuments } from "../../chat-services/ai-search/neondb-ai-search";
+import { IndexDocuments } from "../../../../lib/db/neondb-ai-search";
 import {
   CrackDocument,
   CreateChatDocument,

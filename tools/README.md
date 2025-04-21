@@ -23,10 +23,10 @@ Checks the default database connection and validates schema setup.
 
 **Usage:**
 ```bash
-# Install dependencies if needed
-npm install dotenv @neondatabase/serverless
+# Using npm script
+npm run db:validate
 
-# Run the validator
+# Or directly with ts-node
 npx ts-node tools/db-validator.ts
 ```
 
@@ -43,7 +43,10 @@ Checks a specific user's database connection by retrieving their Neon project an
 
 **Usage:**
 ```bash
-# Run the user DB check
+# Using npm script
+npm run db:check-user
+
+# Or directly with ts-node
 npx ts-node tools/user-db-check.ts
 ```
 
@@ -56,6 +59,24 @@ npx ts-node tools/user-db-check.ts
 
 You'll be prompted to enter a user's email address, which will be hashed to find their project.
 
+## Related Database Utilities
+
+The application also includes a database initialization utility in `lib/db/init-db.ts` that can be used to initialize or reset database schemas:
+
+```bash
+# Using npm script
+npm run db:init
+
+# Or directly with ts-node
+npx ts-node lib/db/init-db.ts "postgres://your-connection-string"
+```
+
+The database code is now centralized in `lib/db/`:
+
+- `lib/db/schema.ts`: Central schema definitions
+- `lib/db/neondb.ts`: Database connection and initialization functions
+- `lib/db/init-db.ts`: Standalone initialization utility
+
 ## Common Issues and Solutions
 
 ### Missing Tables
@@ -65,6 +86,7 @@ If tables are missing in a user's database:
 1. The schema initialization may have failed during project creation
 2. Check logs for errors during the user's first login
 3. Try having the user log out and log back in to trigger project creation again
+4. Use the `db:init` command to manually initialize their database
 
 ### Connection Issues
 

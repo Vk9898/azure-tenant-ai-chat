@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "db:init": "ts-node lib/db/init-db.ts",
+    "db:validate": "ts-node tools/db-validator.ts",
+    "db:check-user": "ts-node tools/user-db-check.ts",
     "format": "prettier \"**/*.{css,js,json,jsx,ts,tsx}\""
   },
   "dependencies": {

@@ -4,10 +4,25 @@
 
 The application uses Neon DB for PostgreSQL database services with a multi-tenant architecture where:
 
-1. **Each user gets their own Neon project** via the `createNeonProjectForUser` function in `features/common/services/neondb.ts`
+1. **Each user gets their own Neon project** via the `createNeonProjectForUser` function in `lib/db/neondb.ts`
 2. **User-specific connection strings** are stored in the JWT token and session
 3. **Schema initialization** occurs when a new project is created
 4. **Vector support** is enabled for similarity search capabilities
+
+## Database Code Structure
+
+The database code has been centralized in the `lib/db/` directory:
+
+1. **lib/db/schema.ts**: Contains the centralized schema definitions for all tables and indexes. This ensures consistency across the application.
+
+2. **lib/db/neondb.ts**: Provides core database functionality:
+   - `NeonDBInstance()`: Gets a database connection for the current user or default
+   - `createNeonProjectForUser()`: Creates or retrieves a Neon project for a user
+   - `initializeDatabaseSchema()`: Sets up all tables and indexes in a database
+   - `logSchemaCorrection()`: Tracks schema changes and errors
+   - `getSchemaCorrections()`: Retrieves logs of schema changes
+
+3. **lib/db/init-db.ts**: Standalone utility for manual database initialization
 
 ## Authentication Flow and Database Connection
 
@@ -24,21 +39,12 @@ The application uses Neon DB for PostgreSQL database services with a multi-tenan
 
 ## Schema Initialization Process
 
-When a new Neon project is created, `initializeDatabaseSchema` is called to:
+When a new Neon project is created, `initializeDatabaseSchema` is called to create tables and indexes based on the centralized schema definition:
 
-1. Create a `schema_corrections` table for tracking schema changes
-2. Create all application tables:
-   - `chat_threads`
-   - `chat_citations`
-   - `personas`
-   - `extensions`
-   - `documents` (with vector support)
-   - `chat_messages`
-   - `chat_documents`
-   - `prompts`
-   - `prompt_logs`
-3. Create indexes for performance optimization
-4. Enable PostgreSQL vector extension for similarity search
+1. Creates a `schema_corrections` table for tracking schema changes
+2. Creates all application tables defined in `lib/db/schema.ts`
+3. Creates indexes for performance optimization
+4. Enables PostgreSQL vector extension for similarity search
 
 ## Identified Issues
 
@@ -54,25 +60,14 @@ When a new Neon project is created, `initializeDatabaseSchema` is called to:
 
 5. **Session Inconsistency**: The `databaseConnectionString` can be undefined in the session user object, which might cause issues in `NeonDBInstance`.
 
-### 2. Schema Definition Inconsistencies
+### 2. Schema Definition Inconsistencies (Resolved)
 
-A critical issue discovered is the inconsistency in table schema definitions between different files:
+The previous schema inconsistencies between different files have been resolved by centralizing the schema definition in `lib/db/schema.ts`. This ensures:
 
-1. **Primary Key Differences**: 
-   - In `components/common/services/neondb.ts`, `chat_messages` uses `id CHAR(64) PRIMARY KEY`
-   - In `features/common/services/neondb.ts`, it uses `id CHAR(36) PRIMARY KEY`
-
-2. **Field Type Differences**:
-   - `chat_threads.extension` is defined differently in different files:
-     - In one place: `extension TEXT[] DEFAULT '{}'`
-     - In another: `extension TEXT[] DEFAULT '{}'::text[]`
-
-3. **Missing Fields**:
-   - `documents` table in `components/common/services/neondb.ts` is missing the `is_admin_kb` field
-   - This field is present in `features/common/services/neondb.ts` and used in `neondb-ai-search.ts`
-
-4. **Duplicate Schema Creation Logic**:
-   - Schema creation code exists in multiple places, increasing the risk of inconsistencies
+- Consistent primary key sizes across tables
+- Standardized default values for arrays and other complex types
+- All required fields are present in all tables
+- Single source of truth for schema definition
 
 ### 3. System Architecture Issues
 
@@ -86,18 +81,16 @@ A critical issue discovered is the inconsistency in table schema definitions bet
 
 5. **Connection String Persistence**: If the JWT token is invalidated or expires, the user might lose their database connection string.
 
-6. **Code Imports vs. Dynamic Imports**: The codebase uses dynamic imports in some places (`createNeonProjectForUser` in auth-config) and static imports elsewhere, leading to potential inconsistencies.
-
 ## Diagnostic Tools
 
-To help diagnose and fix these issues, two diagnostic tools have been created in the `tools` directory:
+To help diagnose and fix these issues, diagnostic tools are available in the `tools` directory:
 
 ### 1. Database Validator
 
 Checks the default database connection and validates the schema setup:
 
 ```bash
-npx ts-node tools/db-validator.ts
+npm run db:validate
 ```
 
 ### 2. User Database Check
@@ -105,40 +98,48 @@ npx ts-node tools/db-validator.ts
 Checks a specific user's database connection by retrieving their Neon project and testing connectivity:
 
 ```bash
-npx ts-node tools/user-db-check.ts
+npm run db:check-user
+```
+
+### 3. Database Initialization Utility
+
+Manually initialize or reset a database schema:
+
+```bash
+npm run db:init
 ```
 
 See `tools/README.md` for more detailed usage instructions.
 
 ## Recommendations
 
-### 1. Schema Management Improvements
+### 1. Schema Management Improvements (Partially Implemented)
 
-1. **Centralize Schema Definitions**: Move all table definitions to a single source of truth.
-2. **Implement Schema Versioning**: Add explicit schema version tracking.
-3. **Add Database Migrations**: Use a proper migration system (like [node-pg-migrate](https://github.com/salsita/node-pg-migrate)).
-4. **Add Schema Validation**: Check actual database schema against expected definition.
+1. ✅ **Centralize Schema Definitions**: Schema definitions are now centralized in `lib/db/schema.ts`.
+2. ⏳ **Implement Schema Versioning**: Add explicit schema version tracking for future migrations.
+3. ⏳ **Add Database Migrations**: Consider using a proper migration system for production databases.
+4. ⏳ **Add Schema Validation**: Add checks to verify the actual database schema matches the expected definition.
 
 ### 2. Connection and Authentication Enhancements
 
-1. **Add explicit logging** of which database is being used for each operation.
-2. **Store database connection information** in a more secure way than JWT tokens.
-3. **Implement connection pooling** for better performance and reliability.
-4. **Add database health checks** to verify connectivity periodically.
-5. **Improve error recovery** for database provisioning failures.
+1. ✅ **Add explicit logging**: Added additional logging of which database is being used.
+2. ⏳ **Store database connection information** in a more secure way than JWT tokens.
+3. ⏳ **Implement connection pooling** for better performance and reliability.
+4. ⏳ **Add database health checks** to verify connectivity periodically.
+5. ✅ **Improve error recovery**: Added better error handling and fallback mechanisms.
 
 ### 3. Architecture Improvements
 
-1. **Consider a more centralized database approach** with tenant isolation instead of separate projects.
-2. **Add diagnostic endpoints** to verify database connectivity.
-3. **Create a database administration dashboard** for managing user databases.
-4. **Implement a caching layer** to reduce database load.
-5. **Add database metrics and monitoring**.
+1. ⏳ **Consider a more centralized database approach** with tenant isolation instead of separate projects.
+2. ✅ **Add diagnostic endpoints**: Created diagnostic tools for verifying database connectivity.
+3. ⏳ **Create a database administration dashboard** for managing user databases.
+4. ⏳ **Implement a caching layer** to reduce database load.
+5. ⏳ **Add database metrics and monitoring**.
 
-### 4. Short-term Fixes
+### 4. Next Steps
 
-1. **Reconcile schema differences** between feature/components paths.
-2. **Add explicit error handling** in middleware for database connection failures.
-3. **Add retry logic** for database operations.
-4. **Improve visibility** into database connection status during runtime.
-5. **Add recovery mechanism** for lost connection strings. 
+1. Ensure all component imports are updated to reference the new database location
+2. Run the diagnostic tools to verify schema consistency
+3. Test authentication flow to ensure database provisioning works properly
+4. Consider implementing database migrations for future schema changes
+5. Add more comprehensive error handling for database operations 

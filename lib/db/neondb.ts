@@ -5,6 +5,11 @@ import { auth } from "@/lib/auth/auth-api"; // Import auth directly
 import type { CustomUser } from "@/lib/auth/auth-helpers"; // Import type if needed
 import { getAllSchemaStatements } from "@/lib/db/schema"; // Import centralized schema
 
+/**
+ * Get a Neon database instance using the appropriate connection string.
+ * Prioritizes explicitly provided connection string, then user-specific string from session,
+ * then falls back to environment variable.
+ */
 export const NeonDBInstance = async (connectionString?: string) => {
   try {
     // Prioritize explicitly provided connection string
@@ -19,36 +24,36 @@ export const NeonDBInstance = async (connectionString?: string) => {
 
     // Check if there's a user-specific connection string in the session
     if (userConnectionString) {
+      console.log(`Using user-specific database for user ${user.email || user.id}`);
       return neon(userConnectionString);
     }
 
     // Fall back to the environment-provided connection string
-    const defaultConnectionString = process.env.ANON_DATABASE_URL;
+    const defaultConnectionString = process.env.DATABASE_URL;
     if (!defaultConnectionString) {
       throw new Error("No database connection string available - neither user-specific nor default.");
     }
 
+    console.log("Using default database connection");
     return neon(defaultConnectionString);
   } catch (error) {
     console.error("Error initializing NeonDBInstance:", error);
-    // Rethrow or handle as appropriate for your application
-    // Depending on context, you might want to return a default instance or throw
+    // Handle fallback to default connection
     const defaultConnectionString = process.env.DATABASE_URL;
-     if (!defaultConnectionString) {
-        console.error("FATAL: No default DATABASE_URL found after error in NeonDBInstance.");
-        throw new Error("Database initialization failed and no default connection string available.");
-     }
-     console.warn("NeonDBInstance falling back to default DATABASE_URL due to error:", error);
-     return neon(defaultConnectionString);
+    if (!defaultConnectionString) {
+      console.error("FATAL: No default DATABASE_URL found after error in NeonDBInstance.");
+      throw new Error("Database initialization failed and no default connection string available.");
+    }
+    console.warn("NeonDBInstance falling back to default DATABASE_URL due to error:", error);
+    return neon(defaultConnectionString);
   }
 };
 
-
+// API endpoints for Neon
 const NEON_API_URL = "https://console.neon.tech/api/v2";
-const NEON_API_KEY = process.env.NEON_API_KEY; // Add your Neon API key to the environment variables
+const NEON_API_KEY = process.env.NEON_API_KEY;
 const DEFAULT_DATABASE_NAME = process.env.NEON_DEFAULT_DB_NAME || "neondb";
 const DEFAULT_DATABASE_ROLE = process.env.NEON_DEFAULT_DB_ROLE || "neondb_owner";
-
 
 /**
  * Create or retrieve a Neon project for a user.
@@ -61,7 +66,7 @@ export const createNeonProjectForUser = async (userId: string): Promise<string> 
   }
 
   try {
-    const projectName = `user-${userId}`; // Consider making prefix configurable
+    const projectName = `user-${userId}`;
 
     // Check if the project already exists
     const projectListResponse = await fetch(`${NEON_API_URL}/projects`, {
@@ -102,14 +107,14 @@ export const createNeonProjectForUser = async (userId: string): Promise<string> 
           project: {
             name: projectName,
             pg_version: process.env.NEON_PG_VERSION ? parseInt(process.env.NEON_PG_VERSION) : 16,
-            region_id: process.env.NEON_REGION_ID || "azure-eastus2", // Changed default region
+            region_id: process.env.NEON_REGION_ID || "azure-eastus2",
           },
         }),
       });
 
       if (!createResponse.ok) {
         const errorText = await createResponse.text();
-         console.error(`Failed to create Neon project (${createResponse.status}): ${errorText}`);
+        console.error(`Failed to create Neon project (${createResponse.status}): ${errorText}`);
         throw new Error(`Failed to create Neon project: ${createResponse.statusText}`);
       }
 
@@ -120,29 +125,27 @@ export const createNeonProjectForUser = async (userId: string): Promise<string> 
     }
 
     // Fetch connection URI for the project's default branch and db/role
-     console.log(`Fetching connection URI for project ${projectId}...`);
-     const branchesResponse = await fetch(`${NEON_API_URL}/projects/${projectId}/branches`, {
-       headers: { Authorization: `Bearer ${NEON_API_KEY}`, Accept: 'application/json' },
-     });
-     if (!branchesResponse.ok) throw new Error('Failed to fetch branches');
-     const branchesData = await branchesResponse.json();
-     const defaultBranch = branchesData.branches.find((b: any) => b.primary); // Or find by name if needed
-     if (!defaultBranch) throw new Error('Default branch not found');
+    console.log(`Fetching connection URI for project ${projectId}...`);
+    const branchesResponse = await fetch(`${NEON_API_URL}/projects/${projectId}/branches`, {
+      headers: { Authorization: `Bearer ${NEON_API_KEY}`, Accept: 'application/json' },
+    });
+    if (!branchesResponse.ok) throw new Error('Failed to fetch branches');
+    const branchesData = await branchesResponse.json();
+    const defaultBranch = branchesData.branches.find((b: any) => b.primary);
+    if (!defaultBranch) throw new Error('Default branch not found');
 
-     const endpointsResponse = await fetch(`${NEON_API_URL}/projects/${projectId}/branches/${defaultBranch.id}/endpoints`, {
-       headers: { Authorization: `Bearer ${NEON_API_KEY}`, Accept: 'application/json' },
-     });
-     if (!endpointsResponse.ok) throw new Error('Failed to fetch endpoints');
-     const endpointsData = await endpointsResponse.json();
-     const defaultEndpoint = endpointsData.endpoints.find((ep: any) => ep.type === 'read_write'); // Find the read-write endpoint
-     if (!defaultEndpoint) throw new Error('Default read-write endpoint not found');
+    const endpointsResponse = await fetch(`${NEON_API_URL}/projects/${projectId}/branches/${defaultBranch.id}/endpoints`, {
+      headers: { Authorization: `Bearer ${NEON_API_KEY}`, Accept: 'application/json' },
+    });
+    if (!endpointsResponse.ok) throw new Error('Failed to fetch endpoints');
+    const endpointsData = await endpointsResponse.json();
+    const defaultEndpoint = endpointsData.endpoints.find((ep: any) => ep.type === 'read_write');
+    if (!defaultEndpoint) throw new Error('Default read-write endpoint not found');
 
-
-     const connectionUriResponse = await fetch(
-       `${NEON_API_URL}/projects/${projectId}/connection_uri?endpoint_id=${defaultEndpoint.id}&role_name=${encodeURIComponent(DEFAULT_DATABASE_ROLE)}&database_name=${encodeURIComponent(DEFAULT_DATABASE_NAME)}`,
-       { headers: { Authorization: `Bearer ${NEON_API_KEY}`, Accept: 'application/json' } }
-     );
-
+    const connectionUriResponse = await fetch(
+      `${NEON_API_URL}/projects/${projectId}/connection_uri?endpoint_id=${defaultEndpoint.id}&role_name=${encodeURIComponent(DEFAULT_DATABASE_ROLE)}&database_name=${encodeURIComponent(DEFAULT_DATABASE_NAME)}`,
+      { headers: { Authorization: `Bearer ${NEON_API_KEY}`, Accept: 'application/json' } }
+    );
 
     if (!connectionUriResponse.ok) {
       const errorText = await connectionUriResponse.text();
@@ -154,24 +157,22 @@ export const createNeonProjectForUser = async (userId: string): Promise<string> 
     const connectionString = connectionUriData.connection_uri;
 
     if (needsInitialization) {
-        console.log(`Initializing schema for new project '${projectName}'...`);
-        await initializeDatabaseSchema(connectionString); // Initialize schema only for new projects
+      console.log(`Initializing schema for new project '${projectName}'...`);
+      await initializeDatabaseSchema(connectionString);
     }
-
 
     return connectionString;
   } catch (error) {
     console.error(`Error creating/retrieving Neon project for user ${userId}:`, error);
-    throw error; // Re-throw the error to be handled by the caller
+    throw error;
   }
 };
-
 
 /**
  * Initialize the database schema for the project.
  * @param connectionString The connection string for the Neon database.
  */
-const initializeDatabaseSchema = async (connectionString: string) => {
+export const initializeDatabaseSchema = async (connectionString: string) => {
   try {
     console.log("Initializing database schema...");
 
@@ -180,7 +181,7 @@ const initializeDatabaseSchema = async (connectionString: string) => {
       console.error("FATAL: Invalid or empty connectionString provided to initializeDatabaseSchema.");
       throw new Error("Invalid database connection string for schema initialization.");
     }
-    console.log(`Using connection string for schema init: ${connectionString.substring(0, 20)}...`); // Log prefix
+    console.log(`Using connection string for schema init: ${connectionString.substring(0, 20)}...`);
 
     // Initialize Neon client
     const sql = neon(connectionString);
@@ -192,7 +193,7 @@ const initializeDatabaseSchema = async (connectionString: string) => {
     for (const statement of schemaStatements) {
       console.log(`Executing SQL for ${statement.table}: ${statement.description}`);
       try {
-        await sql(statement.sql); // Execute raw SQL directly
+        await sql(statement.sql);
         await logSchemaCorrection(
           "schema_init",
           statement.table, 
@@ -206,18 +207,19 @@ const initializeDatabaseSchema = async (connectionString: string) => {
           "schema_error",
           statement.table,
           `Error: ${error instanceof Error ? error.message : String(error)}`,
-          statement.sql
+          statement.sql,
+          null,
+          connectionString
         );
       }
     }
 
-    console.log("Database schema initialized successfully.");
+    console.log("Database schema initialization completed.");
   } catch (error) {
     console.error("Error initializing database schema:", error);
     throw error;
   }
 };
-
 
 /**
  * Log a schema correction or data fix to the database
@@ -226,22 +228,45 @@ const initializeDatabaseSchema = async (connectionString: string) => {
  * @param description Description of what was corrected
  * @param sqlExecuted The SQL that was executed (if applicable)
  * @param userId User who made the correction (if applicable)
+ * @param specificConnectionString Optional connection string to use specifically for logging
  */
 export const logSchemaCorrection = async (
   correctionType: string,
   tableName: string,
   description: string,
   sqlExecuted: string,
-  userId?: string
+  userId?: string | null,
+  specificConnectionString?: string
 ): Promise<void> => {
   try {
-    // Use the default instance for logging corrections, regardless of user DB
-    const defaultConnectionString = process.env.DATABASE_URL;
-    if (!defaultConnectionString) {
-      console.error("Cannot log schema correction: Default DATABASE_URL is not set.");
+    // Use the specified connection string or default
+    const connString = specificConnectionString || process.env.DATABASE_URL;
+    if (!connString) {
+      console.error("Cannot log schema correction: No connection string available");
       return;
     }
-    const sql = neon(defaultConnectionString);
+    
+    const sql = neon(connString);
+
+    // Ensure the schema_corrections table exists
+    const createTableSql = `
+      CREATE TABLE IF NOT EXISTS schema_corrections (
+        id SERIAL PRIMARY KEY,
+        correction_type TEXT NOT NULL,
+        table_name TEXT NOT NULL,
+        description TEXT NOT NULL,
+        sql_executed TEXT,
+        user_id TEXT,
+        executed_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+    `;
+    
+    try {
+      await sql(createTableSql);
+    } catch (err) {
+      console.error("Error creating schema_corrections table:", err);
+      return; // Cannot log if we can't create the table
+    }
 
     const logQuery = `
       INSERT INTO schema_corrections (
@@ -254,7 +279,7 @@ export const logSchemaCorrection = async (
       tableName,
       description,
       sqlExecuted,
-      userId || null
+      userId
     ]);
 
     console.log(`Logged schema correction: ${description}`);
@@ -268,20 +293,17 @@ export const logSchemaCorrection = async (
  * Get schema correction logs from the database
  * @param limit Maximum number of logs to retrieve
  * @param offset Offset for pagination
+ * @param connectionString Optional specific connection string to use
  * @returns Array of schema correction logs
  */
 export const getSchemaCorrections = async (
   limit: number = 100,
-  offset: number = 0
+  offset: number = 0,
+  connectionString?: string
 ): Promise<any[]> => {
   try {
-     // Use the default instance for reading corrections
-     const defaultConnectionString = process.env.DATABASE_URL;
-     if (!defaultConnectionString) {
-       console.error("Cannot get schema corrections: Default DATABASE_URL is not set.");
-       return [];
-     }
-     const sql = neon(defaultConnectionString);
+    // Use the specified connection string or get from database instance
+    const sql = connectionString ? neon(connectionString) : await NeonDBInstance();
 
     const query = `
       SELECT * FROM schema_corrections
