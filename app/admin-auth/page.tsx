@@ -1,9 +1,20 @@
-import { redirectIfAuthenticated } from "@/lib/auth/auth-helpers";
+"use client";
+
+import { useRedirectIfAuthenticated } from "@/lib/auth/auth-client";
 import { AdminLogin } from "./admin-login";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-export default async function AdminLoginPage() {
-  await redirectIfAuthenticated();
+export default function AdminLoginPage() {
+  const [mounted, setMounted] = useState(false);
+  const { isLoading } = useRedirectIfAuthenticated();
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || isLoading) return null;
+  
   return (
     <main className="container flex flex-col items-center justify-center min-h-screen py-12">
       <div className="w-full max-w-md">
@@ -24,7 +35,7 @@ export default async function AdminLoginPage() {
         </p>
         
         <AdminLogin 
-          githubEnabled={!!process.env.AUTH_GITHUB_ID}
+          githubEnabled={!!process.env.NEXT_PUBLIC_GITHUB_AUTH_ENABLED}
         />
         
         <div className="mt-8 text-center">

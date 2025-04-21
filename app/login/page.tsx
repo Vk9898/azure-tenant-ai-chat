@@ -1,17 +1,28 @@
-import { redirectIfAuthenticated } from "@/lib/auth/auth-helpers";
+"use client";
+
+import { useRedirectIfAuthenticated } from "@/lib/auth/auth-client";
 import { LogIn } from "@/components/auth-page/login";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-export default async function LoginPage() {
-  await redirectIfAuthenticated();
+export default function LoginPage() {
+  const [mounted, setMounted] = useState(false);
+  const { isLoading } = useRedirectIfAuthenticated();
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || isLoading) return null;
+  
   return (
     <main className="container flex flex-col items-center justify-center min-h-screen py-12">
       <h1 className="text-3xl font-bold text-primary mb-8">User Login</h1>
       
       <LogIn
-        isDevMode={process.env.NODE_ENV === "development"}
-        githubEnabled={!!process.env.AUTH_GITHUB_ID}
-        entraIdEnabled={!!process.env.AZURE_AD_CLIENT_ID}
+        isDevMode={process.env.NEXT_PUBLIC_NODE_ENV === "development"}
+        githubEnabled={!!process.env.NEXT_PUBLIC_GITHUB_AUTH_ENABLED}
+        entraIdEnabled={!!process.env.NEXT_PUBLIC_ENTRA_ID_AUTH_ENABLED}
       />
       
       <div className="mt-8 text-center">

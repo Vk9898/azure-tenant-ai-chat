@@ -1,19 +1,18 @@
 "use client";
 
 import { LogIn } from "@/components/auth-page/login";
-import { redirectIfAuthenticated } from "@/lib/auth/auth-helpers";
+import { useRedirectIfAuthenticated } from "@/lib/auth/auth-client";
 import { useEffect, useState } from "react";
 
 export default function SignInPage() {
   const [mounted, setMounted] = useState(false);
+  const { isLoading } = useRedirectIfAuthenticated();
 
   useEffect(() => {
     setMounted(true);
-    // Check if user is already authenticated and redirect if needed
-    redirectIfAuthenticated();
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted || isLoading) return null;
 
   const isDevMode = process.env.NEXT_PUBLIC_NODE_ENV === "development";
   const githubEnabled = !!process.env.NEXT_PUBLIC_GITHUB_AUTH_ENABLED;

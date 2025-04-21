@@ -22,6 +22,10 @@ export interface CustomSession extends Omit<Session, "user"> {
   user?: CustomUser;
 }
 
+/**
+ * Server-side function to get user session
+ * Only use in Server Components or Route Handlers
+ */
 export const userSession = async (): Promise<CustomUser | null> => {
   // Use the auth() function from NextAuth v5
   const session = await auth();
@@ -41,6 +45,10 @@ export const getCurrentUser = async (): Promise<CustomUser> => {
   return user;
 };
 
+/**
+ * Server-side redirect if user is authenticated
+ * Only use in Server Components or Route Handlers
+ */
 export const redirectIfAuthenticated = async (path = '/chat') => {
   const session = await auth();
   if (session) {
@@ -48,6 +56,10 @@ export const redirectIfAuthenticated = async (path = '/chat') => {
   }
 };
 
+/**
+ * Server-side redirect to login if user is not authenticated
+ * Only use in Server Components or Route Handlers
+ */
 export const redirectToLoginIfUnauthenticated = async () => {
   const session = await auth();
   if (!session) {

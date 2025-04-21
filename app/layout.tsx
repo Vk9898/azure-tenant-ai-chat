@@ -1,6 +1,5 @@
 import { AI_NAME } from "@/components/theme/theme-config";
-import { ThemeProvider } from "@/components/theme/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { AuthenticatedProviders } from "@/components/globals/providers";
 import { cn } from "@/lib/utils";
 import { cal, inter } from "@/styles/fonts";
 import "@/styles/globals.css";
@@ -24,15 +23,9 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
       <body className={cn(cal.variable, inter.variable)} data-slot="root-layout">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <AuthenticatedProviders>
           {children}
-          <Toaster />
-        </ThemeProvider>
+        </AuthenticatedProviders>
       </body>
     </html>
   );
