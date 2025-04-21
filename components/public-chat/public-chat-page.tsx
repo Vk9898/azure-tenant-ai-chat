@@ -3,7 +3,7 @@ import { FC, useEffect, useRef } from "react";
 import { useChatScrollAnchor } from "@/components/ui/chat/chat-message-area/use-chat-scroll-anchor";
 import { ChatLoading } from "@/components/ui/chat/chat-message-area/chat-loading";
 import { PublicChatInput } from "./public-chat-input";
-import { usePublicChat, publicChatStore } from "./public-chat-store"; // Correct import
+import { usePublicChatStore, publicChatStore } from "./public-chat-store"; // Correct import
 import MessageContent from "./message-content";
 import { Button } from "@/components/ui/button";
 import { Trash2, Info } from "lucide-react";
