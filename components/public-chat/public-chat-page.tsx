@@ -3,7 +3,7 @@ import { FC, useEffect, useRef } from "react";
 import { useChatScrollAnchor } from "@/components/ui/chat/chat-message-area/use-chat-scroll-anchor";
 import { ChatLoading } from "@/components/ui/chat/chat-message-area/chat-loading";
 import { PublicChatInput } from "./public-chat-input";
-import { usePublicChatStore, publicChatStore } from "./public-chat-store"; // Correct import
+import { usePublicChatStore } from "./public-chat-store"; // Fixed import
 import MessageContent from "./message-content";
 import { Button } from "@/components/ui/button";
 import { Trash2, Info } from "lucide-react";
@@ -18,19 +18,19 @@ import ChatMessageContainer from "@/components/ui/chat/chat-message-area/chat-me
 import ChatMessageContentArea from "@/components/ui/chat/chat-message-area/chat-message-content";
 
 export const PublicChatPage: FC = () => {
-  const { messages, loading } = usePublicChat(); // Use the imported hook
+  const { messages, loading, initChatSession, clearChatHistory } = usePublicChatStore(); // Use the correct hook
   const current = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Initialize chat session with Guest username
-    publicChatStore.initChatSession("Guest");
-  }, []);
+    initChatSession("Guest");
+  }, [initChatSession]);
 
   useChatScrollAnchor({ ref: current });
 
   const handleClearChat = () => {
     if (window.confirm("Are you sure you want to clear the chat history?")) {
-      publicChatStore.clearChatHistory(); // Call store action directly
+      clearChatHistory(); // Use the function from the hook
     }
   };
 
