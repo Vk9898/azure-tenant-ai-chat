@@ -3,7 +3,7 @@ import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
 import AzureADB2CProvider from "next-auth/providers/azure-ad-b2c";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
-import { hashValueSync } from "../../components/auth-page/utils";
+import { hashValueSync } from "@/lib/auth/auth-utils";
 import type { JWT } from "next-auth/jwt";
 import type { Session, User, Account } from "next-auth";
 import type { NextAuthConfig } from "next-auth";
