@@ -5,7 +5,10 @@
 /*
   Dark mode custom variant
 */
-@custom-variant dark (&:is(.dark *));
+/* Replace custom variant with standard CSS selector */
+.dark * {
+  /* Dark mode styles will be applied here */
+}
 
 /*
   Root variables
@@ -79,6 +82,59 @@
   --sidebar-accent-foreground: hsl(240 5.9% 10%);
   --sidebar-border: hsl(220 13% 91%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+  /* Theme colors (mapped from root variables) */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
 }
 
 .dark {
@@ -129,57 +185,22 @@
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
-  
-  @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
+/* Animation keyframes */
+@keyframes accordion-down {
+  from {
+    height: 0;
   }
-  
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
   }
 }
 
@@ -219,6 +240,7 @@
 
   h1 {
      font-size: 2.5rem;
+     font-weight: bold;
      font-family: var(--font-title);
   }
 
@@ -282,8 +304,11 @@
   hover:bg-primary/90;
   active:bg-primary/80;
   font-weight: bold;
-  uppercase;
-  rounded-xs transition-all duration-200 min-h-11 md:min-h-10;
+  text-transform: uppercase;
+  border-radius: var(--radius-xs);
+  transition: all 0.2s ease;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .ds-button-secondary {
@@ -292,8 +317,11 @@
   hover:bg-secondary/90;
   active:bg-secondary/80;
   font-weight: bold;
-  uppercase;
-  rounded-xs transition-all duration-200;
+  text-transform: uppercase;
+  border-radius: var(--radius-xs);
+  transition: all 0.2s ease;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .ds-button-outline {
@@ -303,12 +331,18 @@
   hover:bg-primary/10;
   active:bg-primary/20;
   font-weight: bold;
-  uppercase;
-  rounded-xs transition-all duration-200;
+  text-transform: uppercase;
+  border-radius: var(--radius-xs);
+  transition: all 0.2s ease;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
-.ds-focus-ring {
-  focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+.ds-focus-ring:focus-visible {
+  outline: none;
+  ring-width: 2px;
+  ring-color: var(--color-ring);
+  ring-offset-width: 2px;
 }
 
 .ds-touch-target {
