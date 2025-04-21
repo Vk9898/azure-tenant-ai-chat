@@ -1,12 +1,16 @@
+
 import { FC } from "react";
-import { ScrollArea } from "../ui/scroll-area";
-import { AddExtension } from "./add-extension/add-new-extension";
-import { ExtensionCard } from "./extension-card/extension-card";
-import { ExtensionHero } from "./extension-hero/extension-hero";
-import { ExtensionModel } from "./extension-services/models";
-import { WebSearchTemplates } from "./web-search-templates/web-search-templates";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { AddExtension } from "@/components/extensions-page/add-extension/add-new-extension";
+import { ExtensionCard } from "@/components/extensions-page/extension-card/extension-card";
+import { ExtensionHero } from "@/components/extensions-page/extension-hero/extension-hero";
+import { ExtensionModel } from "@/components/extensions-page/extension-services/models";
+import { WebSearchTemplates } from "@/components/extensions-page/web-search-templates/web-search-templates";
 import { PlusCircle } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
+import { FindAllExtensionsForAdmin } from "@/components/extensions-page/extension-services/extension-service";
+import { DisplayError } from "@/components/ui/error/display-error";
+
 
 interface Props {
   extensions: ExtensionModel[];
@@ -68,3 +72,5 @@ export const ExtensionPage: FC<Props> = (props) => {
     </ScrollArea>
   );
 };
+
+
