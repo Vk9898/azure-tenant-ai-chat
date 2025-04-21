@@ -271,7 +271,18 @@ class PublicChatState implements PublicChatStore {
   }
 }
 
-export const usePublicChatStore = () => useSnapshot(state);
+// Create the state instance
+const chatState = new PublicChatState();
 
-// Create the state object
-const state = proxy(new PublicChatState()); 
+// Create the proxy with proper binding
+const state = proxy<PublicChatStore>({
+  ...chatState,
+  updateLoading: chatState.updateLoading.bind(chatState),
+  initChatSession: chatState.initChatSession.bind(chatState),
+  clearChatHistory: chatState.clearChatHistory.bind(chatState),
+  updateInput: chatState.updateInput.bind(chatState),
+  updateAutoScroll: chatState.updateAutoScroll.bind(chatState),
+  submitChat: chatState.submitChat.bind(chatState),
+});
+
+export const usePublicChatStore = () => useSnapshot(state); 

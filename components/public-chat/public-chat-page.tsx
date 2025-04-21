@@ -13,7 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ChatMessageArea } from "@/components/ui/chat/chat-message-area/chat-message-area";
+import { PublicChatMessageArea } from "./chat-message-area";
 import ChatMessageContainer from "@/components/ui/chat/chat-message-area/chat-message-container";
 import ChatMessageContentArea from "@/components/ui/chat/chat-message-area/chat-message-content";
 
@@ -24,7 +24,7 @@ export const PublicChatPage: FC = () => {
   useEffect(() => {
     // Initialize chat session with Guest username
     initChatSession("Guest");
-  }, [initChatSession]);
+  }, []); // Remove initChatSession from dependencies to avoid re-initialization
 
   useChatScrollAnchor({ ref: current });
 
@@ -74,7 +74,7 @@ export const PublicChatPage: FC = () => {
       <ChatMessageContainer ref={current} className="flex-1 py-4 sm:py-6 pb-32 sm:pb-24">
         <ChatMessageContentArea className="container max-w-3xl px-4 sm:px-6 mx-auto space-y-8 sm:space-y-10">
           {messages.map((message) => (
-            <ChatMessageArea
+            <PublicChatMessageArea
               key={message.id}
               profileName={message.name}
               role={message.role}
@@ -90,7 +90,7 @@ export const PublicChatPage: FC = () => {
               data-slot={`message-${message.role}`}
             >
               <MessageContent message={message} />
-            </ChatMessageArea>
+            </PublicChatMessageArea>
           ))}
           {loading === "loading" && <ChatLoading />}
         </ChatMessageContentArea>

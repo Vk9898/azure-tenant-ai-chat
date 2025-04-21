@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { CheckIcon, ClipboardIcon, UserCircle } from "lucide-react";
+import { CheckIcon, ClipboardIcon, PocketKnife, UserCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,7 @@ export const PublicChatMessageArea = ({
   if (profilePicture) {
     profile = (
       <Avatar>
-        <AvatarImage src={profilePicture} />
+        <AvatarImage src={profilePicture} alt={profileName || role} />
       </Avatar>
     );
   } else {
