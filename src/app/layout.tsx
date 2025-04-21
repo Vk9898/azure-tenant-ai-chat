@@ -3,7 +3,7 @@ import { ThemeProvider } from "@/features/theme/theme-provider";
 import { Toaster } from "@/features/ui/sonner";
 import { cn } from "@/lib/utils";
 import { cal, inter, jetbrainsMono } from "@/styles/fonts";
-import "./globals.css";
+import "@/styles/globals.css";
 
 export const metadata = {
   title: AI_NAME,
