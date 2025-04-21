@@ -62,6 +62,10 @@ class ExtensionState {
     return defaultFunction;
   }
 
+  public updateExtension(model: ExtensionModel) {
+    this.extension = { ...model };
+  }
+
   public async submitForm(modelToSubmit: ExtensionModel) {
     this.isLoading = true;
     this.formState = {

@@ -4,9 +4,11 @@ import { AddExtension } from "./add-extension/add-new-extension";
 import { ExtensionCard } from "./extension-card/extension-card";
 import { ExtensionHero } from "./extension-hero/extension-hero";
 import { ExtensionModel } from "./extension-services/models";
+import { WebSearchTemplates } from "./web-search-templates/web-search-templates";
 
 interface Props {
   extensions: ExtensionModel[];
+  showWebSearchTemplates?: boolean;
 }
 
 export const ExtensionPage: FC<Props> = (props) => {
@@ -15,6 +17,7 @@ export const ExtensionPage: FC<Props> = (props) => {
       <main className="flex flex-1 flex-col">
         <ExtensionHero />
         <div className="container max-w-4xl py-3">
+          {props.showWebSearchTemplates && <WebSearchTemplates />}
           <div className="grid grid-cols-3 gap-3">
             {props.extensions.map((extension) => {
               return (

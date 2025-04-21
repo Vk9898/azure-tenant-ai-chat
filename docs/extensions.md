@@ -137,6 +137,147 @@ Tenant AI Chat can be enhanced with web search capabilities through extensions t
 }
 ```
 
+### News Search Extension
+
+```json
+{
+  "name": "news_search",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "object",
+        "description": "News search query parameters",
+        "properties": {
+          "topic": {
+            "type": "string",
+            "description": "The news topic to search for"
+          },
+          "timeframe": {
+            "type": "string",
+            "description": "Time period for news (e.g., 'today', 'this week', 'this month')",
+            "enum": ["today", "this week", "this month", "this year"]
+          },
+          "language": {
+            "type": "string",
+            "description": "Language preference for news results"
+          }
+        },
+        "required": ["topic"]
+      }
+    },
+    "required": ["query"]
+  },
+  "description": "Search for recent news articles on a specific topic"
+}
+```
+
+### Technical Documentation Search
+
+```json
+{
+  "name": "technical_docs_search",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "object",
+        "description": "Technical documentation search parameters",
+        "properties": {
+          "technology": {
+            "type": "string",
+            "description": "Technology or framework name (e.g., 'React', 'Python', 'Kubernetes')"
+          },
+          "specific_term": {
+            "type": "string",
+            "description": "Specific method, function, or concept to search for"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the technology (optional)"
+          }
+        },
+        "required": ["technology", "specific_term"]
+      }
+    },
+    "required": ["query"]
+  },
+  "description": "Search for technical documentation, API references, and developer guides"
+}
+```
+
+### Product Review Search
+
+```json
+{
+  "name": "product_review_search",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "object",
+        "description": "Product review search parameters",
+        "properties": {
+          "product_name": {
+            "type": "string",
+            "description": "Name of the product to find reviews for"
+          },
+          "review_type": {
+            "type": "string",
+            "description": "Type of reviews to focus on",
+            "enum": ["professional", "user", "all"]
+          },
+          "min_rating": {
+            "type": "number",
+            "description": "Minimum rating threshold (1-5)"
+          }
+        },
+        "required": ["product_name"]
+      }
+    },
+    "required": ["query"]
+  },
+  "description": "Search for product reviews and ratings from across the web"
+}
+```
+
+### Competitive Analysis Search
+
+```json
+{
+  "name": "competitive_analysis",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "object",
+        "description": "Competitive analysis search parameters",
+        "properties": {
+          "company_name": {
+            "type": "string",
+            "description": "Primary company to research"
+          },
+          "competitors": {
+            "type": "array",
+            "description": "List of competitors to compare against",
+            "items": {
+              "type": "string"
+            }
+          },
+          "industry": {
+            "type": "string",
+            "description": "Industry sector for more targeted results"
+          }
+        },
+        "required": ["company_name"]
+      }
+    },
+    "required": ["query"]
+  },
+  "description": "Research companies and perform competitive analysis with web data"
+}
+```
+
 ## Implementation Notes
 
 To implement these extensions, you'll need to:
@@ -177,6 +318,40 @@ const data = await response.json();
 return data.choices[0].message.content;
 ```
 
+For the news search extension, you could use:
+
+```javascript
+// Parse the incoming function call arguments
+const topic = args.query.topic;
+const timeframe = args.query.timeframe || "this week";
+const language = args.query.language || "English";
+
+// Construct the search query with timeframe
+const searchTerm = `${topic} news ${timeframe} ${language !== "English" ? "in " + language : ""}`;
+
+// Construct the OpenAI API request
+const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+  },
+  body: JSON.stringify({
+    model: "gpt-4o-search-preview",
+    web_search_options: {},
+    messages: [
+      {
+        role: "user",
+        content: searchTerm
+      }
+    ]
+  })
+});
+
+const data = await response.json();
+return data.choices[0].message.content;
+```
+
 ### Required Headers
 
 For the extension to work properly, you'll need to include:
@@ -192,3 +367,8 @@ For the extension to work properly, you'll need to include:
 2. **Security**: Store API keys securely using the extensions header system
 3. **User Experience**: Design your extensions to return concise and relevant information
 4. **Attribution**: Always include source URLs in your response to properly attribute information
+5. **Caching**: Consider implementing a caching layer for frequently searched topics
+6. **Error Handling**: Implement robust error handling for API failures
+7. **Query Construction**: Craft search queries carefully to get the most relevant results
+8. **Timeout Management**: Add timeout handling for long-running searches
+9. **Result Processing**: Consider post-processing results for better formatting and relevance

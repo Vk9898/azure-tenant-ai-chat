@@ -19,7 +19,6 @@ import {
   FormLabel, 
   FormMessage 
 } from "@/features/ui/form";
-import { Input } from "@/features/ui/input";
 import { Textarea } from "@/features/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/features/ui/tabs";
 import { 
@@ -32,10 +31,11 @@ import {
 import { Label } from "@/features/ui/label";
 import { Slider } from "@/features/ui/slider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, FieldValues } from "react-hook-form";
 import * as z from "zod";
 import { RefreshCw, SendIcon, SparklesIcon } from "lucide-react";
 import { generatePlaygroundResponse } from "./playground-service";
+import { logPrompt } from "./prompt-logging-service";
 
 // Define the schema for the playground form
 const formSchema = z.object({
@@ -46,6 +46,8 @@ const formSchema = z.object({
   maxTokens: z.number().min(1).max(4096).default(1000),
   systemPrompt: z.string().optional(),
 });
+
+type FormValues = z.infer<typeof formSchema>;
 
 type PromptResult = {
   response: string;
@@ -61,7 +63,7 @@ export function ChatPlayground() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<PromptResult | null>(null);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: "",
@@ -73,8 +75,8 @@ export function ChatPlayground() {
     },
   });
 
-  // Update the onSubmit function to use the actual API
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  // Update the onSubmit function to use the actual API and log the result
+  async function onSubmit(values: FormValues) {
     setIsLoading(true);
     
     try {
@@ -88,11 +90,49 @@ export function ChatPlayground() {
         systemPrompt: values.systemPrompt || "",
       });
       
+      const endTime = Date.now();
+      const responseTime = endTime - startTime;
+      
       if (playgroundResponse.status === "OK") {
         setResult(playgroundResponse.response);
+        
+        // Log the prompt and response
+        await logPrompt({
+          modelName: values.model,
+          prompt: values.prompt,
+          expectedResponse: values.expectedResponse,
+          actualResponse: playgroundResponse.response.response,
+          temperature: values.temperature,
+          maxTokens: values.maxTokens,
+          tokensUsed: playgroundResponse.response.tokens.total,
+          responseTimeMs: responseTime,
+          success: true,
+          metadata: {
+            systemPrompt: values.systemPrompt,
+            source: "admin-playground"
+          }
+        });
       } else {
         // Handle error
         console.error("Error from API:", playgroundResponse.errors);
+        
+        // Log the error
+        await logPrompt({
+          modelName: values.model,
+          prompt: values.prompt,
+          expectedResponse: values.expectedResponse,
+          actualResponse: "Error: " + (playgroundResponse.errors[0]?.message || "Unknown error"),
+          temperature: values.temperature,
+          maxTokens: values.maxTokens,
+          responseTimeMs: responseTime,
+          success: false,
+          errorMessage: playgroundResponse.errors[0]?.message || "Unknown error",
+          metadata: {
+            systemPrompt: values.systemPrompt,
+            source: "admin-playground"
+          }
+        });
+        
         throw new Error(playgroundResponse.errors[0]?.message || "Unknown error");
       }
     } catch (error) {
@@ -159,7 +199,7 @@ export function ChatPlayground() {
                               max={2}
                               step={0.1}
                               value={[field.value]}
-                              onValueChange={(value) => field.onChange(value[0])}
+                              onValueChange={(value: number[]) => field.onChange(value[0])}
                             />
                           </FormControl>
                           <FormDescription>
@@ -182,7 +222,7 @@ export function ChatPlayground() {
                               max={4096}
                               step={100}
                               value={[field.value]}
-                              onValueChange={(value) => field.onChange(value[0])}
+                              onValueChange={(value: number[]) => field.onChange(value[0])}
                             />
                           </FormControl>
                           <FormDescription>

@@ -1,5 +1,24 @@
 CREATE EXTENSION IF NOT EXISTS vector;
 
+-- Track user prompts and AI responses for monitoring, analytics, and improvement
+CREATE TABLE prompt_logs (
+    id SERIAL PRIMARY KEY,
+    user_id TEXT,                           -- User who sent the prompt
+    thread_id TEXT,                         -- Associated chat thread
+    model_name TEXT NOT NULL,               -- Model used (gpt-4o, gpt-35-turbo, etc)
+    prompt TEXT NOT NULL,                   -- User's prompt/question
+    expected_response TEXT,                 -- Expected response if provided (for testing)
+    actual_response TEXT NOT NULL,          -- AI's actual response
+    temperature FLOAT,                      -- Temperature setting used
+    max_tokens INTEGER,                     -- Max tokens setting
+    tokens_used INTEGER,                    -- Total tokens used
+    response_time_ms INTEGER,               -- Response time in milliseconds
+    success BOOLEAN NOT NULL DEFAULT TRUE,  -- Whether the request was successful
+    error_message TEXT,                     -- Error message if any
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(), -- When the prompt was logged
+    metadata JSONB                          -- Additional metadata as needed
+);
+
 CREATE TABLE chat_threads (
     id TEXT PRIMARY KEY, -- String-based ID
     name TEXT NOT NULL, -- Name of the chat thread

@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/features/auth-page/helpers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Users, MessageSquare, ListFilter, SparklesIcon } from "lucide-react";
+import { LayoutDashboard, Users, MessageSquare, ListFilter, SparklesIcon, Database } from "lucide-react";
 
 export default async function AdminLayout({
   children,
@@ -26,6 +26,7 @@ export default async function AdminLayout({
               <AdminNavLink href="/admin/users" icon={<Users size={18} />} label="Users" />
               <AdminNavLink href="/admin/chats" icon={<MessageSquare size={18} />} label="Chat Histories" />
               <AdminNavLink href="/admin/playground" icon={<SparklesIcon size={18} />} label="Chat Playground" />
+              <AdminNavLink href="/admin/prompts" icon={<Database size={18} />} label="Prompt Logs" />
               <AdminNavLink href="/reporting" icon={<ListFilter size={18} />} label="Reports" />
             </nav>
           </div>

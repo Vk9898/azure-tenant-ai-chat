@@ -120,24 +120,72 @@ const initializeDatabaseSchema = async (connectionString: string) => {
     // Initialize Neon client
     const sql = neon(connectionString);
 
+    // First, create the schema_corrections table if it doesn't exist
+    const schemaCorrectionsTable = `
+      CREATE TABLE IF NOT EXISTS schema_corrections (
+        id SERIAL PRIMARY KEY,
+        correction_type TEXT NOT NULL,
+        table_name TEXT NOT NULL,
+        description TEXT NOT NULL,
+        sql_executed TEXT,
+        user_id TEXT,
+        executed_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+    `;
+    
+    await sql(schemaCorrectionsTable);
+    console.log("Schema corrections table initialized.");
+    
+    // Helper function to log schema corrections
+    const logSchemaCorrection = async (
+      correctionType: string,
+      tableName: string,
+      description: string,
+      sqlExecuted: string,
+      userId?: string
+    ) => {
+      const logQuery = `
+        INSERT INTO schema_corrections (
+          correction_type, table_name, description, sql_executed, user_id
+        ) VALUES ($1, $2, $3, $4, $5)
+      `;
+      
+      await sql(logQuery, [
+        correctionType,
+        tableName,
+        description,
+        sqlExecuted,
+        userId || null
+      ]);
+      
+      console.log(`Logged schema correction: ${description}`);
+    };
+
     // Define the schema creation SQL statements
     const schemaSQLStatements = [
-      `CREATE EXTENSION IF NOT EXISTS vector;`,
-
-      `CREATE TABLE IF NOT EXISTS chat_threads (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        use_name TEXT NULL,
-        user_id TEXT NOT NULL,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        last_message_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        bookmarked BOOLEAN NOT NULL DEFAULT FALSE,
-        is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-        type TEXT NOT NULL,
-        persona_message TEXT,
-        persona_message_title TEXT,
-        extension TEXT[] DEFAULT '{}'
-      );`,
+      {
+        sql: `CREATE EXTENSION IF NOT EXISTS vector;`,
+        table: "postgres_extension",
+        description: "Enable vector extension for embeddings"
+      },
+      {
+        sql: `CREATE TABLE IF NOT EXISTS chat_threads (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          use_name TEXT NULL,
+          user_id TEXT NOT NULL,
+          created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+          last_message_at TIMESTAMP NOT NULL DEFAULT NOW(),
+          bookmarked BOOLEAN NOT NULL DEFAULT FALSE,
+          is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+          type TEXT NOT NULL,
+          persona_message TEXT,
+          persona_message_title TEXT,
+          extension TEXT[] DEFAULT '{}'
+        );`,
+        table: "chat_threads",
+        description: "Create chat threads table"
+      },
 
       `CREATE TABLE IF NOT EXISTS chat_citations (
         id TEXT PRIMARY KEY,
@@ -216,15 +264,88 @@ const initializeDatabaseSchema = async (connectionString: string) => {
       );`
     ];
 
-    // Execute each SQL statement sequentially
+    // Execute each SQL statement sequentially and log it
     for (const statement of schemaSQLStatements) {
-      console.log(`Executing SQL: ${statement}`);
-      await sql(statement);
+      console.log(`Executing SQL: ${statement.sql}`);
+      await sql(statement.sql);
+      await logSchemaCorrection(
+        "schema_init",
+        statement.table, 
+        statement.description,
+        statement.sql
+      );
     }
 
     console.log("Database schema initialized successfully.");
   } catch (error) {
     console.error("Error initializing database schema:", error);
     throw error;
+  }
+};
+
+/**
+ * Log a schema correction or data fix to the database
+ * @param connectionString Database connection string
+ * @param correctionType Type of correction (schema_update, data_fix, etc.)
+ * @param tableName Target table
+ * @param description Description of what was corrected
+ * @param sqlExecuted The SQL that was executed (if applicable)
+ * @param userId User who made the correction (if applicable)
+ */
+export const logSchemaCorrection = async (
+  correctionType: string,
+  tableName: string,
+  description: string,
+  sqlExecuted: string,
+  userId?: string
+): Promise<void> => {
+  try {
+    const sql = await NeonDBInstance();
+    
+    const logQuery = `
+      INSERT INTO schema_corrections (
+        correction_type, table_name, description, sql_executed, user_id
+      ) VALUES ($1, $2, $3, $4, $5)
+    `;
+    
+    await sql(logQuery, [
+      correctionType,
+      tableName,
+      description,
+      sqlExecuted,
+      userId || null
+    ]);
+    
+    console.log(`Logged schema correction: ${description}`);
+  } catch (error) {
+    console.error("Error logging schema correction:", error);
+    // Don't throw here to prevent disruption of normal operations
+  }
+};
+
+/**
+ * Get schema correction logs from the database
+ * @param limit Maximum number of logs to retrieve
+ * @param offset Offset for pagination
+ * @returns Array of schema correction logs
+ */
+export const getSchemaCorrections = async (
+  limit: number = 100,
+  offset: number = 0
+): Promise<any[]> => {
+  try {
+    const sql = await NeonDBInstance();
+    
+    const query = `
+      SELECT * FROM schema_corrections
+      ORDER BY executed_at DESC
+      LIMIT $1 OFFSET $2
+    `;
+    
+    const results = await sql(query, [limit, offset]);
+    return results;
+  } catch (error) {
+    console.error("Error retrieving schema corrections:", error);
+    return [];
   }
 };

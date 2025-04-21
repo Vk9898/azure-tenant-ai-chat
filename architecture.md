@@ -88,27 +88,57 @@ The Reporting page provides admins access to:
 
 ### Chat Observability and Monitoring
 
-The Chat Observability page provides administrators with advanced tools to monitor, analyze, and improve chat interactions:
+The Chat Observability system provides administrators with advanced tools to monitor, analyze, and improve chat interactions:
 
 1. **Chat Playground**:
    - Test prompts with different models and parameters
    - Compare expected outputs against actual responses
    - Fine-tune system prompts and model configurations
+   - Logs all playground activity for further analysis
 
-2. **Response Analysis**:
-   - View detailed metrics on response quality, time, and token usage
-   - Identify patterns in user queries and AI responses
-   - Track model performance over time
+2. **Prompt Logging System**:
+   - Automatically captures all user prompts and AI responses
+   - Records performance metrics (tokens, response time, success rate)
+   - Stores model parameters (temperature, max tokens) for each interaction
+   - Enables detailed analysis of model behavior and effectiveness
 
-3. **Conversation Debugging**:
-   - Inspect full conversation context for problematic interactions
-   - Replay conversations with modified parameters
-   - Apply corrective actions and improvements
+3. **Response Analysis Dashboard**:
+   - Comprehensive metrics on response quality, time, and token usage
+   - Breakdown of model usage across the platform
+   - Success rate tracking and error monitoring
+   - Daily usage trends and patterns
 
-4. **Model Performance Dashboard**:
-   - Compare performance metrics across different models and versions
-   - Monitor token usage and costs
-   - Track user satisfaction metrics
+4. **Conversation Debugging**:
+   - Detailed logs of problematic interactions
+   - Access to full prompt and response history
+   - Ability to replay conversations with modified parameters
+   - Comparison of expected vs. actual responses
+
+## Database Schema for Monitoring
+
+The system uses a dedicated `prompt_logs` table in Postgres to track all AI interactions:
+
+```sql
+CREATE TABLE prompt_logs (
+    id SERIAL PRIMARY KEY,
+    user_id TEXT,                           -- User who sent the prompt
+    thread_id TEXT,                         -- Associated chat thread
+    model_name TEXT NOT NULL,               -- Model used (gpt-4o, gpt-35-turbo, etc)
+    prompt TEXT NOT NULL,                   -- User's prompt/question
+    expected_response TEXT,                 -- Expected response if provided (for testing)
+    actual_response TEXT NOT NULL,          -- AI's actual response
+    temperature FLOAT,                      -- Temperature setting used
+    max_tokens INTEGER,                     -- Max tokens setting
+    tokens_used INTEGER,                    -- Total tokens used
+    response_time_ms INTEGER,               -- Response time in milliseconds
+    success BOOLEAN NOT NULL DEFAULT TRUE,  -- Whether the request was successful
+    error_message TEXT,                     -- Error message if any
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(), -- When the prompt was logged
+    metadata JSONB                          -- Additional metadata as needed
+);
+```
+
+This table structure enables comprehensive logging of all model interactions, supporting detailed analysis and continuous improvement of the AI system.
 
 ## Authentication and Authorization
 
