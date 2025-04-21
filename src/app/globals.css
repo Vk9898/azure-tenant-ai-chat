@@ -1,148 +1,213 @@
-@config "../tailwind.config.css";
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@layer base {
-  :root {
-    /* Light mode */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    
-    /* Vercel Blue */
-    --primary: 214 100% 48%;
-    --primary-foreground: 0 0% 98%;
-    
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 98%;
-    
-    --warning: 38 92% 50%;
-    --warning-foreground: 240 5.9% 10%;
-    
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    
-    /* Neutral grays for layering */
-    --gray-50: 210 40% 98%;
-    --gray-100: 220 14% 96%;
-    --gray-200: 220 13% 91%;
-    --gray-300: 216 12% 84%;
-    --gray-400: 218 11% 65%;
-    --gray-500: 220 9% 46%;
-    --gray-600: 215 14% 34%;
-    --gray-700: 217 19% 27%;
-    --gray-800: 215 28% 17%;
-    --gray-900: 221 39% 11%;
-    --gray-950: 224 71% 4%;
-    
-    /* Border radius values */
-    --radius-xs: 0.125rem;
-    --radius-sm: 0.25rem;
-    --radius-md: 0.375rem;
-    --radius-lg: 0.5rem;
-    --radius-xl: 0.75rem;
-    --radius-2xl: 1rem;
-    --radius-3xl: 1.5rem;
-    --radius-full: 9999px;
-    
-    /* Sidebar */
-    --sidebar: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+@config '../tailwind.config.ts';
 
-    --radius: var(--radius-lg);
+/*
+  Dark mode custom variant
+*/
+@custom-variant dark (&:is(.dark *));
+
+/*
+  Root variables
+*/
+:root {
+  /* Light mode */
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(222.2 84% 4.9%);
+
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(222.2 84% 4.9%);
+
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(222.2 84% 4.9%);
+
+  /* Vercel blue */
+  --primary: hsl(214 100% 48%);
+  --primary-foreground: hsl(210 40% 98%);
+
+  --secondary: hsl(210 40% 96.1%);
+  --secondary-foreground: hsl(222.2 47.4% 11.2%);
+
+  --muted: hsl(210 40% 96.1%);
+  --muted-foreground: hsl(215.4 16.3% 46.9%);
+
+  --accent: hsl(210 40% 96.1%);
+  --accent-foreground: hsl(222.2 47.4% 11.2%);
+
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(210 40% 98%);
+
+  --success: hsl(142 76% 36%);
+  --success-foreground: hsl(210 40% 98%);
+
+  --warning: hsl(38 92% 50%);
+  --warning-foreground: hsl(210 40% 98%);
+
+  --border: hsl(214.3 31.8% 91.4%);
+  --input: hsl(214.3 31.8% 91.4%);
+  --ring: hsl(214 100% 48%);
+
+  /* Neutral grays for layering */
+  --gray-50: hsl(210 40% 98%);
+  --gray-100: hsl(220 14% 96%);
+  --gray-200: hsl(220 13% 91%);
+  --gray-300: hsl(216 12% 84%);
+  --gray-400: hsl(218 11% 65%);
+  --gray-500: hsl(220 9% 46%);
+  --gray-600: hsl(215 14% 34%);
+  --gray-700: hsl(217 19% 27%);
+  --gray-800: hsl(215 28% 17%);
+  --gray-900: hsl(221 39% 11%);
+  --gray-950: hsl(224 71% 4%);
+
+  /* Border radius values */
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Sidebar */
+  --sidebar: hsl(0 0% 98%);
+  --sidebar-foreground: hsl(240 5.3% 26.1%);
+  --sidebar-primary: hsl(240 5.9% 10%);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: hsl(240 4.8% 95.9%);
+  --sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --sidebar-border: hsl(220 13% 91%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+
+.dark {
+  /* Dark mode - using dark gray instead of pure black */
+  --background: hsl(222.2 84% 4.9%);
+  --foreground: hsl(210 40% 98%);
+
+  --card: hsl(222.2 84% 4.9%);
+  --card-foreground: hsl(210 40% 98%);
+
+  --popover: hsl(222.2 84% 4.9%);
+  --popover-foreground: hsl(210 40% 98%);
+
+  /* Vercel blue */
+  --primary: hsl(214 100% 48%);
+  --primary-foreground: hsl(210 40% 98%);
+
+  --secondary: hsl(217.2 32.6% 17.5%);
+  --secondary-foreground: hsl(210 40% 98%);
+
+  --muted: hsl(217.2 32.6% 17.5%);
+  --muted-foreground: hsl(215 20.2% 65.1%);
+
+  --accent: hsl(217.2 32.6% 17.5%);
+  --accent-foreground: hsl(210 40% 98%);
+
+  --destructive: hsl(0 62.8% 30.6%);
+  --destructive-foreground: hsl(210 40% 98%);
+
+  --success: hsl(142 76% 36%);
+  --success-foreground: hsl(210 40% 98%);
+
+  --warning: hsl(38 92% 50%);
+  --warning-foreground: hsl(210 40% 98%);
+
+  --border: hsl(217.2 32.6% 17.5%);
+  --input: hsl(217.2 32.6% 17.5%);
+  --ring: hsl(214 100% 48%);
+
+  /* Sidebar */
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
   }
-
-  .dark {
-    /* Dark mode - using dark gray instead of pure black */
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    
-    /* Vercel Blue */
-    --primary: 214 100% 60%;
-    --primary-foreground: 0 0% 98%;
-    
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 98%;
-    
-    --warning: 38 92% 50%;
-    --warning-foreground: 240 5.9% 10%;
-    
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    
-    /* Sidebar */
-    --sidebar: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
   }
 }
 
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+*/
 @layer base {
-  /* The default border color has changed to `currentcolor` in Tailwind CSS v4,
-     so we've added these compatibility styles to make sure everything still
-     looks the same as it did with Tailwind CSS v3. */
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--border, currentcolor);
+    border-color: var(--color-gray-200, currentcolor);
   }
   
   * {
     @apply border-border;
   }
   
+  html {
+    font-family: var(--font-inter), system-ui, sans-serif;
+  }
+  
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings: "ss01" on, "ss02" on, "ss03" on, "ss04" on, "ss05" on;
   }
 
   /* Typography improvements */
@@ -165,9 +230,13 @@
   p {
     @apply leading-relaxed;
   }
+  
+  * {
+    @apply border-border outline-ring/50;
+  }
 }
 
-/* Design System Utility Classes */
+/* Design system custom utility classes */
 @utility ds-section-title {
   @apply text-2xl sm:text-3xl font-black uppercase tracking-tight mb-2;
 }
@@ -189,21 +258,22 @@
 }
 
 @utility ds-button-secondary {
-  @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70 font-bold uppercase rounded-xs transition-all duration-200 min-h-11 md:min-h-10;
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 active:bg-secondary/80 font-bold uppercase rounded-xs transition-all duration-200;
 }
 
 @utility ds-button-outline {
-  @apply bg-transparent border-2 border-primary text-primary hover:bg-primary/10 active:bg-primary/20 font-bold uppercase rounded-xs transition-all duration-200 min-h-11 md:min-h-10;
+  @apply bg-transparent border-2 border-primary text-primary hover:bg-primary/10 active:bg-primary/20 font-bold uppercase rounded-xs transition-all duration-200;
 }
 
 @utility ds-focus-ring {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  @apply focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
 }
 
 @utility ds-touch-target {
   @apply min-h-11 min-w-11;
 }
 
+/* Mobile safe area utilities */
 @utility pb-safe {
   @apply pb-[env(safe-area-inset-bottom)];
 }
@@ -212,9 +282,9 @@
   @apply pt-[env(safe-area-inset-top)];
 }
 
-/* Container with responsive padding */
 @utility container {
-  @apply mx-auto px-4 sm:px-6 lg:px-8;
+  /* Container with responsive padding */
+  @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-(--breakpoint-xl);
 }
 
 /* Maintain existing gradient for backward compatibility */
