@@ -23,7 +23,7 @@ export const PublicChatPage: FC = () => {
 
   useEffect(() => {
     // Initialize chat session
-    publicChatStore.initChatSession();
+    publicChatStore.initChatSession("Guest");
   }, []);
 
   useChatScrollAnchor({ ref: current });
