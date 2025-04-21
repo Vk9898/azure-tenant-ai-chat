@@ -100,7 +100,7 @@ export const authConfig: NextAuthConfig = {
         if (user.email) {
           // Use the sync hash function for stability across environments if needed,
           // or prefer the async one if edge compatibility is crucial and can wait.
-          // hashValueSync is generally safer here to avoid async issues during JWT creation.
+          // hashValueSync is generally safer here to avoid async issues during JWT creationa.
           token.hashedUserId = hashValueSync(user.email.toLowerCase());
         } else {
            // Handle cases where email might be missing (e.g., some OAuth providers might not return it)

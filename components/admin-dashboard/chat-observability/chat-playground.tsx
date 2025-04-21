@@ -33,7 +33,7 @@ import { Slider } from "@/components/ui/slider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { FieldValues } from "react-hook-form";
-import * as z from "zod";
+import { z } from "zod";
 import { 
   BarChart3, 
   Clock, 
@@ -58,7 +58,15 @@ const formSchema = z.object({
   systemPrompt: z.string().optional(),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+// Define the form values type manually instead of using z.infer
+type FormValues = {
+  prompt: string;
+  model: string;
+  temperature: number;
+  maxTokens: number;
+  expectedResponse?: string;
+  systemPrompt?: string;
+};
 
 type PromptResult = {
   response: string;
