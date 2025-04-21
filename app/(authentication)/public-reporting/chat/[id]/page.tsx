@@ -18,6 +18,8 @@ export default async function Home(props: HomeParams) {
   }
 
   return (
-    <ReportingChatPage chatDocuments={[]} messages={chatResponse.response} />
+    <div data-slot="reporting-chat-page">
+      <ReportingChatPage chatDocuments={[]} messages={chatResponse.response} />
+    </div>
   );
 }

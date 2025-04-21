@@ -20,12 +20,12 @@ export default async function Home() {
   // This is a protected route in the (authentication) folder, so the layout should handle auth
   // But we'll add an extra check here for safety
   const session = await auth();
-  
+
   if (!session?.user) {
     redirect('/api/auth/signin');
     return null;
   }
-  
+
   try {
     const [personaResponse, extensionResponse] = await Promise.all([
       FindAllPersonaForCurrentUser(),
@@ -39,10 +39,10 @@ export default async function Home() {
     if (extensionResponse.status !== "OK") {
       return <DisplayError errors={extensionResponse.errors} />;
     }
-    
+
     const personas = personaResponse.response;
     const extensions = extensionResponse.response;
-    
+
     return (
       <div className="flex flex-col min-h-screen" data-slot="chat-home-page">
         <ScrollArea className="flex-1">
@@ -57,7 +57,7 @@ export default async function Home() {
                       height={64}
                       quality={100}
                       alt="AI Icon"
-                      className="rounded-xs"
+                      className="rounded-xs" // Use design system border radius
                     />
                     <span>{AI_NAME}</span>
                   </div>
@@ -65,9 +65,9 @@ export default async function Home() {
               }
               description={AI_DESCRIPTION}
             />
-            
+
             <div className="container max-w-6xl px-4 sm:px-6 py-6 sm:py-8 space-y-10 sm:space-y-12">
-              <section>
+              <section data-slot="extensions-section">
                 <div className="mb-6 sm:mb-8">
                   <h2 className="ds-section-title">Extensions</h2>
                   <div className="ds-accent-bar"></div>
@@ -76,7 +76,7 @@ export default async function Home() {
                 {extensions && extensions.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {extensions.map((extension) => (
-                      <ExtensionCard
+                      <ExtensionCard // Assumes ExtensionCard internally uses ds-card styles (border-2, rounded-xs, shadow-xs)
                         extension={extension}
                         key={extension.id}
                         showContextMenu={false}
@@ -90,22 +90,25 @@ export default async function Home() {
                     </div>
                     <h3 className="text-lg font-bold mb-2">No Extensions Found</h3>
                     <p className="text-muted-foreground mb-6">Add extensions to enhance your AI chat experience</p>
+                    {/* Use Button component with default (primary) variant */}
                     <Button 
-                      className="ds-button-primary"
+                      variant="default"
                       onClick={() => {
+                        // Consider refactoring this to avoid direct DOM manipulation if possible
                         const addExtensionElement = document.querySelector('[data-extension-add]');
                         if (addExtensionElement) {
                           (addExtensionElement as HTMLButtonElement).click();
                         }
                       }}
+                      className="ds-touch-target" // Ensure touch target size
                     >
                       Create Extension
                     </Button>
                   </div>
                 )}
               </section>
-              
-              <section>
+
+              <section data-slot="personas-section">
                 <div className="mb-6 sm:mb-8">
                   <h2 className="ds-section-title">Personas</h2>
                   <div className="ds-accent-bar"></div>
@@ -114,7 +117,7 @@ export default async function Home() {
                 {personas && personas.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {personas.map((persona) => (
-                      <PersonaCard
+                      <PersonaCard // Assumes PersonaCard internally uses ds-card styles (border-2, rounded-xs, shadow-xs)
                         persona={persona}
                         key={persona.id}
                         showContextMenu={false}
@@ -128,11 +131,13 @@ export default async function Home() {
                     </div>
                     <h3 className="text-lg font-bold mb-2">No Personas Found</h3>
                     <p className="text-muted-foreground mb-6">Create personas to customize your chat experience</p>
+                    {/* Example: Add Persona button - Add functionality if needed */}
+                    {/* <Button variant="default" className="ds-touch-target">Create Persona</Button> */}
                   </div>
                 )}
               </section>
             </div>
-            
+
             {/* Hidden AddExtension for triggering */}
             <div className="hidden">
               <AddExtension />

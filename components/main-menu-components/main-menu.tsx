@@ -24,8 +24,8 @@ export const MainMenu = async () => {
   const isAdmin = user.isAdmin;
 
   return (
-    <Menu>
-      <MenuBar className="border-r-2 border-border bg-sidebar">
+    <Menu data-slot="main-menu">
+      <MenuBar className="border-r-2 border-sidebar-border bg-sidebar">
         <MenuItemContainer>
           <MenuItem tooltip="Home" asChild>
             <MenuLink href="/chat" ariaLabel="Go to the Home page" className="ds-touch-target">
@@ -40,19 +40,19 @@ export const MainMenu = async () => {
               <MessageCircle {...menuIconProps} className="text-sidebar-foreground" />
             </MenuLink>
           </MenuItem>
-          
+
           <MenuItem tooltip="Personas">
             <MenuLink href="/personas" ariaLabel="Go to the Personas page" className="ds-touch-target">
               <VenetianMask {...menuIconProps} className="text-sidebar-foreground" />
             </MenuLink>
           </MenuItem>
-          
+
           <MenuItem tooltip="Extensions">
             <MenuLink href="/extensions" ariaLabel="Go to the Extensions page" className="ds-touch-target">
               <PocketKnife {...menuIconProps} className="text-sidebar-foreground" />
             </MenuLink>
           </MenuItem>
-          
+
           {/* Admin-specific menu items */}
           {isAdmin && (
             <>
@@ -61,23 +61,23 @@ export const MainMenu = async () => {
                   <Book {...menuIconProps} className="text-sidebar-foreground" />
                 </MenuLink>
               </MenuItem>
-              
+
               <MenuItem tooltip="Reporting">
-                <MenuLink href="/admin/reporting" ariaLabel="Go to the Admin reporting" className="ds-touch-target">
+                <MenuLink href="/admin/reporting" ariaLabel="Go to the Admin reporting page" className="ds-touch-target">
                   <BarChart3 {...menuIconProps} className="text-sidebar-foreground" />
                 </MenuLink>
               </MenuItem>
             </>
           )}
-          
+
           {/* More options dropdown */}
           <MenuItem tooltip="More Options">
-            <div className="ds-touch-target">
+            <div className="ds-touch-target" data-slot="dropdown-nav-trigger-wrapper">
               <DropdownNavigation isAdmin={isAdmin} />
             </div>
           </MenuItem>
         </MenuItemContainer>
-        
+
         <MenuItemContainer>
           <MenuItem tooltip="Profile">
             <UserProfile />

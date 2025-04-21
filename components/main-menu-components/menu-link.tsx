@@ -14,12 +14,16 @@ interface MenuLinkProps {
 
 export const MenuLink: FC<MenuLinkProps> = (props) => {
   const path = usePathname();
+  // More specific active check: exact match for '/', startsWith otherwise
+  const isActive = props.href === "/" ? path === "/" : path.startsWith(props.href);
+
   return (
     <Link
       className={cn(
-        ButtonLinkVariant,
-        "rounded-xs hover:bg-sidebar-accent focus-visible:bg-sidebar-accent ds-focus-ring",
-        path.startsWith(props.href) && props.href !== "/" ? "text-sidebar-primary" : "",
+        ButtonLinkVariant, // Base button link styles (padding, flex, etc.)
+        "rounded-xs hover:bg-sidebar-accent focus-visible:bg-sidebar-accent ds-focus-ring ds-touch-target", // DS styles: radius, hover/focus, focus ring, touch target
+        "h-12 w-12", // Ensure consistent square size like toggle button
+        isActive ? "text-sidebar-primary bg-sidebar-accent" : "text-sidebar-foreground", // Active/inactive states using sidebar colors
         props.className
       )}
       href={props.href}

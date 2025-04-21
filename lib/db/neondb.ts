@@ -4,38 +4,59 @@ import fs from "fs/promises";
 import { auth } from "@/lib/auth/auth-api"; // Import auth directly
 import type { CustomUser } from "@/lib/auth/auth-helpers"; // Import type if needed
 import { getAllSchemaStatements } from "@/lib/db/schema"; // Import centralized schema
+import { checkAndCreateTables } from "@/lib/db/drizzle/config"; // Import Drizzle table checking
 
 /**
  * Get a Neon database instance using the appropriate connection string.
  * Prioritizes explicitly provided connection string, then user-specific string from session,
  * then falls back to environment variable.
+ * 
+ * Also performs automatic table validation and creation if tables are missing.
  */
 export const NeonDBInstance = async (connectionString?: string) => {
   try {
+    let finalConnectionString: string | undefined;
+    let logPrefix = '';
+
     // Prioritize explicitly provided connection string
     if (connectionString) {
-      return neon(connectionString);
+      finalConnectionString = connectionString;
+      logPrefix = 'Explicitly provided';
+    } else {
+      // Get session directly using auth()
+      const session = await auth();
+      const user = session?.user as CustomUser | undefined;
+      const userConnectionString = user?.databaseConnectionString;
+
+      // Check if there's a user-specific connection string in the session
+      if (userConnectionString) {
+        console.log(`Using user-specific database for user ${user.email || user.id}`);
+        finalConnectionString = userConnectionString;
+        logPrefix = `User ${user.email || user.id}'s`;
+      } else {
+        // Fall back to the environment-provided connection string
+        finalConnectionString = process.env.DATABASE_URL;
+        if (!finalConnectionString) {
+          throw new Error("No database connection string available - neither user-specific nor default.");
+        }
+        console.log("Using default database connection");
+        logPrefix = 'Default';
+      }
     }
 
-    // Get session directly using auth()
-    const session = await auth();
-    const user = session?.user as CustomUser | undefined;
-    const userConnectionString = user?.databaseConnectionString;
-
-    // Check if there's a user-specific connection string in the session
-    if (userConnectionString) {
-      console.log(`Using user-specific database for user ${user.email || user.id}`);
-      return neon(userConnectionString);
+    // Verify tables exist before returning the connection
+    console.log(`${logPrefix} database: Checking for required tables...`);
+    const checkResult = await checkAndCreateTables(finalConnectionString);
+    
+    if (!checkResult.success && checkResult.missingTables.includes('chat_threads')) {
+      console.error(`CRITICAL: Failed to create chat_threads table. Error: ${checkResult.message}`);
+      console.log(`Attempting emergency schema initialization...`);
+      await initializeDatabaseSchema(finalConnectionString);
+    } else if (checkResult.missingTables.length > 0) {
+      console.warn(`Some tables couldn't be auto-created: ${checkResult.missingTables.join(', ')}`);
     }
-
-    // Fall back to the environment-provided connection string
-    const defaultConnectionString = process.env.DATABASE_URL;
-    if (!defaultConnectionString) {
-      throw new Error("No database connection string available - neither user-specific nor default.");
-    }
-
-    console.log("Using default database connection");
-    return neon(defaultConnectionString);
+    
+    return neon(finalConnectionString);
   } catch (error) {
     console.error("Error initializing NeonDBInstance:", error);
     // Handle fallback to default connection
@@ -45,6 +66,17 @@ export const NeonDBInstance = async (connectionString?: string) => {
       throw new Error("Database initialization failed and no default connection string available.");
     }
     console.warn("NeonDBInstance falling back to default DATABASE_URL due to error:", error);
+    
+    // Even for fallback, try to ensure tables exist
+    try {
+      const checkResult = await checkAndCreateTables(defaultConnectionString);
+      if (!checkResult.success) {
+        console.warn(`Tables check on fallback database failed: ${checkResult.message}`);
+      }
+    } catch (err) {
+      console.error("Failed to check tables on fallback database:", err);
+    }
+    
     return neon(defaultConnectionString);
   }
 };

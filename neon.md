@@ -22,7 +22,13 @@ The database code has been centralized in the `lib/db/` directory:
    - `logSchemaCorrection()`: Tracks schema changes and errors
    - `getSchemaCorrections()`: Retrieves logs of schema changes
 
-3. **lib/db/init-db.ts**: Standalone utility for manual database initialization
+3. **lib/db/drizzle/**: Contains Drizzle ORM schema definitions and migration tools:
+   - `schema.ts`: TypeScript schema definitions for Drizzle ORM
+   - `config.ts`: Configuration and table validation with auto-creation
+   - `migrate.ts`: Migration runner utility
+   - `check-tables.ts`: Table checker and creator utility
+
+4. **lib/db/init-db.ts**: Standalone utility for manual database initialization
 
 ## Authentication Flow and Database Connection
 
@@ -36,15 +42,38 @@ The database code has been centralized in the `lib/db/` directory:
    - First tries to use an explicitly provided connection string
    - Then tries to get the user's connection string from the session
    - Falls back to the environment's `DATABASE_URL` if neither is available
+   - **Automatically checks and creates missing tables** before returning the connection
 
-## Schema Initialization Process
+## Schema Initialization and Migration Process
 
-When a new Neon project is created, `initializeDatabaseSchema` is called to create tables and indexes based on the centralized schema definition:
+The application now uses a two-tiered approach to schema management:
 
-1. Creates a `schema_corrections` table for tracking schema changes
-2. Creates all application tables defined in `lib/db/schema.ts`
-3. Creates indexes for performance optimization
-4. Enables PostgreSQL vector extension for similarity search
+1. **Initial Schema Creation**:
+   - When a new Neon project is created, `initializeDatabaseSchema` is called to create tables and indexes
+   - This uses the centralized schema definition from `lib/db/schema.ts`
+
+2. **Runtime Table Validation**:
+   - Every time `NeonDBInstance` is called, it now checks if required tables exist
+   - If tables are missing, they're automatically created using the schema definition
+   - This prevents "relation does not exist" errors during normal operation
+
+3. **Drizzle Migrations** (for schema evolution):
+   - Full schema migrations can be run using `npm run db:migrate`
+   - Migrations are generated with `npm run db:gen`
+   - Tables can be checked and fixed manually using `npm run db:check`
+
+This multi-layered approach ensures tables are always available when needed, preventing the "relation 'chat_threads' does not exist" error even if schema initialization fails during user setup.
+
+## Error Recovery Process
+
+If a query attempts to access a table that doesn't exist:
+
+1. The error is caught by the NeonDBInstance wrapper
+2. Missing tables are automatically created using the schema definition
+3. The operation can then be retried with the tables in place
+4. All table creations are logged to the `schema_corrections` table
+
+This automatic recovery mechanism is especially important for the multi-tenant architecture where each user has their own database that might need initialization.
 
 ## Identified Issues
 
@@ -109,24 +138,41 @@ Manually initialize or reset a database schema:
 npm run db:init
 ```
 
+### 4. New Table Checker and Creator
+
+Checks for missing tables and creates them automatically:
+
+```bash
+npm run db:check
+```
+
+### 5. Drizzle Migration Runner
+
+Run Drizzle migrations on the database:
+
+```bash
+npm run db:migrate
+```
+
 See `tools/README.md` for more detailed usage instructions.
 
 ## Recommendations
 
-### 1. Schema Management Improvements (Partially Implemented)
+### 1. Schema Management Improvements (Implemented)
 
 1. ✅ **Centralize Schema Definitions**: Schema definitions are now centralized in `lib/db/schema.ts`.
-2. ⏳ **Implement Schema Versioning**: Add explicit schema version tracking for future migrations.
-3. ⏳ **Add Database Migrations**: Consider using a proper migration system for production databases.
-4. ⏳ **Add Schema Validation**: Add checks to verify the actual database schema matches the expected definition.
+2. ✅ **Implement Schema Versioning**: Added Drizzle ORM for schema versioning and migrations.
+3. ✅ **Add Database Migrations**: Implemented Drizzle migrations for schema changes.
+4. ✅ **Add Schema Validation**: Added automatic table validation and creation in `NeonDBInstance`.
+5. ✅ **Add Runtime Recovery**: Tables are now automatically created if they're missing during a query.
 
 ### 2. Connection and Authentication Enhancements
 
 1. ✅ **Add explicit logging**: Added additional logging of which database is being used.
 2. ⏳ **Store database connection information** in a more secure way than JWT tokens.
 3. ⏳ **Implement connection pooling** for better performance and reliability.
-4. ⏳ **Add database health checks** to verify connectivity periodically.
-5. ✅ **Improve error recovery**: Added better error handling and fallback mechanisms.
+4. ✅ **Add database health checks**: Added table validation on each connection.
+5. ✅ **Improve error recovery**: Added automatic table creation and better error handling.
 
 ### 3. Architecture Improvements
 
@@ -138,8 +184,8 @@ See `tools/README.md` for more detailed usage instructions.
 
 ### 4. Next Steps
 
-1. Ensure all component imports are updated to reference the new database location
-2. Run the diagnostic tools to verify schema consistency
-3. Test authentication flow to ensure database provisioning works properly
-4. Consider implementing database migrations for future schema changes
-5. Add more comprehensive error handling for database operations 
+1. Generate proper Drizzle migrations using `npm run db:gen`
+2. Test the automatic table creation on different environment setups
+3. Consider adding more sophisticated schema versioning with comparison between expected and actual schemas
+4. Add more comprehensive error handling for database operations
+5. Add automatic recovery for other database-related errors beyond missing tables 

@@ -10,6 +10,9 @@
     "db:init": "ts-node lib/db/init-db.ts",
     "db:validate": "ts-node tools/db-validator.ts",
     "db:check-user": "ts-node tools/user-db-check.ts",
+    "db:gen": "drizzle-kit generate:pg",
+    "db:migrate": "ts-node lib/db/drizzle/migrate.ts",
+    "db:check": "ts-node lib/db/drizzle/check-tables.ts",
     "format": "prettier \"**/*.{css,js,json,jsx,ts,tsx}\""
   },
   "dependencies": {
@@ -44,6 +47,8 @@
     "@uiw/react-codemirror": "^4.21.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.0.0",
+    "drizzle-kit": "^0.31.0",
+    "drizzle-orm": "^0.42.0",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",
@@ -55,6 +60,7 @@
     "next-auth": "^5.0.0-beta.26",
     "next-themes": "^0.4.6",
     "openai": "^4.26.0",
+    "pg": "^8.14.1",
     "prettier-plugin-classnames": "^0.7.6",
     "prettier-plugin-merge": "^0.7.2",
     "react": "19.1.0",
