@@ -198,7 +198,7 @@
   }
   
   * {
-    @apply border-border;
+    border-color: var(--color-border);
   }
   
   html {
@@ -206,85 +206,132 @@
   }
   
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
     font-feature-settings: "ss01" on, "ss02" on, "ss03" on, "ss04" on, "ss05" on;
   }
 
   /* Typography improvements */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight;
+     font-weight: bold;
+     font-family: var(--font-title);
   }
 
   h1 {
-    @apply text-4xl font-black uppercase;
+     font-size: 2.5rem;
+     font-family: var(--font-title);
   }
 
   h2 {
-    @apply text-2xl font-bold;
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: var(--font-title);
   }
 
   h3 {
-    @apply text-xl font-bold;
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: var(--font-title);
   }
 
   p {
-    @apply leading-relaxed;
+    font-size: 1rem;
+    font-weight: normal;
+    font-family: var(--font-inter);
   }
   
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--color-border);
+    outline-color: var(--color-ring);
   }
 }
 
 /* Design system custom utility classes */
-@utility ds-section-title {
-  @apply text-2xl sm:text-3xl font-black uppercase tracking-tight mb-2;
+.ds-section-title {
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: var(--font-title);
+  margin-bottom: 0.5rem;
 }
 
-@utility ds-section-subtitle {
-  @apply text-xl font-bold mb-4;
+.ds-section-subtitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: var(--font-title);
+  margin-bottom: 1rem;
 }
 
-@utility ds-accent-bar {
-  @apply h-1 w-16 bg-primary mb-4;
+.ds-accent-bar {
+  height: 1rem;
+  width: 16rem;
+  background-color: var(--color-primary);
+  margin-bottom: 1rem;
 }
 
-@utility ds-card {
-  @apply bg-card border-2 border-border text-card-foreground rounded-xs transition-all duration-200;
+.ds-card {
+  background-color: var(--color-card);
+  border: 2px solid var(--color-border);
+  color: var(--color-card-foreground);
+  border-radius: var(--radius-xs);
+  transition: all 0.2s ease;
 }
 
-@utility ds-button-primary {
-  @apply bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 font-bold uppercase rounded-xs transition-all duration-200 min-h-11 md:min-h-10;
+.ds-button-primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+  hover:bg-primary/90;
+  active:bg-primary/80;
+  font-weight: bold;
+  uppercase;
+  rounded-xs transition-all duration-200 min-h-11 md:min-h-10;
 }
 
-@utility ds-button-secondary {
-  @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 active:bg-secondary/80 font-bold uppercase rounded-xs transition-all duration-200;
+.ds-button-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+  hover:bg-secondary/90;
+  active:bg-secondary/80;
+  font-weight: bold;
+  uppercase;
+  rounded-xs transition-all duration-200;
 }
 
-@utility ds-button-outline {
-  @apply bg-transparent border-2 border-primary text-primary hover:bg-primary/10 active:bg-primary/20 font-bold uppercase rounded-xs transition-all duration-200;
+.ds-button-outline {
+  background-color: transparent;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  hover:bg-primary/10;
+  active:bg-primary/20;
+  font-weight: bold;
+  uppercase;
+  rounded-xs transition-all duration-200;
 }
 
-@utility ds-focus-ring {
-  @apply focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+.ds-focus-ring {
+  focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
 }
 
-@utility ds-touch-target {
-  @apply min-h-11 min-w-11;
+.ds-touch-target {
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 /* Mobile safe area utilities */
-@utility pb-safe {
-  @apply pb-[env(safe-area-inset-bottom)];
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-@utility pt-safe {
-  @apply pt-[env(safe-area-inset-top)];
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
 }
 
-@utility container {
+.container {
   /* Container with responsive padding */
-  @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-(--breakpoint-xl);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  max-width: var(--breakpoint-xl);
 }
 
 /* Maintain existing gradient for backward compatibility */
