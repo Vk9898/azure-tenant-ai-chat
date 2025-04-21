@@ -2,10 +2,17 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import { buttonVariants } from '@/features/ui/button';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/features/auth-page/auth-options';
+import { options as authOptions } from '@/features/auth-page/auth-api';
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
+  // Safely handle the case where session might be undefined during development
+  let session;
+  try {
+    session = await getServerSession(authOptions);
+  } catch (error) {
+    console.error("Error getting session:", error);
+    session = null;
+  }
 
   return (
     <main className="flex min-h-screen flex-col">
