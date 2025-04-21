@@ -35,6 +35,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { RefreshCw, SendIcon, SparklesIcon } from "lucide-react";
+import { generatePlaygroundResponse } from "./playground-service";
 
 // Define the schema for the playground form
 const formSchema = z.object({
@@ -72,43 +73,28 @@ export function ChatPlayground() {
     },
   });
 
-  // Simulate sending a prompt to the model and getting a response
+  // Update the onSubmit function to use the actual API
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     
     try {
-      // In a real implementation, this would call the actual AI model API
       const startTime = Date.now();
       
-      // Simulated API call with a timeout to mimic response time
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const endTime = Date.now();
-      const timeTaken = (endTime - startTime) / 1000;
-      
-      // Simulate a response
-      const simulatedResponse = `This is a simulated response to the prompt: "${values.prompt}".
-      
-In a real implementation, this would be the actual response from the model.
-
-The system prompt was: "${values.systemPrompt}"
-Model: ${values.model}
-Temperature: ${values.temperature}
-Max Tokens: ${values.maxTokens}`;
-      
-      // Calculate simulated token usage
-      const promptTokens = Math.floor(values.prompt.length / 4) + Math.floor((values.systemPrompt?.length || 0) / 4);
-      const completionTokens = Math.floor(simulatedResponse.length / 4);
-      
-      setResult({
-        response: simulatedResponse,
-        tokens: {
-          prompt: promptTokens,
-          completion: completionTokens,
-          total: promptTokens + completionTokens,
-        },
-        timeTaken,
+      const playgroundResponse = await generatePlaygroundResponse({
+        prompt: values.prompt,
+        model: values.model,
+        temperature: values.temperature,
+        maxTokens: values.maxTokens,
+        systemPrompt: values.systemPrompt || "",
       });
+      
+      if (playgroundResponse.status === "OK") {
+        setResult(playgroundResponse.response);
+      } else {
+        // Handle error
+        console.error("Error from API:", playgroundResponse.errors);
+        throw new Error(playgroundResponse.errors[0]?.message || "Unknown error");
+      }
     } catch (error) {
       console.error("Error generating response:", error);
     } finally {
