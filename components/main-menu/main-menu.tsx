@@ -5,7 +5,7 @@ import {
   MenuItem,
   MenuItemContainer,
   menuIconProps,
-} from "@/ui/menu";
+} from "@/components/ui/menu";
 import {
   Book,
   Home,

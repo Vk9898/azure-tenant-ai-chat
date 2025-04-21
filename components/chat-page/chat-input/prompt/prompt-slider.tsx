@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingIndicator } from "@/components/ui/loading";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -11,7 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/ui/sheet";
+} from "@/components/ui/sheet";
 import { Book } from "lucide-react";
 import { FC } from "react";
 import { inputPromptStore, useInputPromptState } from "./input-prompt-store";

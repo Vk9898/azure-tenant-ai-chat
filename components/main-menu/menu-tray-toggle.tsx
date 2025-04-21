@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { MenuItem } from "@/ui/menu";
+import { MenuItem } from "@/components/ui/menu";
 import { useMenuSidebar } from "./menu-store";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 

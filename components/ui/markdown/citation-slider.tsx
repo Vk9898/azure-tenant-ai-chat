@@ -1,11 +1,11 @@
-import { Button } from "@/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/ui/sheet";
+} from "@/components/ui/sheet";
 import { FC, useActionState } from "react";
 import { ScrollArea } from "../scroll-area";
 import { useMarkdownContext } from "./markdown-context";
