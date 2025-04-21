@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UsersTable } from "@/features/admin-dashboard/users-table";
-import { GetAllUsers, User } from "@/features/admin-dashboard/admin-services/admin-service";
+import { UsersTable, User as UsersTableUser } from "@/features/admin-dashboard/users-table";
+import { GetAllUsers, User as AdminServiceUser } from "@/features/admin-dashboard/admin-services/admin-service";
 import { redirect } from "next/navigation";
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UsersTableUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +15,15 @@ export default function UsersPage() {
       try {
         setLoading(true);
         const fetchedUsers = await GetAllUsers();
-        setUsers(fetchedUsers);
+        // Map the users from admin-service format to users-table format
+        const mappedUsers: UsersTableUser[] = fetchedUsers.map(user => ({
+          userId: user.id,
+          userName: user.name || 'Unknown',
+          chatCount: user.chatCount,
+          messageCount: user.messageCount,
+          lastActive: user.lastActive ? new Date(user.lastActive) : new Date()
+        }));
+        setUsers(mappedUsers);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch users:", err);

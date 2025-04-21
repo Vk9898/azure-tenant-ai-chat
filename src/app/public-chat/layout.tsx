@@ -1,6 +1,7 @@
 import { AI_NAME } from "@/features/theme/theme-config";
 import { ArrowRight, Info, Layout } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata = {
   title: `Public Chat - ${AI_NAME}`,
@@ -16,7 +17,7 @@ export default function PublicChatLayout({
     <div className="flex flex-col min-h-screen">
       <header className="bg-primary text-primary-foreground py-3 px-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <img src="/ai-icon.png" alt="AI Icon" className="w-8 h-8" />
+          <Image src="/ai-icon.png" alt="AI Icon" width={32} height={32} className="w-8 h-8" />
           <h1 className="text-lg font-semibold">{AI_NAME} Public Chat</h1>
         </div>
         <div className="flex items-center gap-3">
