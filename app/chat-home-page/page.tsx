@@ -7,16 +7,20 @@ import { AI_DESCRIPTION, AI_NAME } from "@/components/theme/theme-config";
 import { Hero } from "@/components/ui/hero";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Image from "next/image";
-import { FC } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
+import { FindAllPersonaForCurrentUser } from "@/components/persona-page/persona-services/persona-service";
+import { FindAllExtensionsForCurrentUser } from "@/components/extensions-page/extension-services/extension-service";
 
-interface ChatPersonaProps {
-  personas: PersonaModel[];
-  extensions: ExtensionModel[];
-}
-
-export const ChatHome: FC<ChatPersonaProps> = (props) => {
+// Convert to a proper Next.js page with default export
+export default async function Page() {
+  // Fetch data for the page
+  const personasResponse = await FindAllPersonaForCurrentUser();
+  const extensionsResponse = await FindAllExtensionsForCurrentUser();
+  
+  const personas = personasResponse.status === "OK" ? personasResponse.response : [];
+  const extensions = extensionsResponse.status === "OK" ? extensionsResponse.response : [];
+  
   return (
     <ScrollArea className="flex-1">
       <main className="flex flex-1 flex-col">
@@ -46,9 +50,9 @@ export const ChatHome: FC<ChatPersonaProps> = (props) => {
               <div className="ds-accent-bar"></div>
             </div>
 
-            {props.extensions && props.extensions.length > 0 ? (
+            {extensions && extensions.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {props.extensions.map((extension) => (
+                {extensions.map((extension) => (
                   <ExtensionCard
                     extension={extension}
                     key={extension.id}
@@ -84,9 +88,9 @@ export const ChatHome: FC<ChatPersonaProps> = (props) => {
               <div className="ds-accent-bar"></div>
             </div>
 
-            {props.personas && props.personas.length > 0 ? (
+            {personas && personas.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {props.personas.map((persona) => (
+                {personas.map((persona) => (
                   <PersonaCard
                     persona={persona}
                     key={persona.id}
@@ -113,4 +117,4 @@ export const ChatHome: FC<ChatPersonaProps> = (props) => {
       </main>
     </ScrollArea>
   );
-};
+}
