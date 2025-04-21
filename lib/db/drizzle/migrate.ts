@@ -6,7 +6,7 @@
  * It can be used to apply migrations to the default database or a specific one.
  */
 
-import { neon } from '@neondatabase/serverless';
+import { neon, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { migrate } from 'drizzle-orm/neon-http/migrator';
 import * as dotenv from 'dotenv';
@@ -15,6 +15,9 @@ import { fileURLToPath } from 'url';
 
 // Load environment variables
 dotenv.config();
+
+// Configure Neon for Drizzle compatibility
+neonConfig.fetchConnectionCache = true;
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -36,7 +39,7 @@ async function runMigrations(connectionString?: string) {
     
     // Create Drizzle client with neon-http
     const client = neon(dbUrl);
-    const db = drizzle(client);
+    const db = drizzle(client as any);
     
     // Run migrations from the migrations folder
     const migrationsFolder = join(__dirname, 'migrations');

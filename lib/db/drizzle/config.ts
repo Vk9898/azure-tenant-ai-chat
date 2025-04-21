@@ -1,6 +1,9 @@
 import { drizzle } from 'drizzle-orm/neon-http';
-import { neon } from '@neondatabase/serverless';
+import { neon, neonConfig } from '@neondatabase/serverless';
 import * as schema from './schema';
+
+// Configure Neon for Drizzle compatibility
+neonConfig.fetchConnectionCache = true;
 
 /**
  * Create a Drizzle instance for the given connection string
@@ -9,7 +12,7 @@ import * as schema from './schema';
  */
 export function createDrizzleClient(connectionString: string) {
   const client = neon(connectionString);
-  return drizzle(client, { schema });
+  return drizzle(client as any, { schema });
 }
 
 /**
@@ -24,7 +27,7 @@ export async function checkAndCreateTables(connectionString: string): Promise<{
 }> {
   try {
     const client = neon(connectionString);
-    const db = drizzle(client, { schema });
+    const db = drizzle(client as any, { schema });
     
     // Check which tables exist
     const tablesQuery = `
