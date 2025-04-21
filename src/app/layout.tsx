@@ -1,7 +1,7 @@
 import { AI_NAME } from "@/features/theme/theme-config";
 import { ThemeProvider } from "@/features/theme/theme-provider";
-import { Toaster } from "@/features/ui/toaster";
-import { cn } from "@/ui/lib";
+import { Toaster } from "@/features/ui/sonner";
+import { cn } from "@/lib/utils";
 import { cal, inter, jetbrainsMono } from "@/styles/fonts";
 import "./globals.css";
 
@@ -21,7 +21,6 @@ export default function RootLayout({
     <html lang="en" className={cn("h-full w-full overflow-hidden", inter.variable, cal.variable, jetbrainsMono.variable)} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <link rel="preload" href="/fonts/CalSans-SemiBold.otf" as="font" type="font/otf" crossOrigin="anonymous" />
       </head>
       <body
         className={cn(

@@ -56,7 +56,7 @@ export const ChatAPIEntry = async (props: UserPrompt, signal: AbortSignal) => {
 
   // save the user message
   await CreateChatMessage({
-    name: user.name,
+    name: user.name || "",
     content: props.message,
     role: "user",
     chatThreadId: currentChatThread.id,

@@ -33,6 +33,11 @@ const buttonVariants = cva(
   }
 )
 
+// Add the missing button style variants
+const ButtonLinkVariant = "inline-flex items-center gap-2 hover:underline text-primary [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+const dsButtonPrimary = "bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2"
+const dsButtonOutline = "border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2"
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
@@ -53,4 +58,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 )
 Button.displayName = "Button"
 
-export { Button, buttonVariants }
+export { Button, buttonVariants, ButtonLinkVariant, dsButtonPrimary, dsButtonOutline }

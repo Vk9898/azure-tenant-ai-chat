@@ -38,13 +38,12 @@ export const AdminLogin: React.FC<AdminLoginProps> = (props) => {
       
       // Since we're using GitHub or other OAuth providers, we'll redirect to their login
       // In a real app, this could be a custom authentication mechanism
-      const result = await signIn("github", { 
+      await signIn("github", { 
         callbackUrl: "/reporting"
       });
       
-      if (!result?.ok) {
-        throw new Error("Login failed");
-      }
+      // Note: signIn will automatically redirect on success, so we won't reach here
+      // if authentication is successful
     } catch (err) {
       setError("Authentication failed. Please check your credentials.");
       setLoading(false);
