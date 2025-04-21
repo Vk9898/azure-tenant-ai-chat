@@ -1,11 +1,18 @@
-/** @type {import('prettier').Config} */
+/** @type {import("prettier").Config} */
+const functions = ["cn", "clsx"];
 const config = {
-  bracketSpacing: true,
+  tailwindFunctions: functions,
+  customFunctions: functions,
+  endingPosition: "absolute-with-indent",
+  plugins: [
+    // https://www.nikolailehbr.ink/blog/tailwind-css-tips#Automatic-wrapping-of-long-class-names
+    "prettier-plugin-tailwindcss",
+    "prettier-plugin-classnames",
+    "prettier-plugin-merge",
+  ],
   semi: true,
-  trailingComma: "all",
-  printWidth: 80,
   tabWidth: 2,
-  plugins: ["prettier-plugin-tailwindcss"],
+  singleQuote: false,
 };
 
 export default config;
