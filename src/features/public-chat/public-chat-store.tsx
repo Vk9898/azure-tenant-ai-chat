@@ -15,11 +15,18 @@
  * See src/app/(authenticated)/layout.tsx for the authenticated layout with sidebar.
  */
 "use client";
-import { uniqueId } from "@/features/common/util";
-import { showError } from "@/features/globals/global-message-store";
-import { AI_NAME } from "@/features/theme/theme-config";
+import { v4 as uuidv4 } from 'uuid';
 import { proxy, useSnapshot } from "valtio";
 import { FormEvent } from "react";
+
+// Define constants that were previously imported
+const AI_NAME = "Azure Tenant AI";
+
+// Simple error display function instead of imported showError
+const showError = (message: string) => {
+  console.error(message);
+  // Optionally show an error toast/alert in the UI
+};
 
 // Define the public chat message model - note this data is ONLY stored client-side
 // and NOT saved to a database unlike the authenticated chat which uses NeonDB
@@ -36,7 +43,22 @@ type chatStatus = "idle" | "loading";
 // LocalStorage key for saving public chat history
 const LOCAL_STORAGE_KEY = "public_chat_history";
 
-class PublicChatState {
+// Define the store interface to solve TypeScript errors
+export interface PublicChatStore {
+  messages: Array<PublicChatMessageModel>;
+  loading: chatStatus;
+  input: string;
+  autoScroll: boolean;
+  userName: string;
+  updateLoading: (value: chatStatus) => void;
+  initChatSession: (userName?: string) => void;
+  clearChatHistory: () => void;
+  updateInput: (value: string) => void;
+  updateAutoScroll: (value: boolean) => void;
+  submitChat: (e: FormEvent<HTMLFormElement>) => Promise<void>;
+}
+
+class PublicChatState implements PublicChatStore {
   public messages: Array<PublicChatMessageModel> = [];
   public loading: chatStatus = "idle";
   public input: string = "";
@@ -60,7 +82,7 @@ class PublicChatState {
       // Start with a welcome message if no history exists
       this.messages = [
         {
-          id: uniqueId(),
+          id: uuidv4(),
           role: "assistant",
           content: "Welcome to the public chat! How can I help you today?",
           name: AI_NAME,
@@ -111,7 +133,7 @@ class PublicChatState {
   public clearChatHistory() {
     this.messages = [
       {
-        id: uniqueId(),
+        id: uuidv4(),
         role: "assistant",
         content: "Chat history cleared. How can I help you today?",
         name: AI_NAME,
@@ -143,7 +165,7 @@ class PublicChatState {
     this.loading = "loading";
 
     const newUserMessage: PublicChatMessageModel = {
-      id: uniqueId(),
+      id: uuidv4(),
       role: "user",
       content: this.input,
       name: this.userName,
@@ -177,9 +199,11 @@ class PublicChatState {
       } else if (input.includes("calculate") || input.includes("math") || input.match(/[0-9+\-*/()]/)) {
         // Simple math operations
         try {
-          if (input.match(/\d+\s*[\+\-\*\/]\s*\d+/)) {
+          // Fix null check for regex match
+          const mathMatch = input.match(/\d+\s*[\+\-\*\/]\s*\d+/);
+          if (mathMatch && mathMatch[0]) {
             // Extract the mathematical expression
-            const expression = input.match(/\d+\s*[\+\-\*\/]\s*\d+/)[0];
+            const expression = mathMatch[0];
             // Use Function constructor to safely evaluate the expression
             const result = new Function(`return ${expression}`)();
             botResponse = `The result of ${expression} is ${result}.`;
@@ -199,7 +223,7 @@ class PublicChatState {
       }
 
       const botMessage: PublicChatMessageModel = {
-        id: uniqueId(),
+        id: uuidv4(),
         role: "assistant",
         content: botResponse,
         name: AI_NAME,

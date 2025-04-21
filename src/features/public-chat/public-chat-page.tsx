@@ -8,7 +8,7 @@ import ChatMessageContentArea from "@/features/ui/chat/chat-message-area/chat-me
 import { PublicChatInput } from "./public-chat-input";
 import { publicChatStore, usePublicChat } from "./public-chat-store";
 import MessageContent from "./message-content";
-import { Button, dsButtonOutline } from "@/features/ui/button";
+import { Button } from "@/features/ui/button";
 import { Trash2, Info } from "lucide-react";
 import { 
   Tooltip,
@@ -22,7 +22,7 @@ export const PublicChatPage: FC = () => {
   const current = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Initialize chat session
+    // Initialize chat session with Guest username
     publicChatStore.initChatSession("Guest");
   }, []);
 
@@ -72,31 +72,35 @@ export const PublicChatPage: FC = () => {
           </p>
         </div>
       </div>
-      <ChatMessageContainer ref={current}>
-        <ChatMessageContentArea>
-          {messages.map((message) => {
-            return (
-              <ChatMessageArea
-                key={message.id}
-                profileName={message.name}
-                role={message.role}
-                onCopy={() => {
-                  navigator.clipboard.writeText(message.content);
-                }}
-                profilePicture={
-                  message.role === "assistant"
-                    ? "/ai-icon.png"
-                    : undefined
-                }
-              >
-                <MessageContent message={message} />
-              </ChatMessageArea>
-            );
-          })}
+      <ChatMessageContainer ref={current} className="flex-1 py-4 sm:py-6 pb-32 sm:pb-24">
+        <ChatMessageContentArea className="container max-w-3xl px-4 sm:px-6 mx-auto space-y-8 sm:space-y-10">
+          {messages.map((message) => (
+            <ChatMessageArea
+              key={message.id}
+              profileName={message.name}
+              role={message.role}
+              onCopy={() => {
+                navigator.clipboard.writeText(message.content);
+              }}
+              profilePicture={
+                message.role === "assistant"
+                  ? "/ai-icon.png"
+                  : undefined
+              }
+              className="rounded-xs"
+              data-slot={`message-${message.role}`}
+            >
+              <MessageContent message={message} />
+            </ChatMessageArea>
+          ))}
           {loading === "loading" && <ChatLoading />}
         </ChatMessageContentArea>
       </ChatMessageContainer>
-      <PublicChatInput />
+      <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t border-border pb-safe" data-slot="chat-input-container">
+        <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-4">
+          <PublicChatInput />
+        </div>
+      </div>
     </main>
   );
 }; 

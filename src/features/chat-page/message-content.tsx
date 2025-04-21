@@ -22,28 +22,29 @@ interface MessageContentProps {
 const MessageContent: React.FC<MessageContentProps> = ({ message }) => {
   if (message.role === "assistant" || message.role === "user") {
     return (
-      <>
+      <div data-slot="message-content-text">
         <Markdown
           content={message.content}
           onCitationClick={CitationAction}
         ></Markdown>
-        {message.multiModalImage && <img src={message.multiModalImage} />}
-      </>
+        {message.multiModalImage && <img src={message.multiModalImage} className="rounded-xs border-2 border-border mt-2" data-slot="multimodal-image" />}
+      </div>
     );
   }
 
   if (message.role === "tool" || message.role === "function") {
     return (
-      <div className="py-3">
+      <div className="py-3" data-slot="tool-message-container">
         <Accordion
           type="multiple"
-          className="bg-background rounded-md border p-2"
+          className="bg-background rounded-xs border-2 border-border p-4 shadow-xs"
+          data-slot="tool-message-accordion"
         >
           <AccordionItem value="item-1" className="">
             <AccordionTrigger className="text-sm py-1 items-center gap-2">
               <div className="flex gap-2 items-center">
                 <FunctionSquare
-                  size={18}
+                  size={20}
                   strokeWidth={1.4}
                   className="text-muted-foreground"
                 />{" "}

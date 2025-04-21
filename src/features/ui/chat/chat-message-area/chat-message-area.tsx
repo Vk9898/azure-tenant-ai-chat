@@ -68,40 +68,44 @@ export const ChatMessageArea = (props: {
   }
 
   return (
-    <div className="flex flex-col">
-      <div className="h-7 flex items-center justify-between">
-        <div className="flex gap-3">
-          {profile}
+    <div className="flex flex-col p-4 sm:p-6" data-slot="chat-message">
+      <div className="h-7 flex items-center justify-between mb-2">
+        <div className="flex gap-3 items-center">
+          <div data-slot="chat-message-avatar">
+            {profile}
+          </div>
           <div
             className={cn(
-              "text-primary capitalize items-center flex",
+              "text-primary capitalize font-bold",
               props.role === "function" || props.role === "tool"
                 ? "text-muted-foreground text-sm"
                 : ""
             )}
+            data-slot="chat-message-profile-name"
           >
             {props.profileName}
           </div>
         </div>
-        <div className=" h-7 flex items-center justify-between">
+        <div className="h-7 flex items-center justify-between">
           <div>
             <Button
-              variant={"ghost"}
-              size={"sm"}
+              variant="ghost"
+              size="icon"
               title="Copy text"
-              className="justify-right flex"
+              className="rounded-xs min-h-10 min-w-10"
               onClick={handleButtonClick}
+              data-slot="chat-message-copy-button"
             >
               {isIconChecked ? (
-                <CheckIcon size={16} />
+                <CheckIcon size={20} />
               ) : (
-                <ClipboardIcon size={16} />
+                <ClipboardIcon size={20} />
               )}
             </Button>
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-2 flex-1 px-10">
+      <div className="flex flex-col gap-2 flex-1 ps-10" data-slot="chat-message-content">
         <div className="prose prose-slate dark:prose-invert whitespace-break-spaces prose-p:leading-relaxed prose-pre:p-0 max-w-none">
           {props.children}
         </div>

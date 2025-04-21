@@ -349,6 +349,75 @@ The following app pages have been updated to adhere to the design system guideli
 - Uses pb-safe utility for mobile safe area
 - Implements data-slot attributes for styling hooks
 
+### Alert Component
+
+The Alert component (`src/features/ui/alert.tsx`) follows the design system guidelines:
+
+✅ Implementation highlights:
+- Uses `rounded-xs` for corners
+- Implements `border-2` for emphasis
+- Uses `shadow-xs` for elevation
+- Responsive padding with `p-4 sm:p-6`
+- Adds semantic variants: success, warning, destructive
+- Uses `font-bold` for alert titles
+- Uses data-slot attributes
+
+### Dialog Component
+
+The Dialog component (`src/features/ui/dialog.tsx`) follows the design system guidelines:
+
+✅ Implementation highlights:
+- Uses `rounded-xs` for dialog content
+- Implements `border-2 border-border` for emphasis
+- Uses `shadow-xs` for elevation
+- Responsive padding with `p-4 sm:p-6`
+- Enhanced close button with proper touch target (`min-h-10 min-w-10`)
+- Uses `font-bold` for dialog title
+- Uses ds-focus-ring for accessibility
+- Uses data-slot attributes
+
+### Chat Components
+
+The chat components follow the design system:
+
+#### ChatInputForm (`src/features/ui/chat/chat-input-area/chat-input-area.tsx`)
+
+✅ Implementation highlights:
+- Uses `rounded-xs` instead of rounded-md
+- Implements `border-2 border-border` for emphasis
+- Uses `shadow-xs` for elevation
+- Updated status component with rounded-xs and border-2
+- Uses pb-safe utility for mobile safe areas
+- Uses data-slot attributes
+
+#### ImageInput (`src/features/ui/chat/chat-input-area/image-input.tsx`)
+
+✅ Implementation highlights:
+- Uses `rounded-xs` for image preview
+- Implements `border-2` for image preview container
+- Better touch targets for buttons
+- Uses larger icon sizes (20px) for better visibility
+- Uses data-slot attributes
+
+#### ChatMessageArea (`src/features/ui/chat/chat-message-area/chat-message-area.tsx`)
+
+✅ Implementation highlights:
+- Responsive padding with `p-4 sm:p-6`
+- Proper spacing between elements
+- Better button styling with rounded-xs and proper touch targets
+- Uses larger icons (20px) for better visibility
+- Uses data-slot attributes
+
+#### MessageContent (`src/features/chat-page/message-content.tsx`)
+
+✅ Implementation highlights:
+- Uses `rounded-xs` for accordion container
+- Implements `border-2 border-border` for emphasis
+- Uses `shadow-xs` for elevation
+- Uses larger icon sizes (20px) for better readability
+- Uses `p-4` for better content spacing
+- Uses data-slot attributes
+
 ## 4. Layout Patterns
 
 The implementation of layout patterns follows design system guidelines:
