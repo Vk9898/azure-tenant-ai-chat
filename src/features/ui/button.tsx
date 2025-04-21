@@ -42,6 +42,10 @@ const ButtonLinkVariant = cn(
 );
 
 // Design system compliant button classes
+const dsButtonPrimary = "ds-button-primary";
+const dsButtonSecondary = "ds-button-secondary";
+const dsButtonOutline = "ds-button-outline";
+
 Button.displayName = "Button";
 
-export { Button, ButtonLinkVariant, buttonVariants };
+export { Button, ButtonLinkVariant, buttonVariants, dsButtonPrimary, dsButtonSecondary, dsButtonOutline };
