@@ -8,6 +8,7 @@ import { Hero } from "@/features/ui/hero";
 import { ScrollArea } from "@/features/ui/scroll-area";
 import Image from "next/image";
 import { FC } from "react";
+import { Button } from "@/features/ui/button";
 
 interface ChatPersonaProps {
   personas: PersonaModel[];
@@ -27,18 +28,21 @@ export const ChatHome: FC<ChatPersonaProps> = (props) => {
                 height={60}
                 quality={100}
                 alt="ai-icon"
+                className="rounded-xs"
               />{" "}
               {AI_NAME}
             </>
           }
           description={AI_DESCRIPTION}
-        ></Hero>
-        <div className="container max-w-4xl flex gap-20 flex-col">
-          <div>
-            <h2 className="text-2xl font-bold mb-3">Extensions</h2>
+        />
+        
+        <div className="container max-w-4xl flex flex-col gap-8 md:gap-10">
+          <section>
+            <h2 className="ds-section-title">Extensions</h2>
+            <div className="ds-accent-bar"></div>
 
             {props.extensions && props.extensions.length > 0 ? (
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {props.extensions.map((extension) => {
                   return (
                     <ExtensionCard
@@ -49,16 +53,30 @@ export const ChatHome: FC<ChatPersonaProps> = (props) => {
                   );
                 })}
               </div>
-            ) :
-              <p className="text-muted-foreground max-w-xl">No extentions created</p>
-            }
-
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold mb-3">Personas</h2>
+            ) : (
+              <div className="border-2 border-dashed border-border p-6 sm:p-8 flex flex-col items-center justify-center text-center rounded-xs" data-slot="empty-state">
+                <p className="text-muted-foreground mb-4">No extensions created</p>
+                <Button 
+                  className="ds-button-primary"
+                  onClick={() => {
+                    const addExtensionElement = document.querySelector('[data-extension-add]');
+                    if (addExtensionElement) {
+                      (addExtensionElement as HTMLButtonElement).click();
+                    }
+                  }}
+                >
+                  Create Extension
+                </Button>
+              </div>
+            )}
+          </section>
+          
+          <section>
+            <h2 className="ds-section-title">Personas</h2>
+            <div className="ds-accent-bar"></div>
 
             {props.personas && props.personas.length > 0 ? (
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {props.personas.map((persona) => {
                   return (
                     <PersonaCard
@@ -69,12 +87,18 @@ export const ChatHome: FC<ChatPersonaProps> = (props) => {
                   );
                 })}
               </div>
-            ) :
-              <p className="text-muted-foreground max-w-xl">No personas created</p>
-            }
-          </div>
+            ) : (
+              <div className="border-2 border-dashed border-border p-6 sm:p-8 flex flex-col items-center justify-center text-center rounded-xs" data-slot="empty-state">
+                <p className="text-muted-foreground mb-4">No personas created</p>
+              </div>
+            )}
+          </section>
         </div>
-        <AddExtension />
+        
+        {/* Hidden AddExtension for triggering */}
+        <div className="hidden">
+          <AddExtension />
+        </div>
       </main>
     </ScrollArea>
   );

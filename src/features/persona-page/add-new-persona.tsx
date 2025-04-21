@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { FC } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { ServerActionResponse } from "../common/server-action-response";
-import { Button } from "../ui/button";
+import { Button, dsButtonPrimary } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { LoadingIndicator } from "../ui/loading";
@@ -45,7 +45,7 @@ export const AddNewPersona: FC<Props> = (props) => {
       return (
         <div className="flex items-center space-x-2">
           <Switch name="isPublished" defaultChecked={persona.isPublished} />
-          <Label htmlFor="description">Publish</Label>
+          <Label htmlFor="description" className="font-medium">Publish</Label>
         </div>
       );
     }
@@ -58,51 +58,56 @@ export const AddNewPersona: FC<Props> = (props) => {
         personaStore.updateOpened(value);
       }}
     >
-      <SheetContent className="min-w-[480px] sm:w-[540px] flex flex-col">
+      <SheetContent 
+        className="min-w-[480px] sm:w-[540px] border-l-2 rounded-xs" 
+        data-slot="add-persona-sheet"
+      >
         <SheetHeader>
-          <SheetTitle>Persona</SheetTitle>
+          <SheetTitle className="text-xl font-bold">{persona.id ? "Edit Persona" : "Create Persona"}</SheetTitle>
         </SheetHeader>
         <form action={formAction} className="flex-1 flex flex-col">
           <ScrollArea
             className="flex-1 -mx-6 flex max-h-[calc(100vh-140px)]"
             type="always"
           >
-            <div className="pb-6 px-6 flex gap-8 flex-col  flex-1">
+            <div className="pb-6 px-6 flex gap-6 flex-col flex-1">
               <input type="hidden" name="id" defaultValue={persona.id} />
               {formState && formState.status === "OK" ? null : (
                 <>
                   {formState &&
                     formState.errors.map((error, index) => (
-                      <div key={index} className="text-red-500">
+                      <div key={index} className="text-red-500 bg-destructive/10 p-3 rounded-xs border border-destructive">
                         {error.message}
                       </div>
                     ))}
                 </>
               )}
               <div className="grid gap-2">
-                <Label>Name</Label>
+                <Label className="font-medium">Name</Label>
                 <Input
                   type="text"
                   required
                   name="name"
                   defaultValue={persona.name}
                   placeholder="Name of your persona"
+                  className="rounded-xs"
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="description">Short description</Label>
+                <Label htmlFor="description" className="font-medium">Short description</Label>
                 <Input
                   type="text"
                   required
                   defaultValue={persona.description}
                   name="description"
                   placeholder="Short description"
+                  className="rounded-xs"
                 />
               </div>
-              <div className="grid gap-2 flex-1 ">
-                <Label htmlFor="personaMessage">Personality</Label>
+              <div className="grid gap-2 flex-1">
+                <Label htmlFor="personaMessage" className="font-medium">Personality</Label>
                 <Textarea
-                  className="min-h-[300px]"
+                  className="min-h-[300px] rounded-xs"
                   required
                   defaultValue={persona.persona_message}
                   name="personaMessage"
@@ -111,8 +116,9 @@ export const AddNewPersona: FC<Props> = (props) => {
               </div>
             </div>
           </ScrollArea>
-          <SheetFooter className="py-2 flex sm:justify-between flex-row">
-            <PublicSwitch /> <Submit />
+          <SheetFooter className="py-4 flex sm:justify-between flex-row border-t border-border">
+            <PublicSwitch /> 
+            <Submit />
           </SheetFooter>
         </form>
       </SheetContent>
@@ -123,7 +129,11 @@ export const AddNewPersona: FC<Props> = (props) => {
 function Submit() {
   const status = useFormStatus();
   return (
-    <Button disabled={status.pending} className="gap-2">
+    <Button 
+      disabled={status.pending} 
+      className={`${dsButtonPrimary} gap-2`}
+      data-slot="submit-button"
+    >
       <LoadingIndicator isLoading={status.pending} />
       Save
     </Button>

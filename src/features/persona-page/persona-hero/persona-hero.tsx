@@ -8,16 +8,15 @@ export const PersonaHero = () => {
     <Hero
       title={
         <>
-          <VenetianMask size={36} strokeWidth={1.5} /> Persona
+          <VenetianMask className="size-10 text-primary" strokeWidth={1.5} /> Persona
         </>
       }
-      description={`  Persona is a representation of a personality that you can use to
-    have a conversation with.`}
+      description="Personas are customized AI personalities you can use to have specialized conversations."
     >
       <HeroButton
+        icon={<VenetianMask className="size-5 text-primary" />}
         title="New Persona"
         description="Create a new personality that you can use to have a conversation with."
-        icon={<VenetianMask />}
         onClick={() =>
           personaStore.newPersonaAndOpen({
             name: "",
@@ -34,9 +33,9 @@ Example:
         }
       />
       <HeroButton
+        icon={<Languages className="size-5 text-primary" />}
         title="Translator"
         description="English to French translator."
-        icon={<Languages />}
         onClick={() =>
           personaStore.newPersonaAndOpen({
             name: "English to French translator",
@@ -46,10 +45,10 @@ Example:
           })
         }
       />
-      {/* <HeroButton
+      <HeroButton
+        icon={<Atom className="size-5 text-primary" />}
         title="ReactJS Expert"
         description="ReactJs expert who can write clean functional components."
-        icon={<Atom />}
         onClick={() =>
           personaStore.newPersonaAndOpen({
             name: "ReactJS Expert",
@@ -78,10 +77,10 @@ Input.displayName = "Input";
 export { Input };
 
               `,
-            description: "Customer service persona.",
+            description: "ReactJS expert for component development.",
           })
         }
-      /> */}
+      />
     </Hero>
   );
 };

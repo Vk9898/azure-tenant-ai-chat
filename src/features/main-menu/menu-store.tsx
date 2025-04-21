@@ -1,18 +1,34 @@
 import { proxy, useSnapshot } from "valtio";
-class Menu {
-  public isMenuOpen: boolean;
+
+interface MenuState {
+  isOpen: boolean;
+  toggleSidebar: () => void;
+}
+
+class MenuSidebar implements MenuState {
+  public isOpen: boolean;
 
   constructor() {
-    this.isMenuOpen = true;
+    this.isOpen = true;
   }
 
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
+  toggleSidebar() {
+    this.isOpen = !this.isOpen;
   }
 }
 
-export const menuStore = proxy(new Menu());
+export const menuStore = proxy(new MenuSidebar());
+
 // Hook to use the menu state
 export const useMenuState = () => {
   return useSnapshot(menuStore);
+};
+
+// Hook with renamed properties to match the component
+export const useMenuSidebar = () => {
+  const state = useSnapshot(menuStore);
+  return {
+    isOpen: state.isOpen,
+    toggleSidebar: menuStore.toggleSidebar.bind(menuStore)
+  };
 };

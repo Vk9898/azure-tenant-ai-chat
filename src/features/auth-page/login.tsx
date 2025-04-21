@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { cn } from "@/lib/utils";
 
 interface LoginProps {
   isDevMode: boolean;
@@ -20,23 +21,30 @@ interface LoginProps {
 
 export const LogIn: FC<LoginProps> = (props) => {
   return (
-    <Card className="flex gap-2 flex-col min-w-[300px]">
-      <CardHeader className="gap-2">
-        <CardTitle className="text-2xl flex gap-2">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={"ai-icon.png"} />
+    <Card className={cn(
+      "ds-card shadow-xs min-w-[300px] sm:min-w-[360px]",
+      "transition-all duration-200"
+    )} data-slot="login-card">
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="text-xl sm:text-2xl font-black flex items-center gap-2">
+          <Avatar className="h-8 w-8 rounded-xs">
+            <AvatarImage src={"ai-icon.png"} alt={AI_NAME} />
           </Avatar>
           <span className="text-primary">{AI_NAME}</span>
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-sm text-muted-foreground mt-1">
           Sign in to access your personal AI chat assistant
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4">
+      <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0 space-y-4">
         {props.githubEnabled && (
           <Button 
             onClick={() => signIn("github", { callbackUrl: "/chat" })}
-            className="flex items-center gap-2"
+            className={cn(
+              "ds-button-primary w-full h-12 md:h-10 min-h-11 md:min-h-10",
+              "flex items-center justify-center gap-2"
+            )}
+            data-slot="login-button-github"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5">
               <path
@@ -48,14 +56,28 @@ export const LogIn: FC<LoginProps> = (props) => {
           </Button>
         )}
         {props.entraIdEnabled && (
-          <Button onClick={() => signIn("azure-ad", { callbackUrl: "/chat" })}>
+          <Button 
+            onClick={() => signIn("azure-ad", { callbackUrl: "/chat" })}
+            className={cn(
+              "ds-button-primary w-full h-12 md:h-10 min-h-11 md:min-h-10"
+            )}
+            data-slot="login-button-microsoft"
+          >
+            <svg className="h-5 w-5 mr-2" viewBox="0 0 23 23">
+              <path fill="currentColor" d="M0 0h10.931v10.931H0zM12.069 0H23v10.931H12.069zM0 12.069h10.931V23H0zM12.069 12.069H23V23H12.069z"/>
+            </svg>
             Continue with Microsoft
           </Button>
         )}
         {props.isDevMode && (
           <Button 
-            onClick={() => signIn("localdev", { callbackUrl: "/chat" })}
             variant="secondary"
+            onClick={() => signIn("localdev", { callbackUrl: "/chat" })}
+            className={cn(
+              "w-full h-12 md:h-10 min-h-11 md:min-h-10 rounded-xs font-bold uppercase",
+              "bg-secondary text-secondary-foreground hover:bg-secondary/90"
+            )}
+            data-slot="login-button-dev"
           >
             Basic Auth (DEV ONLY)
           </Button>

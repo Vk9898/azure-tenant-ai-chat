@@ -8,7 +8,7 @@ import ChatMessageContentArea from "@/features/ui/chat/chat-message-area/chat-me
 import { PublicChatInput } from "./public-chat-input";
 import { publicChatStore, usePublicChat } from "./public-chat-store";
 import MessageContent from "./message-content";
-import { Button } from "@/features/ui/button";
+import { Button, dsButtonOutline } from "@/features/ui/button";
 import { Trash2, Info } from "lucide-react";
 import { 
   Tooltip,
@@ -36,9 +36,9 @@ export const PublicChatPage: FC = () => {
 
   return (
     <main className="flex flex-1 relative flex-col">
-      <div className="p-4 border-b bg-primary/5">
-        <div className="flex justify-between items-center mb-2">
-          <h1 className="text-xl font-semibold">Public Chat Demo</h1>
+      <div className="p-4 border-b border-border bg-primary/5">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-xl sm:text-2xl font-bold">Public Chat Demo</h1>
           <div className="flex items-center gap-2">
             <TooltipProvider>
               <Tooltip>
@@ -47,21 +47,22 @@ export const PublicChatPage: FC = () => {
                     variant="ghost"
                     size="icon"
                     onClick={handleClearChat}
-                    className="h-8 w-8"
+                    className="h-9 w-9 ds-touch-target"
+                    uppercase={false}
                   >
                     <Trash2 className="h-4 w-4" />
                     <span className="sr-only">Clear Chat</span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="rounded-xs">
                   <p>Clear chat history</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-background/50 p-2 rounded-md">
-          <Info className="h-4 w-4 text-blue-500 flex-shrink-0" />
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-background/50 p-3 rounded-xs border border-border">
+          <Info className="h-4 w-4 text-primary flex-shrink-0" />
           <p>
             This is a demo with limited functionality. Public chats are stored only in your browser and not saved to a database. For full features and persistent chats, please login.
           </p>

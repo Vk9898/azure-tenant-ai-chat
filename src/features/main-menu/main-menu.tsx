@@ -24,19 +24,19 @@ export const MainMenu = async () => {
 
   return (
     <Menu>
-      <MenuBar>
+      <MenuBar className="border-r-2 border-border bg-sidebar">
         <MenuItemContainer>
           <MenuItem tooltip="Home" asChild>
-            <MenuLink href="/chat" ariaLabel="Go to the Home page">
-              <Home {...menuIconProps} />
+            <MenuLink href="/chat" ariaLabel="Go to the Home page" className="ds-touch-target">
+              <Home {...menuIconProps} className="text-sidebar-foreground" />
             </MenuLink>
           </MenuItem>
           <MenuTrayToggle />
         </MenuItemContainer>
         <MenuItemContainer>
           <MenuItem tooltip="Chat">
-            <MenuLink href="/chat" ariaLabel="Go to the Chat page">
-              <MessageCircle {...menuIconProps} />
+            <MenuLink href="/chat" ariaLabel="Go to the Chat page" className="ds-touch-target">
+              <MessageCircle {...menuIconProps} className="text-sidebar-foreground" />
             </MenuLink>
           </MenuItem>
           
@@ -44,23 +44,23 @@ export const MainMenu = async () => {
           {isAdmin && (
             <>
               <MenuItem tooltip="Persona">
-                <MenuLink href="/persona" ariaLabel="Go to the Persona configuration page">
-                  <VenetianMask {...menuIconProps} />
+                <MenuLink href="/persona" ariaLabel="Go to the Persona configuration page" className="ds-touch-target">
+                  <VenetianMask {...menuIconProps} className="text-sidebar-foreground" />
                 </MenuLink>
               </MenuItem>
               <MenuItem tooltip="Extensions">
-                <MenuLink href="/extensions" ariaLabel="Go to the Extensions configuration page">
-                  <PocketKnife {...menuIconProps} />
+                <MenuLink href="/extensions" ariaLabel="Go to the Extensions configuration page" className="ds-touch-target">
+                  <PocketKnife {...menuIconProps} className="text-sidebar-foreground" />
                 </MenuLink>
               </MenuItem>
               <MenuItem tooltip="Prompts">
-                <MenuLink href="/prompt" ariaLabel="Go to the Prompt Library configuration page">
-                  <Book {...menuIconProps} />
+                <MenuLink href="/prompt" ariaLabel="Go to the Prompt Library configuration page" className="ds-touch-target">
+                  <Book {...menuIconProps} className="text-sidebar-foreground" />
                 </MenuLink>
               </MenuItem>
               <MenuItem tooltip="Reporting">
-                <MenuLink href="/reporting" ariaLabel="Go to the Admin reporting" >
-                  <Sheet {...menuIconProps} />
+                <MenuLink href="/reporting" ariaLabel="Go to the Admin reporting" className="ds-touch-target">
+                  <Sheet {...menuIconProps} className="text-sidebar-foreground" />
                 </MenuLink>
               </MenuItem>
             </>

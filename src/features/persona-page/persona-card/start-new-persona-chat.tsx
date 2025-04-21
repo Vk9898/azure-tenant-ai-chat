@@ -5,7 +5,7 @@ import { showError } from "@/features/globals/global-message-store";
 import { LoadingIndicator } from "@/features/ui/loading";
 import { MessageCircle } from "lucide-react";
 import { FC, useState } from "react";
-import { Button } from "../../ui/button";
+import { Button, dsButtonPrimary } from "../../ui/button";
 import { PersonaModel } from "../persona-services/models";
 import { CreatePersonaChat } from "../persona-services/persona-service";
 
@@ -19,7 +19,7 @@ export const StartNewPersonaChat: FC<Props> = (props) => {
 
   return (
     <Button
-      className="flex-1 gap-3"
+      className={`${dsButtonPrimary} flex-1 gap-2 min-h-11 md:min-h-10 w-full sm:w-auto`}
       onClick={async () => {
         setIsLoading(true);
         const response = await CreatePersonaChat(persona.id);
@@ -30,13 +30,14 @@ export const StartNewPersonaChat: FC<Props> = (props) => {
         }
         setIsLoading(false);
       }}
+      data-slot="start-chat-button"
     >
       {isLoading ? (
         <LoadingIndicator isLoading={isLoading} />
       ) : (
-        <MessageCircle size={18} />
+        <MessageCircle className="size-5" />
       )}
-      Start chat
+      Start Chat
     </Button>
   );
 };

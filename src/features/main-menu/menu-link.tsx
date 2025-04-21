@@ -9,6 +9,7 @@ interface MenuLinkProps {
   href: string;
   ariaLabel: string;
   children: React.ReactNode;
+  className?: string;
 }
 
 export const MenuLink: FC<MenuLinkProps> = (props) => {
@@ -17,10 +18,13 @@ export const MenuLink: FC<MenuLinkProps> = (props) => {
     <Link
       className={cn(
         ButtonLinkVariant,
-        path.startsWith(props.href) && props.href !== "/" ? "text-primary" : ""
+        "rounded-xs hover:bg-sidebar-accent focus-visible:bg-sidebar-accent ds-focus-ring",
+        path.startsWith(props.href) && props.href !== "/" ? "text-sidebar-primary" : "",
+        props.className
       )}
       href={props.href}
       aria-label={props.ariaLabel}
+      data-slot="menu-link"
     >
       {props.children}
     </Link>

@@ -1,24 +1,27 @@
 "use client";
-import { cn } from "@/ui/lib";
-import { MenuItem, menuIconProps } from "@/ui/menu";
-import { PanelLeftClose } from "lucide-react";
-import { menuStore, useMenuState } from "./menu-store";
+import { Button } from "@/features/ui/button";
+import { MenuItem } from "@/ui/menu";
+import { useMenuSidebar } from "./menu-store";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
 
 export const MenuTrayToggle = () => {
-  const { isMenuOpen } = useMenuState();
+  const { isOpen, toggleSidebar } = useMenuSidebar();
 
   return (
-    <MenuItem
-      onClick={() => menuStore.toggleMenu()}
-      tooltip="Open and Collapse menu"
-    >
-      <PanelLeftClose
-        {...menuIconProps}
-        className={cn(
-          "transition-all rotate-180 duration-700",
-          isMenuOpen ? "rotate-0" : ""
-        )}
-      />
+    <MenuItem tooltip={isOpen ? "Collapse Menu" : "Expand Menu"}>
+      <Button
+        variant="ghost"
+        className="h-12 w-12 p-0 text-sidebar-foreground hover:bg-sidebar-accent focus-visible:bg-sidebar-accent ds-touch-target rounded-xs"
+        onClick={() => toggleSidebar()}
+        data-test="menu-tray-toggle"
+        data-slot="menu-tray-toggle"
+        uppercase={false}
+      >
+        {isOpen ? <ChevronsLeft /> : <ChevronsRight />}
+        <span className="sr-only">
+          {isOpen ? "Collapse sidebar" : "Expand sidebar"}
+        </span>
+      </Button>
     </MenuItem>
   );
 };

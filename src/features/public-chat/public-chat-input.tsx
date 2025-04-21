@@ -1,71 +1,67 @@
 "use client";
 
-import { Button } from "@/features/ui/button";
+import { FC, KeyboardEvent, useState } from "react";
 import { Textarea } from "@/features/ui/textarea";
-import { SendHorizontal } from "lucide-react";
-import { ChangeEvent, FormEvent, useRef } from "react";
-import { publicChatStore, usePublicChat } from "./public-chat-store";
+import { Button, dsButtonPrimary } from "@/features/ui/button";
+import { Send } from "lucide-react";
+import { publicChatStore } from "./public-chat-store";
 
-export const PublicChatInput = () => {
-  const { input, loading } = usePublicChat();
-  const formRef = useRef<HTMLFormElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+export const PublicChatInput: FC = () => {
+  const [message, setMessage] = useState("");
+  const [inputRows, setInputRows] = useState(1);
 
-  const updateInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    publicChatStore.updateInput(e.target.value);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      formRef.current?.requestSubmit();
+      handleSubmit();
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    publicChatStore.submitChat(e);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
+    
+    // Calculate rows based on content (with min/max limits)
+    const rowCount = e.target.value.split('\n').length;
+    const calculatedRows = Math.min(Math.max(rowCount, 1), 5);
+    setInputRows(calculatedRows);
+  };
+
+  const handleSubmit = () => {
+    const trimmedMessage: string = message.trim();
+    if (trimmedMessage.length > 0) {
+      publicChatStore.sendMessage(trimmedMessage);
+      setMessage("");
+      setInputRows(1);
     }
   };
 
   return (
-    <div className="relative bg-background pt-2 border-t mb-6">
-      <div className="mx-auto max-w-3xl px-4 relative">
-        <form
-          ref={formRef}
-          onSubmit={handleSubmit}
-          className="relative flex flex-col w-full"
-        >
-          <div className="relative flex items-center">
+    <div className="border-t border-border bg-background p-4">
+      <div className="container max-w-4xl">
+        <div className="flex gap-3 items-end">
+          <div className="flex-1 rounded-xs border border-input focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
             <Textarea
-              ref={textareaRef}
-              onChange={updateInput}
-              value={input}
-              onKeyDown={handleKeyDown}
               placeholder="Send a message..."
-              className="min-h-12 resize-none pr-20 py-3"
-              rows={1}
+              value={message}
+              onChange={handleMessageChange}
+              onKeyDown={handleKeyDown}
+              rows={inputRows}
+              className="min-h-[40px] border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xs"
             />
-            <div className="absolute right-2 flex items-center">
-              <Button
-                type="submit"
-                size="icon"
-                className={`shrink-0 ${loading === "loading" ? "opacity-50" : ""}`}
-                disabled={loading === "loading" || !input.trim()}
-              >
-                <SendHorizontal className="h-5 w-5" />
-                <span className="sr-only">Send</span>
-              </Button>
-            </div>
           </div>
-          <div className="px-2 pb-2">
-            <p className="text-xs text-muted-foreground">
-              This is a limited public chat demo. 
-              <a href="/auth/signin" className="text-primary underline ml-1">Sign in</a> for full access.
-            </p>
-          </div>
-        </form>
+          <Button
+            size="icon"
+            className={`${dsButtonPrimary} size-10 rounded-xs`}
+            disabled={message.trim().length === 0}
+            onClick={handleSubmit}
+          >
+            <Send className="size-5" strokeWidth={2.5} />
+            <span className="sr-only">Send message</span>
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          Messages are stored in your browser&apos;s local storage and not sent to a server.
+        </p>
       </div>
     </div>
   );
