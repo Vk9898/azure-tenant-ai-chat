@@ -2,7 +2,6 @@
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { auth } from "@/features/auth-page/auth-api";
 
 export const AuthenticatedProviders = ({
   children,
