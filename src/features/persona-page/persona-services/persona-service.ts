@@ -426,7 +426,7 @@ export const CreatePersonaChat = async (
 
     const response = await UpsertChatThread({
       name: persona.name,
-      useName: user.name,
+      useName: user.name || "User",
       userId: hashedId,
       id: "",
       createdAt: new Date(),
