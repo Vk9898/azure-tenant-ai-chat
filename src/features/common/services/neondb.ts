@@ -186,82 +186,124 @@ const initializeDatabaseSchema = async (connectionString: string) => {
         table: "chat_threads",
         description: "Create chat threads table"
       },
-
-      `CREATE TABLE IF NOT EXISTS chat_citations (
-        id TEXT PRIMARY KEY,
-        content TEXT NOT NULL,
-        type TEXT NOT NULL,
-        user_id TEXT NOT NULL,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW()
-      );`,
-
-      `CREATE TABLE IF NOT EXISTS personas (
-        id CHAR(64) PRIMARY KEY,
-        name TEXT NOT NULL,
-        description TEXT NOT NULL,
-        persona_message TEXT NOT NULL,
-        is_published BOOLEAN NOT NULL DEFAULT FALSE,
-        user_id CHAR(64) NOT NULL,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        type TEXT NOT NULL
-      );`,
-
-      `CREATE TABLE IF NOT EXISTS extensions (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        execution_steps TEXT NOT NULL,
-        description TEXT NOT NULL,
-        is_published BOOLEAN NOT NULL DEFAULT FALSE,
-        user_id TEXT NOT NULL,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        type TEXT NOT NULL,
-        functions JSONB DEFAULT '[]'::JSONB,
-        headers JSONB DEFAULT '[]'::JSONB
-      );`,
-
-      `CREATE TABLE IF NOT EXISTS documents (
-        id TEXT PRIMARY KEY,
-        metadata TEXT,
-        page_content TEXT NOT NULL,
-        chat_thread_id TEXT NOT NULL,
-        embedding VECTOR(1536),
-        user_id TEXT NOT NULL,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW()
-      );`,
-
-      `CREATE TABLE IF NOT EXISTS chat_messages (
-        id CHAR(64) PRIMARY KEY,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        type TEXT NOT NULL,
-        is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-        content TEXT NOT NULL,
-        name TEXT,
-        role TEXT,
-        thread_id CHAR(64) NOT NULL,
-        user_id CHAR(64),
-        multi_modal_image TEXT
-      );`,
-
-      `CREATE TABLE IF NOT EXISTS chat_documents (
-        id CHAR(64) PRIMARY KEY,
-        chat_thread_id CHAR(64) NOT NULL,
-        user_id CHAR(64) NOT NULL,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        type TEXT NOT NULL,
-        is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-        name TEXT NOT NULL
-      );`,
-
-      `CREATE TABLE IF NOT EXISTS prompts (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        description TEXT NOT NULL,
-        is_published BOOLEAN NOT NULL DEFAULT FALSE,
-        user_id TEXT NOT NULL,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        type TEXT NOT NULL,
-        embedding VECTOR(1536)
-      );`
+      {
+        sql: `CREATE TABLE IF NOT EXISTS chat_citations (
+          id TEXT PRIMARY KEY,
+          content TEXT NOT NULL,
+          type TEXT NOT NULL,
+          user_id TEXT NOT NULL,
+          created_at TIMESTAMP NOT NULL DEFAULT NOW()
+        );`,
+        table: "chat_citations",
+        description: "Create chat citations table"
+      },
+      {
+        sql: `CREATE TABLE IF NOT EXISTS personas (
+          id CHAR(64) PRIMARY KEY,
+          name TEXT NOT NULL,
+          description TEXT NOT NULL,
+          persona_message TEXT NOT NULL,
+          is_published BOOLEAN NOT NULL DEFAULT FALSE,
+          user_id CHAR(64) NOT NULL,
+          created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+          type TEXT NOT NULL
+        );`,
+        table: "personas",
+        description: "Create personas table"
+      },
+      {
+        sql: `CREATE TABLE IF NOT EXISTS extensions (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          execution_steps TEXT NOT NULL,
+          description TEXT NOT NULL,
+          is_published BOOLEAN NOT NULL DEFAULT FALSE,
+          user_id TEXT NOT NULL,
+          created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+          type TEXT NOT NULL,
+          functions JSONB DEFAULT '[]'::JSONB,
+          headers JSONB DEFAULT '[]'::JSONB
+        );`,
+        table: "extensions",
+        description: "Create extensions table"
+      },
+      {
+        sql: `CREATE TABLE IF NOT EXISTS documents (
+          id TEXT PRIMARY KEY,
+          metadata TEXT,
+          page_content TEXT NOT NULL,
+          chat_thread_id TEXT NOT NULL,
+          embedding VECTOR(1536),
+          user_id TEXT NOT NULL,
+          created_at TIMESTAMP NOT NULL DEFAULT NOW()
+        );`,
+        table: "documents",
+        description: "Create documents table"
+      },
+      {
+        sql: `CREATE TABLE IF NOT EXISTS chat_messages (
+          id CHAR(64) PRIMARY KEY,
+          created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+          type TEXT NOT NULL,
+          is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+          content TEXT NOT NULL,
+          name TEXT,
+          role TEXT,
+          thread_id CHAR(64) NOT NULL,
+          user_id CHAR(64),
+          multi_modal_image TEXT
+        );`,
+        table: "chat_messages",
+        description: "Create chat messages table"
+      },
+      {
+        sql: `CREATE TABLE IF NOT EXISTS chat_documents (
+          id CHAR(64) PRIMARY KEY,
+          chat_thread_id CHAR(64) NOT NULL,
+          user_id CHAR(64) NOT NULL,
+          created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+          type TEXT NOT NULL,
+          is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+          name TEXT NOT NULL
+        );`,
+        table: "chat_documents",
+        description: "Create chat documents table"
+      },
+      {
+        sql: `CREATE TABLE IF NOT EXISTS prompts (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          description TEXT NOT NULL,
+          is_published BOOLEAN NOT NULL DEFAULT FALSE,
+          user_id TEXT NOT NULL,
+          created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+          type TEXT NOT NULL,
+          embedding VECTOR(1536)
+        );`,
+        table: "prompts",
+        description: "Create prompts table"
+      },
+      {
+        sql: `CREATE TABLE IF NOT EXISTS prompt_logs (
+          id SERIAL PRIMARY KEY,
+          user_id TEXT,
+          thread_id TEXT,
+          model_name TEXT NOT NULL,
+          prompt TEXT NOT NULL,
+          expected_response TEXT,
+          actual_response TEXT NOT NULL,
+          temperature FLOAT,
+          max_tokens INTEGER,
+          tokens_used INTEGER,
+          response_time_ms INTEGER,
+          success BOOLEAN NOT NULL DEFAULT TRUE,
+          error_message TEXT,
+          created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+          metadata JSONB
+        );`,
+        table: "prompt_logs",
+        description: "Create prompt logs table for monitoring"
+      }
     ];
 
     // Execute each SQL statement sequentially and log it

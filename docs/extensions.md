@@ -278,6 +278,45 @@ Tenant AI Chat can be enhanced with web search capabilities through extensions t
 }
 ```
 
+### Reputation Check Extension
+
+```json
+{
+  "name": "reputation_check",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "object",
+        "description": "Reputation search parameters",
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "description": "Full name of the person to check"
+          },
+          "location": {
+            "type": "string",
+            "description": "Geographic location of the person (city, state, country)"
+          },
+          "business_name": {
+            "type": "string",
+            "description": "Business or organization affiliated with the person"
+          },
+          "check_type": {
+            "type": "string",
+            "description": "Type of reputation check to perform",
+            "enum": ["general", "business", "professional", "comprehensive"]
+          }
+        },
+        "required": ["full_name"]
+      }
+    },
+    "required": ["query"]
+  },
+  "description": "Check a person's online reputation and assess potential fraud risk factors"
+}
+```
+
 ## Implementation Notes
 
 To implement these extensions, you'll need to:
