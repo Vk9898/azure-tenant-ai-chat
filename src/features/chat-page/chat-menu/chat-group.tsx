@@ -1,3 +1,5 @@
+"use client";
+
 import React, { PropsWithChildren, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { MoreVertical, PencilIcon, Trash2Icon } from "lucide-react";
