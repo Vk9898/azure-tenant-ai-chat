@@ -20,12 +20,13 @@ export const ChatHeader: FC<Props> = (props) => {
       ? CHAT_DEFAULT_PERSONA
       : props.chatThread.personaMessageTitle;
   return (
-    <div className="bg-background border-b flex items-center py-2">
+    // Updated border to border-b-2
+    <div className="bg-background border-b-2 border-border flex items-center py-2 px-4 sm:px-6 sticky top-0 z-10" data-slot="chat-header">
       <div className="container max-w-3xl flex justify-between items-center">
         <div className="flex flex-col">
-          <span>{props.chatThread.name}</span>
-          <span className="text-sm text-muted-foreground flex gap-1 items-center">
-            <VenetianMask size={18} />
+          <span className="font-bold text-sm">{props.chatThread.name}</span>
+          <span className="text-xs text-muted-foreground flex gap-1 items-center mt-0.5">
+            <VenetianMask size={14} /> {/* Slightly smaller icon */}
             {persona}
           </span>
         </div>

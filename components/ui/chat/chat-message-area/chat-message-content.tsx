@@ -13,7 +13,8 @@ const ChatMessageContentArea: ForwardRefRenderFunction<
   return (
     <div
       ref={ref}
-      className={cn("container max-w-3xl relative min-h-screen pb-[240px] pt-16 flex flex-col gap-16", props.className)}
+      // Adjusted padding and gap for DS consistency
+      className={cn("container max-w-3xl relative min-h-screen pb-24 pt-8 flex flex-col gap-8", props.className)}
     >
       {props.children}
     </div>

@@ -7,7 +7,7 @@ import {
   UserCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Avatar, AvatarImage } from "../../avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "../../avatar"; // Added AvatarFallback
 import { Button } from "../../button";
 
 export const ChatMessageArea = (props: {
@@ -35,34 +35,47 @@ export const ChatMessageArea = (props: {
   }, [isIconChecked]);
 
   let profile = null;
+  const userInitial = props.profileName?.charAt(0).toUpperCase() || "?";
 
   switch (props.role) {
     case "assistant":
+      profile = (
+          <Avatar className="size-7 border-2 border-border rounded-xs" data-slot="chat-avatar-assistant">
+            <AvatarImage src={"/ai-icon.png"} alt="AI Avatar" className="rounded-xs"/>
+            <AvatarFallback className="rounded-xs bg-muted text-muted-foreground font-bold text-xs">AI</AvatarFallback>
+          </Avatar>
+      );
+      break;
     case "user":
       if (props.profilePicture) {
         profile = (
-          <Avatar>
-            <AvatarImage src={props.profilePicture} />
+          <Avatar className="size-7 border-2 border-border rounded-xs" data-slot="chat-avatar-user">
+            <AvatarImage src={props.profilePicture} alt={props.profileName || "User Avatar"} className="rounded-xs"/>
+            <AvatarFallback className="rounded-xs bg-muted text-muted-foreground font-bold text-xs">{userInitial}</AvatarFallback>
           </Avatar>
         );
       } else {
-        profile = (
-          <UserCircle
-            size={28}
-            strokeWidth={1.4}
-            className="text-muted-foreground"
-          />
+         profile = (
+          <Avatar className="size-7 border-2 border-border rounded-xs bg-muted flex items-center justify-center" data-slot="chat-avatar-user-fallback">
+            <UserCircle
+              size={16} // Slightly smaller icon inside avatar
+              strokeWidth={1.8}
+              className="text-muted-foreground"
+            />
+          </Avatar>
         );
       }
       break;
     case "tool":
     case "function":
-      profile = (
-        <PocketKnife
-          size={28}
-          strokeWidth={1.4}
-          className="text-muted-foreground"
-        />
+       profile = (
+        <Avatar className="size-7 border-2 border-border rounded-xs bg-muted flex items-center justify-center" data-slot="chat-avatar-tool">
+          <PocketKnife
+            size={16} // Slightly smaller icon inside avatar
+            strokeWidth={1.8}
+            className="text-muted-foreground"
+          />
+        </Avatar>
       );
       break;
     default:
@@ -70,7 +83,8 @@ export const ChatMessageArea = (props: {
   }
 
   return (
-    <div className={cn("flex flex-col p-4 sm:p-6", props.className)} data-slot={props["data-slot"] || "chat-message"}>
+    // Added rounded-xs to the main container
+    <div className={cn("flex flex-col p-4 sm:p-6 rounded-xs", props.className)} data-slot={props["data-slot"] || "chat-message"}>
       <div className="h-7 flex items-center justify-between mb-2">
         <div className="flex gap-3 items-center">
           <div data-slot="chat-message-avatar">
@@ -78,9 +92,9 @@ export const ChatMessageArea = (props: {
           </div>
           <div
             className={cn(
-              "text-primary capitalize font-bold",
+              "text-primary capitalize font-bold text-sm", // Consistent text-sm
               props.role === "function" || props.role === "tool"
-                ? "text-muted-foreground text-sm"
+                ? "text-muted-foreground font-medium" // Use medium weight for tools
                 : ""
             )}
             data-slot="chat-message-profile-name"
@@ -90,11 +104,12 @@ export const ChatMessageArea = (props: {
         </div>
         <div className="h-7 flex items-center justify-between">
           <div>
+            {/* Button component should handle rounded-xs and touch target */}
             <Button
               variant="ghost"
               size="icon"
               title="Copy text"
-              className="rounded-xs min-h-10 min-w-10"
+              className="min-h-10 min-w-10" // Ensure touch target size
               onClick={handleButtonClick}
               data-slot="chat-message-copy-button"
             >
@@ -108,6 +123,7 @@ export const ChatMessageArea = (props: {
         </div>
       </div>
       <div className="flex flex-col gap-2 flex-1 ps-10" data-slot="chat-message-content">
+        {/* Ensure prose styles align with DS if necessary, though defaults might be fine */}
         <div className="prose prose-slate dark:prose-invert whitespace-break-spaces prose-p:leading-relaxed prose-pre:p-0 max-w-none">
           {props.children}
         </div>

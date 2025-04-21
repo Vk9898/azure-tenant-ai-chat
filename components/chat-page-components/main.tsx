@@ -16,6 +16,7 @@ import {
   ChatThreadModel,
 } from "./chat-services/models";
 import MessageContent from "./message-content";
+import { cn } from "@/lib/utils";
 
 interface ChatPageProps {
   messages: Array<ChatMessageModel>;
@@ -48,8 +49,9 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
         chatDocuments={props.chatDocuments}
         extensions={props.extensions}
       />
-      <ChatMessageContainer ref={current} className="flex-1 py-4 sm:py-6 pb-32 sm:pb-24">
-        <ChatMessageContentArea className="container max-w-3xl px-4 sm:px-6 mx-auto space-y-8 sm:space-y-10">
+      {/* Adjusted container padding/spacing */}
+      <ChatMessageContainer ref={current} className={cn("flex-1", "py-4 sm:py-6", "pb-[150px]")}> {/* Reduced bottom padding */}
+        <ChatMessageContentArea className="container max-w-3xl px-4 sm:px-6 mx-auto"> {/* Removed space-y, gap is handled by content area */}
           {messages.map((message) => (
             <ChatMessageArea
               key={message.id}
@@ -59,11 +61,11 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
                 navigator.clipboard.writeText(message.content);
               }}
               profilePicture={
-                message.role === "assistant"
-                  ? "/ai-icon.png"
-                  : session?.user?.image
+                message.role === "user"
+                  ? session?.user?.image
+                  : undefined // Assistant/Tool uses default icons handled internally
               }
-              className="rounded-xs"
+              className="bg-card text-card-foreground border-2 border-border shadow-xs mb-4 sm:mb-6" // Added card-like styling and margin bottom
               data-slot={`message-${message.role}`}
             >
               <MessageContent message={message} />
@@ -72,8 +74,9 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
           {loading === "loading" && <ChatLoading />}
         </ChatMessageContentArea>
       </ChatMessageContainer>
-      <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t border-border pb-safe" data-slot="chat-input-container">
-        <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-4">
+      {/* Updated border to border-t-2 */}
+      <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t-2 border-border pb-safe z-10" data-slot="chat-input-outer-container">
+        <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-3" data-slot="chat-input-inner-container"> {/* Adjusted padding */}
           <ChatInput />
         </div>
       </div>
