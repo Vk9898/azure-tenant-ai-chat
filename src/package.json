@@ -35,7 +35,7 @@
     "@tailwindcss/typography": "^0.5.10",
     "@types/react-syntax-highlighter": "^15.5.11",
     "@uiw/react-codemirror": "^4.21.21",
-    "class-variance-authority": "^0.7.0",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.0.0",
     "eventsource-parser": "^1.1.1",
     "lucide-react": "^0.309.0",
@@ -63,7 +63,7 @@
     "eslint": "^8",
     "eslint-config-next": "15.3.1",
     "tailwindcss": "^4.1.4",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8.3"
   },
   "overrides": {
     "@types/react": "19.1.2",
