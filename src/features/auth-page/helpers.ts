@@ -1,66 +1,87 @@
-import { createHash } from "crypto";
-import { getServerSession } from "next-auth";
+import { auth } from "./auth-api"; // Import auth function from our config
+import { Session } from "next-auth"; // Import Session type
+import { RedirectToPage } from "../../features/common/navigation-helpers";
 import { redirect } from "next/navigation";
-import { RedirectToPage } from "../common/navigation-helpers";
-import { options } from "./auth-api";
+import { hashValue, hashValueSync } from "./utils";
 
-export const userSession = async (): Promise<UserModel | null> => {
-  const session = await getServerSession(options);
+// Define the expected structure of the user object within the session
+// Removed databaseConnectionString as it's handled per-request now
+export interface CustomUser {
+  id?: string | null; // From token.sub (provider-specific ID)
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  isAdmin?: boolean; // Changed to match NextAuth v5 type (no null)
+  hashedUserId?: string | null; // Consistent hashed ID (based on email)
+  provider?: string | null;
+}
+
+// For backwards compatibility
+export interface CustomSession extends Omit<Session, "user"> {
+  user?: CustomUser;
+}
+
+export const userSession = async (): Promise<CustomUser | null> => {
+  // Use the auth() function from NextAuth v5
+  const session = await auth();
   if (session && session.user) {
-    return {
-      name: session.user.name!,
-      image: session.user.image!,
-      email: session.user.email!,
-      isAdmin: session.user.isAdmin!,
-      databaseConnectionString: session.user.databaseConnectionString!,
-    };
+    // Return user data
+    return session.user as CustomUser;
   }
-
   return null;
 };
 
-// Use this when you need to handle anonymous users gracefully
-export const getUserOrNull = async (): Promise<UserModel | null> => {
-  return await userSession();
-};
-
-// Use this when you need to enforce authentication and redirect anonymous users
-export const getCurrentUser = async (): Promise<UserModel> => {
+// Add the getCurrentUser function to maintain backwards compatibility
+export const getCurrentUser = async (): Promise<CustomUser> => {
   const user = await userSession();
-  if (user) {
-    return user;
-  }
-  redirect('/');
-};
-
-export const userHashedId = async (): Promise<string | null> => {
-  const user = await getUserOrNull();
   if (!user) {
-    return null;
+    throw new Error("User not authenticated");
   }
-  return hashValue(user.email);
+  return user;
 };
 
-export const hashValue = (value: string): string => {
-  return createHash("sha256").update(value).digest("hex");
+export const redirectIfAuthenticated = async (path = '/chat') => {
+  const session = await auth();
+  if (session) {
+    redirect(path);
+  }
 };
 
-export const redirectIfAuthenticated = async () => {
+export const redirectToLoginIfUnauthenticated = async () => {
+  const session = await auth();
+  if (!session) {
+    redirect('/api/auth/signin');
+  }
+};
+
+// This function returns the CONSISTENT identifier used across the system,
+// primarily for database lookups and linking data to a user regardless of login provider.
+// Using a hash of the lowercase email is the most reliable approach here.
+export const getUserIdentifier = async (): Promise<string> => {
   const user = await userSession();
-  if (user) {
-    // Redirect admin users to the reporting page and regular users to chat
-    if (user.isAdmin) {
-      RedirectToPage("reporting");
-    } else {
-      RedirectToPage("chat");
-    }
+
+  // Prioritize the hashedUserId from the token if available (set during JWT callback)
+  if (user?.hashedUserId) {
+    return user.hashedUserId;
   }
+  // Fallback: hash the email if hashedUserId wasn't set or is missing
+  if (user?.email) {
+     console.warn("User identifier: Falling back to hashing email directly in getUserIdentifier.");
+    return hashValueSync(user.email.toLowerCase());
+  }
+  // Fallback: Use provider-specific ID if email is somehow missing (least desirable)
+  if (user?.id) {
+    console.warn("User identifier: Falling back to provider ID (sub claim) - this may cause issues with consistency.");
+    return user.id;
+  }
+
+  throw new Error("Could not determine a consistent user identifier (hashedUserId, email, or ID missing).");
 };
 
-export type UserModel = {
-  name: string;
-  image: string;
-  email: string;
-  isAdmin: boolean;
-  databaseConnectionString: string;
+// Kept for backward compatibility or specific use cases, but prefer getUserIdentifier.
+export const userHashedId = async (): Promise<string> => {
+    return getUserIdentifier(); // Delegate to the consistent identifier function
 };
+
+// Exporting the type for use elsewhere (redefined above)
+export type UserModel = CustomUser;

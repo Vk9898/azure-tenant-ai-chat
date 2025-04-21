@@ -1,11 +1,37 @@
+import NextAuth from "next-auth";
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
 import AzureADB2CProvider from "next-auth/providers/azure-ad-b2c";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
-import { hashValueSync } from "@/lib/auth/utils";
+import { hashValueSync } from "./utils";
 import type { JWT } from "next-auth/jwt";
 import type { Session, User, Account } from "next-auth";
 import type { NextAuthConfig } from "next-auth";
+
+// Extend the next-auth types
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      isAdmin: boolean;
+      hashedUserId?: string;
+      provider?: string;
+      databaseConnectionString?: string;
+    };
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    isAdmin?: boolean;
+    hashedUserId?: string;
+    provider?: string;
+    databaseConnectionString?: string;
+  }
+}
 
 // Define the configuration for NextAuth
 export const authConfig: NextAuthConfig = {
@@ -53,7 +79,7 @@ export const authConfig: NextAuthConfig = {
               username: { label: "Username", type: "text", placeholder: "dev" },
               password: { label: "Password", type: "password" },
             },
-            async authorize(credentials, req) {
+            async authorize(credentials: Record<string, unknown> | undefined, req: any) {
               const username = credentials?.username || "dev";
               const email = `${username}@localhost`.toLowerCase();
               return {
@@ -74,7 +100,7 @@ export const authConfig: NextAuthConfig = {
   secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
   
   callbacks: {
-    async jwt({ token, account, user }: { token: JWT; account: Account | null; user: User | null }) {
+    async jwt({ token, account, user }) {
       // Initial sign-in
       if (account && user) {
         // Store the provider ID
@@ -92,19 +118,25 @@ export const authConfig: NextAuthConfig = {
       return token;
     },
     
-    async session({ session, token }: { session: Session; token: JWT }) {
+    async session({ session, token }) {
       if (session.user) {
         // Copy claims from token to session
-        session.user.id = token.sub;
-        session.user.isAdmin = token.isAdmin as boolean;
-        session.user.hashedUserId = token.hashedUserId as string;
-        session.user.provider = token.provider as string;
+        session.user.id = token.sub || "";
+        session.user.isAdmin = !!token.isAdmin;
+        
+        // Add custom properties to session.user
+        if (token.hashedUserId) {
+          session.user.hashedUserId = token.hashedUserId;
+        }
+        if (token.provider) {
+          session.user.provider = token.provider;
+        }
       }
       return session;
     },
     
     // Only allow sign-in with email
-    async signIn({ user }: { user: User }) {
+    async signIn({ user }) {
       if (!user.email) {
         console.warn(`Sign-in denied for user ID ${user.id}: Missing email address.`);
         return false;
