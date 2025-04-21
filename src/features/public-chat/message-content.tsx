@@ -7,7 +7,8 @@ interface ChatMessage {
   role: "user" | "assistant";
   name: string;
   content: string;
-  timestamp: number;
+  createdAt?: Date;
+  timestamp?: number;
 }
 
 interface MessageContentProps {

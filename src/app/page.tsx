@@ -8,7 +8,9 @@ export default async function Home() {
   // Safely handle the case where session might be undefined during development
   let session;
   try {
-    session = await getServerSession(authOptions);
+    // Ensure authOptions is properly awaited
+    const resolvedAuthOptions = await Promise.resolve(authOptions);
+    session = await getServerSession(resolvedAuthOptions);
   } catch (error) {
     console.error("Error getting session:", error);
     session = null;
