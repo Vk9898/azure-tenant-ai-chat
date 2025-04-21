@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@config '../tailwind.config.ts';
+@config 'src/tailwind.config.ts';
 
 /*
   Dark mode custom variant
