@@ -8,11 +8,12 @@ import { ArrowLeft, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export default async function ChatDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function ChatDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const user = await getCurrentUser();
 
   if (!user.isAdmin) {
@@ -20,13 +21,13 @@ export default async function ChatDetailPage({
   }
 
   const chatId = params.id;
-  
+
   const messagesResponse = await FindAllChatMessagesForAdmin(chatId);
-  
+
   if (messagesResponse.status !== "OK") {
     return <DisplayError errors={messagesResponse.errors} />;
   }
-  
+
   const messages = messagesResponse.response;
 
   return (

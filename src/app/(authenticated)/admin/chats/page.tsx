@@ -18,13 +18,14 @@ import ChatThreadRow from "@/features/reporting-page/table-row";
 
 const SEARCH_PAGE_SIZE = 100;
 
-export default async function AdminChatHistoriesPage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] };
-}) {
+export default async function AdminChatHistoriesPage(
+  props: {
+    searchParams?: Promise<{ [key: string]: string | string[] }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const pageNumber = searchParams?.page ? parseInt(searchParams.page as string) : 0;
-  
+
   return (
     <ScrollArea className="flex-1">
       <main className="flex flex-1 flex-col">
