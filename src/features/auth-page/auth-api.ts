@@ -1,251 +1,135 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
-import AzureADProvider from "next-auth/providers/azure-ad";
-import CredentialsProvider from "next-auth/providers/credentials";
+// src/app/api/auth/[...nextauth]/route.ts   (or pages/api/auth/[...nextauth].ts)
+import NextAuth from "next-auth";
+
+// ─── Providers ──────────────────────────────────────────────────────────────
 import GitHubProvider from "next-auth/providers/github";
-import { Provider } from "next-auth/providers/index";
-import { hashValue } from "./helpers";
+import MicrosoftEntraID from "@auth/microsoft-entra-id-provider"; // Import from separate package
+import AzureADB2CProvider from "next-auth/providers/azure-ad-b2c";              // Consumer / CIAM  [oai_citation_attribution:1‡Auth.js | Authentication for the Web](https://authjs.dev/reference/core/providers/azure-ad-b2c)
+import CredentialsProvider from "next-auth/providers/credentials";
+
+import { hashValue } from "@/features/auth-page/helpers";
 import { createNeonProjectForUser } from "@/features/common/services/neondb";
 
-const configureIdentityProvider = () => {
-  const providers: Array<Provider> = [];
+// ─── Helpers ────────────────────────────────────────────────────────────────
+const ADMIN_EMAILS = (process.env.ADMIN_EMAIL_ADDRESS ?? "")
+  .split(",")
+  .map((e) => e.toLowerCase().trim())
+  .filter(Boolean);
 
-  const adminEmails = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map((email) =>
-    email.toLowerCase().trim()
-  );
+const isAdmin = (email?: string | null) =>
+  !!email && ADMIN_EMAILS.includes(email.toLowerCase());
 
-  if (process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET) {
-    providers.push(
+// ─── NextAuth (v5) config ───────────────────────────────────────────────────
+export const { handlers, auth } = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,                           // JWT/CSRF signing  [oai_citation_attribution:2‡Auth.js | Authentication for the Web](https://authjs.dev/getting-started/migrating-to-v5?utm_source=chatgpt.com)
+  session: { strategy: "jwt" },
+
+  // —— Providers array ————————————————————————————————————————————————
+  providers: [
+    /* GitHub – unchanged */                                      // OAuth ref  [oai_citation_attribution:3‡NextAuth.js](https://next-auth.js.org/configuration/providers/oauth?utm_source=chatgpt.com)
+    process.env.AUTH_GITHUB_ID &&
+      process.env.AUTH_GITHUB_SECRET &&
       GitHubProvider({
-        clientId: process.env.AUTH_GITHUB_ID!,
-        clientSecret: process.env.AUTH_GITHUB_SECRET!,
-        async profile(profile) {
+        clientId: process.env.AUTH_GITHUB_ID,
+        clientSecret: process.env.AUTH_GITHUB_SECRET,
+        profile(p) {
           return {
-            ...profile,
-            isAdmin: adminEmails?.includes(profile.email.toLowerCase()),
+            id: String(p.id),
+            name: p.name ?? p.login,
+            email: p.email,
+            image: p.avatar_url,
+            isAdmin: isAdmin(p.email),
           };
         },
-      })
-    );
-  }
+      }),
 
-  if (
-    process.env.AZURE_AD_CLIENT_ID &&
-    process.env.AZURE_AD_CLIENT_SECRET &&
-    process.env.AZURE_AD_TENANT_ID
-  ) {
-    providers.push(
-      AzureADProvider({
-        clientId: process.env.AZURE_AD_CLIENT_ID!,
-        clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-        tenantId: process.env.AZURE_AD_TENANT_ID!,
-        async profile(profile) {
+    /* Microsoft Entra ID (workforce / multitenant) */            // Provider docs  [oai_citation_attribution:4‡Auth.js | Authentication for the Web](https://authjs.dev/getting-started/providers/microsoft-entra-id?utm_source=chatgpt.com)
+    process.env.AUTH_MICROSOFT_ENTRA_ID_ID &&
+      process.env.AUTH_MICROSOFT_ENTRA_ID_SECRET &&
+      process.env.AUTH_MICROSOFT_ENTRA_ID_ISSUER &&
+      MicrosoftEntraID({
+        clientId: process.env.AUTH_MICROSOFT_ENTRA_ID_ID,
+        clientSecret: process.env.AUTH_MICROSOFT_ENTRA_ID_SECRET,
+        issuer: process.env.AUTH_MICROSOFT_ENTRA_ID_ISSUER,       // e.g. https://login.microsoftonline.com/<tenantId>/v2.0
+        profile(p) {
+          const email =
+            p.email ?? p.preferred_username ?? p.unique_name ?? "";
           return {
-            ...profile,
-            id: profile.sub,
-            isAdmin:
-              adminEmails?.includes(profile.email.toLowerCase()) ||
-              adminEmails?.includes(profile.preferred_username.toLowerCase()),
+            id: p.sub,
+            name: p.name ?? email,
+            email,
+            image: p.picture,
+            isAdmin: isAdmin(email),
           };
         },
-      })
-    );
-  }
+      }),
 
-  if (process.env.NODE_ENV === "development") {
-    providers.push(
+    /* Azure AD B2C (consumer flow) */                            // v5 requires issuer, not tenantId  [oai_citation_attribution:5‡GitHub](https://github.com/nextauthjs/next-auth/issues/12175?utm_source=chatgpt.com)
+    process.env.AUTH_AZURE_AD_B2C_ID &&
+      process.env.AUTH_AZURE_AD_B2C_SECRET &&
+      process.env.AUTH_AZURE_AD_B2C_ISSUER &&
+      AzureADB2CProvider({
+        clientId: process.env.AUTH_AZURE_AD_B2C_ID,
+        clientSecret: process.env.AUTH_AZURE_AD_B2C_SECRET,
+        issuer: process.env.AUTH_AZURE_AD_B2C_ISSUER,             // e.g. https://<tenant>.b2clogin.com/<tenant>.onmicrosoft.com/<userFlow>/v2.0/
+        profile(p) {
+          const email =
+            p.email ?? p.emails?.[0] ?? p.preferred_username ?? "";
+          return {
+            id: p.sub,
+            name: p.name ?? email,
+            email,
+            image: p.picture,
+            isAdmin: isAdmin(email),
+          };
+        },
+      }),
+
+    /* Local‑dev back‑door (only in development) */
+    process.env.NODE_ENV === "development" &&
       CredentialsProvider({
-        name: "localdev",
+        name: "Local Dev",
         credentials: {
-          username: { label: "Username", type: "text", placeholder: "dev" },
+          username: { label: "Username", type: "text", value: "dev" },
           password: { label: "Password", type: "password" },
         },
-        async authorize(credentials, req): Promise<any> {
-          const username = credentials?.username || "dev";
-          const email = username + "@localhost";
-          const user = {
+        async authorize({ username }) {
+          const email = `${username}@localhost`;
+          return {
             id: hashValue(email),
             name: username,
-            email: email,
+            email,
             isAdmin: false,
             image: "",
           };
-          console.log(
-            "=== DEV USER LOGGED IN:\n",
-            JSON.stringify(user, null, 2)
-          );
-          return user;
         },
-      })
-    );
-  }
+      }),
+  ].filter(Boolean), // removes any undefined entries
 
-  return providers;
-};
-
-export const options: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
-  providers: [...configureIdentityProvider()],
+  // —— Callbacks ————————————————————————————————————————————————
   callbacks: {
+    /** Provision a Neon database & persist flags */
     async signIn({ user }) {
       try {
-        const connectionString = await createNeonProjectForUser(user.id);
-        user.databaseConnectionString = connectionString;
-      } catch (error) {
-        console.error(`Error creating Neon project for user ${user.id}:`, error);
-        return false; // Prevent sign-in if project creation fails
+        user.databaseConnectionString = await createNeonProjectForUser(user.id);
+        return true;
+      } catch (err) {
+        console.error("Neon provisioning failed:", err);
+        return false;
       }
-      return true;
     },
     async jwt({ token, user }) {
-      if (user?.isAdmin) {
-        token.isAdmin = user.isAdmin;
-      }
-      if (user?.databaseConnectionString) {
-        token.databaseConnectionString = user.databaseConnectionString; // Pass connection string to token
-      }
+      if (user?.isAdmin) token.isAdmin = true;
+      if (user?.databaseConnectionString)
+        token.databaseConnectionString = user.databaseConnectionString;
       return token;
     },
-    async session({ session, token, user }) {
-      session.user.isAdmin = token.isAdmin as boolean;
-      session.user.databaseConnectionString = token.databaseConnectionString as string;
+    async session({ session, token }) {
+      session.user.isAdmin = !!token.isAdmin;
+      if (token.databaseConnectionString)
+        session.user.databaseConnectionString =
+          token.databaseConnectionString as string;
       return session;
     },
   },
-  session: {
-    strategy: "jwt",
-  },
-};
-
-// New auth function that works in both pages/ and app/ directories
-export async function auth() {
-  // For development, provide a fallback user to avoid errors
-  if (process.env.NODE_ENV === 'development') {
-    try {
-      // Try to get real token first if it exists
-      if (typeof window === 'undefined') {
-        try {
-          const { cookies } = await import('next/headers');
-          const cookieStore = await cookies();
-          const sessionCookie = cookieStore.get(process.env.NEXTAUTH_SECRET ?
-            `next-auth.session-token` :
-            `__Secure-next-auth.session-token`);
-            
-          if (sessionCookie?.value) {
-            // Try to use the real token if it exists
-            const parts = sessionCookie.value.split('.');
-            if (parts.length >= 2) {
-              try {
-                let base64Url = parts[1];
-                let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                let jsonPayload = Buffer.from(base64, 'base64').toString();
-                
-                if (jsonPayload && jsonPayload.trim() !== '') {
-                  const token = JSON.parse(jsonPayload);
-                  return {
-                    user: {
-                      id: token.sub || "",
-                      email: token.email || "",
-                      name: token.name || "",
-                      image: token.picture || "",
-                      isAdmin: token.isAdmin || false,
-                      databaseConnectionString: token.databaseConnectionString || null,
-                    }
-                  };
-                }
-              } catch (e) {
-                console.log("Token parsing failed, using dev fallback");
-              }
-            }
-          }
-        } catch (e) {
-          console.log("Cookie access failed, using dev fallback");
-        }
-      }
-      
-      // Fallback to development user
-      console.log("Using development fallback authentication");
-      return {
-        user: {
-          id: "dev-user-id",
-          email: "dev@example.com",
-          name: "Development User",
-          image: "",
-          isAdmin: true, // Set to true for development
-          databaseConnectionString: null,
-        }
-      };
-    } catch (error) {
-      console.error("Error in development auth fallback:", error);
-      return null;
-    }
-  }
-  
-  // Normal production flow
-  try {
-    // Use getServerSession for compatibility with both directories
-    if (typeof window === 'undefined') {
-      // We're on the server
-      try {
-        // Dynamic import to avoid build errors
-        const { cookies } = await import('next/headers');
-        const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get(process.env.NEXTAUTH_SECRET ?
-          `next-auth.session-token` :
-          `__Secure-next-auth.session-token`);
-
-        if (!sessionCookie?.value) {
-          console.log("No session cookie found");
-          return null;
-        }
-
-        // Check if cookie value has the expected format
-        const parts = sessionCookie.value.split('.');
-        if (parts.length < 2) {
-          console.log("Invalid session token format");
-          return null;
-        }
-
-        // Safely parse the base64 part
-        try {
-          let base64Url = parts[1];
-          let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-          let jsonPayload = Buffer.from(base64, 'base64').toString();
-          
-          // Add more defensive parsing
-          if (!jsonPayload || jsonPayload.trim() === '') {
-            console.log("Empty JSON payload");
-            return null;
-          }
-
-          // Parse the JSON
-          const token = JSON.parse(jsonPayload);
-          
-          return {
-            user: {
-              id: token.sub || "",
-              email: token.email || "",
-              name: token.name || "",
-              image: token.picture || "",
-              isAdmin: token.isAdmin || false,
-              databaseConnectionString: token.databaseConnectionString || null,
-            }
-          };
-        } catch (parseError) {
-          console.error("Error parsing token payload:", parseError);
-          return null;
-        }
-      } catch (error) {
-        console.error("Error accessing cookies:", error);
-        return null;
-      }
-    } else {
-      // We're on the client
-      return null;
-    }
-  } catch (error) {
-    console.error("Error in auth function:", error);
-    return null;
-  }
-}
-
-export const handlers = NextAuth(options);
+});

@@ -21,6 +21,7 @@ export default function RootLayout({
     <html lang="en" className={cn("h-full w-full overflow-hidden", inter.variable, cal.variable, jetbrainsMono.variable)} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <link rel="preload" href="/fonts/CalSans-SemiBold.otf" as="font" type="font/otf" crossOrigin="anonymous" />
       </head>
       <body
         className={cn(
