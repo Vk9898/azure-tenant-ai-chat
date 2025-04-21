@@ -4,10 +4,10 @@ import { FC, KeyboardEvent, useRef, FormEvent } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Send } from "lucide-react";
-import { usePublicChatStore } from "./public-chat-store"; // Correct import
+import { usePublicChat, publicChatStore } from "./public-chat-store"; // Correct import
 
 export const PublicChatInput: FC = () => {
-  const { input, loading, updateInput, submitChat } = usePublicChatStore(); // Use the imported hook
+  const { input, loading } = usePublicChat(); // Use the imported hook
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -16,10 +16,10 @@ export const PublicChatInput: FC = () => {
       handleSubmit(e);
     }
   };
-  
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    submitChat(e);
+    publicChatStore.submitChat(e as FormEvent<HTMLFormElement>); // Call store action directly
   };
 
   return (
@@ -33,7 +33,7 @@ export const PublicChatInput: FC = () => {
           <Textarea
             placeholder="Send a message..."
             value={input}
-            onChange={(e) => updateInput(e.target.value)}
+            onChange={(e) => publicChatStore.updateInput(e.target.value)} // Call store action directly
             onKeyDown={handleKeyDown}
             rows={Math.min(Math.max(input.split('\n').length, 1), 5)}
             className="min-h-[44px] border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xs"

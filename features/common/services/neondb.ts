@@ -174,6 +174,13 @@ const initializeDatabaseSchema = async (connectionString: string) => {
   try {
     console.log("Initializing database schema...");
 
+    // Add check for connection string validity
+    if (!connectionString || typeof connectionString !== 'string' || connectionString.trim() === '') {
+      console.error("FATAL: Invalid or empty connectionString provided to initializeDatabaseSchema.");
+      throw new Error("Invalid database connection string for schema initialization.");
+    }
+    console.log(`Using connection string for schema init: ${connectionString.substring(0, 20)}...`); // Log prefix
+
     // Initialize Neon client
     const sql = neon(connectionString);
 
