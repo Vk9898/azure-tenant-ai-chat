@@ -23,12 +23,15 @@ const adminEmails = (process.env.ADMIN_EMAIL_ADDRESS || "")
 // Helper function to safely parse emailVerified from user/token
 const parseEmailVerified = (value: unknown): Date | null => {
   if (value instanceof Date) return value;
+  // Check if it's a string or number that can be parsed into a valid date
   if (typeof value === 'string' || typeof value === 'number') {
       const date = new Date(value);
       if (!isNaN(date.getTime())) return date;
   }
+  // Return null for any other case (undefined, null, object, invalid date string/number)
   return null;
 };
+
 
 /* ────────────────────────────────────────────────────────── */
 /*  Provider Configuration                                   */
@@ -85,7 +88,6 @@ export const authConfig: NextAuthConfig = {
                 name: username,
                 email: email,
                 emailVerified: null, // Dev users are not email verified by default
-                // isAdmin: false, // Removed isAdmin from here, set in JWT callback
                 image: "", // No image for dev user
               } satisfies AdapterUser; // Ensure it satisfies the base AdapterUser type
             },
@@ -100,16 +102,12 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     /* ---------------- JWT Callback ---------------------- */
     async jwt({ token, account, user, profile }) {
-      // Ensure user and account details are present on initial sign-in
       if (account && user) {
-        token.provider = account.provider; // Store the provider used
-
-        // Determine admin status based on email
+        token.provider = account.provider;
         token.isAdmin = !!(
           user.email && adminEmails.includes(user.email.toLowerCase())
         );
 
-        // Generate and store a consistent hashed user ID based on email
         if (user.email) {
           token.hashedUserId = hashValueSync(user.email.toLowerCase());
         } else {
@@ -117,13 +115,10 @@ export const authConfig: NextAuthConfig = {
            console.warn(`[auth] User email missing for provider ${account.provider}. Using provider ID ${token.hashedUserId} as hashedUserId.`);
         }
 
-        // Forward emailVerified status from user object if available
-        // Check if 'emailVerified' exists on the user object before accessing
+        // Safely handle emailVerified from the user object
         const rawEmailVerified = (user as AdapterUser).emailVerified;
         token.emailVerified = parseEmailVerified(rawEmailVerified);
 
-
-        // Provision Neon DB *only if* the connection string isn't already in the token
         if (!token.databaseConnectionString && token.sub) {
            console.log(`[auth] No databaseConnectionString found for user ${token.sub}. Attempting to provision...`);
           try {
@@ -132,8 +127,8 @@ export const authConfig: NextAuthConfig = {
             console.log(`[auth] Provisioned/retrieved Neon DB for user ${token.sub}`);
           } catch (err) {
             console.error(`[auth] Neon provisioning failed for user ${token.sub}:`, err);
-            console.warn(`[auth] Falling back to default database connection string for user ${token.sub}. Ensure DATABASE_URL is set.`);
-            token.databaseConnectionString = process.env.DATABASE_URL ?? null; // Use default DB URL or null
+            console.warn(`[auth] Falling back to default/anonymous database connection string for user ${token.sub}. Ensure ANONYMOUS_DATABASE_URL is set.`);
+            token.databaseConnectionString = process.env.ANONYMOUS_DATABASE_URL; // Use default DB URL (will be undefined if not set)
             if (!token.databaseConnectionString) {
               console.error("[auth] FATAL: Fallback failed. DATABASE_URL environment variable is not set.");
             }
@@ -144,51 +139,60 @@ export const authConfig: NextAuthConfig = {
             console.error(`[auth] Cannot provision Neon DB: token.sub is missing.`);
         }
       }
-      return token; // Return the updated token
+      return token;
     },
 
     /* --------------- Session Callback ------------------- */
     async session({ session, token }) {
 
-       // Initialize session.user if it doesn't exist, fulfilling basic User type
-       if (!session.user) {
-         session.user = {
-           id: token.sub || "anonymous", // Provide a default id
-           name: token.name || null,
-           email: token.email || null,
-           image: token.image || null,
-         };
-       }
+      // Ensure session.user exists and initialize with base properties from token
+      if (!session.user) {
+        session.user = {
+          id: "",
+          name: "",
+          email: "",
+          image: "",
+          emailVerified: null,
+          isAdmin: false,
+          hashedUserId: "",
+          provider: "",
+          databaseConnectionString: "",
+        }; // Initialize as empty object
+      }
 
-      // Assign properties from token to session.user, ensuring base properties are handled
-      session.user.id = token.sub || session.user.id || "";
-      session.user.name = token.name || session.user.name || null;
-      session.user.email = token.email || session.user.email || null;
-      session.user.image = token.image || session.user.image || null;
-      session.user.emailVerified = token.emailVerified || session.user.emailVerified || null;
-      // No need to assign emailVerified here, it's part of the default Session.user if using Adapter
+      // Assign base properties expected by Session['user']
+      session.user.id = token.sub ?? session.user.id ?? ""; // Ensure id is always a string
+      session.user.name = token.name?.toString() ?? session.user.name ?? "";
+      session.user.email = token.email?.toString() ?? session.user.email ?? "";
+      session.user.image = token.image?.toString() ?? session.user.image ?? "";
+      session.user.emailVerified = token.emailVerified instanceof Date ? token.emailVerified : 
+                                  (token.emailVerified ? new Date(token.emailVerified.toString()) : null);
+      session.user.isAdmin = Boolean(token.isAdmin ?? session.user.isAdmin ?? false);
+      // emailVerified is handled as a Date object or null to match the expected type
 
-      // Now, safely add our custom properties
-      const customUser = session.user as CustomUser; // Use our extended type
+      // Use type assertion to add custom properties, extending the base Session['user']
+      const customUser = session.user as CustomUser;
 
       customUser.isAdmin = !!token.isAdmin; // Ensure boolean
 
+      // Assign custom properties from token
       if (token.hashedUserId) {
         customUser.hashedUserId = token.hashedUserId as string;
       }
       if (token.provider) {
         customUser.provider = token.provider as string;
       }
-      if (token.databaseConnectionString) {
-        customUser.databaseConnectionString = token.databaseConnectionString as string;
-      } else {
-        // Ensure property exists even if null/undefined from token for type consistency
-        customUser.databaseConnectionString = undefined;
-      }
+       if (token.databaseConnectionString) {
+         customUser.databaseConnectionString = token.databaseConnectionString as string;
+       } else {
+         // Explicitly ensure the property is undefined if not present/null on token
+         customUser.databaseConnectionString = undefined;
+       }
 
-      session.user = customUser; // Assign the fully typed user back
+      // Assign the correctly typed and augmented user back
+      session.user = customUser as AdapterUser & { isAdmin: boolean; hashedUserId?: string | undefined; provider?: string | undefined; databaseConnectionString?: string | undefined; };
 
-      return session; // Return the augmented session object
+      return session;
     },
 
     /* --------------- signIn guard ----------------------- */
