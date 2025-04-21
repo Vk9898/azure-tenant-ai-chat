@@ -6,8 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "npm install --legacy-peer-deps"
+    "lint": "next lint"
+
   },
   "dependencies": {
     "@azure/ai-form-recognizer": "^5.0.0",
@@ -64,9 +64,6 @@
     "eslint-config-next": "15.3.1",
     "tailwindcss": "^4.1.4",
     "typescript": "^5.8.3"
-  },
-  "overrides": {
-    "@types/react": "19.1.2",
-    "@types/react-dom": "19.1.2"
+  
   }
 }
