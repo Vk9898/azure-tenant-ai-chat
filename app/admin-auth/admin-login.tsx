@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import { signIn } from "next-auth/react";
 import { FormEvent, useState } from "react";
 
@@ -32,16 +33,16 @@ export const AdminLogin: React.FC<AdminLoginProps> = (props) => {
     try {
       // In a real application, you would validate if the email is in your admin list
       // For now, we'll just check if it's one of the admin emails from the environment variable
-      const adminEmails = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(email => 
+      const adminEmails = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(email =>
         email.toLowerCase().trim()
       ) || [];
-      
+
       // Since we're using GitHub or other OAuth providers, we'll redirect to their login
       // In a real app, this could be a custom authentication mechanism
-      await signIn("github", { 
+      await signIn("github", {
         callbackUrl: "/reporting"
       });
-      
+
       // Note: signIn will automatically redirect on success, so we won't reach here
       // if authentication is successful
     } catch (err) {
@@ -51,7 +52,10 @@ export const AdminLogin: React.FC<AdminLoginProps> = (props) => {
   };
 
   return (
-    <Card className="w-full">
+    <Card className={cn(
+        "w-full border-2 rounded-xs bg-card text-card-foreground shadow-xs" // Direct styles
+      )}
+      data-slot="admin-login-card">
       <CardHeader>
         <CardTitle className="text-xl">Administrator Login</CardTitle>
         <CardDescription>
@@ -60,11 +64,11 @@ export const AdminLogin: React.FC<AdminLoginProps> = (props) => {
       </CardHeader>
       <CardContent>
         {error && (
-          <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md mb-4">
+          <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-xs mb-4">
             {error}
           </div>
         )}
-        
+
         <form onSubmit={handleAdminEmailLogin} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -75,6 +79,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = (props) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="rounded-xs border-2" // Apply theme styles
             />
           </div>
           <div className="space-y-2">
@@ -85,11 +90,16 @@ export const AdminLogin: React.FC<AdminLoginProps> = (props) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="rounded-xs border-2" // Apply theme styles
             />
           </div>
-          <Button 
-            type="submit" 
-            className="w-full" 
+          <Button
+            type="submit"
+            className={cn(
+               "w-full rounded-xs font-bold uppercase min-h-11 md:min-h-10", // Standard sizing
+               "bg-primary text-primary-foreground hover:bg-primary/90", // Primary colors
+               "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" // Focus ring
+            )}
             disabled={loading}
           >
             {loading ? "Logging in..." : "Login as Admin"}
@@ -99,7 +109,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = (props) => {
       <CardFooter className="flex flex-col">
         <div className="relative w-full mb-4">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+            <span className="w-full border-t border-border" /> {/* Use theme border */}
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-card px-2 text-muted-foreground">
@@ -107,11 +117,15 @@ export const AdminLogin: React.FC<AdminLoginProps> = (props) => {
             </span>
           </div>
         </div>
-        
+
         {props.githubEnabled && (
-          <Button 
-            variant="outline" 
-            className="w-full" 
+          <Button
+            variant="outline"
+            className={cn(
+              "w-full rounded-xs font-bold uppercase min-h-11 md:min-h-10", // Standard sizing
+              "border-2", // Add border-2 to match design
+              "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" // Focus ring
+            )}
             onClick={() => signIn("github", { callbackUrl: "/reporting" })}
           >
             <svg viewBox="0 0 24 24" className="mr-2 h-4 w-4">
@@ -126,4 +140,4 @@ export const AdminLogin: React.FC<AdminLoginProps> = (props) => {
       </CardFooter>
     </Card>
   );
-}; 
+};
