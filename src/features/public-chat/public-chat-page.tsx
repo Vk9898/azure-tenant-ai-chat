@@ -75,7 +75,7 @@ export const PublicChatPage: FC = () => {
       </div>
       <PublicChatMessageContainer ref={current} className="flex-1 py-4 sm:py-6 pb-32 sm:pb-24">
         <PublicChatMessageContentArea className="container max-w-3xl px-4 sm:px-6 mx-auto space-y-8 sm:space-y-10">
-          {messages.map((message) => (
+          {messages.map((message: any) => (
             <PublicChatMessageArea
               key={message.id}
               profileName={message.name}
