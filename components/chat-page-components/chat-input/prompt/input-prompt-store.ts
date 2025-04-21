@@ -1,4 +1,4 @@
-import { PromptModel } from "@/components/prompt-page-components/prompt-models";
+import { PromptModel } from "@/components/prompt-page-components/models";
 import { FindAllPublishedPrompts } from "@/components/prompt-page-components/prompt-service";
 import { proxy, useSnapshot } from "valtio";
 import { chatStore } from "../../chat-store";

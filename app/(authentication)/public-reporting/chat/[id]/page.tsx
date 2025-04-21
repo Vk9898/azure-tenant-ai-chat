@@ -1,5 +1,5 @@
-import ReportingChatPage from "@/components/reporting-page/reporting-chat-page";
-import { FindAllChatMessagesForAdmin } from "@/components/reporting-page/reporting-services/reporting-service";
+import ReportingChatPage from "@/components/reporting-page-components/reporting-chat-page";
+import { FindAllChatMessagesForAdmin } from "@/components/reporting-page-components/reporting-services/reporting-service";
 import { DisplayError } from "@/components/ui/error/display-error";
 
 interface HomeParams {

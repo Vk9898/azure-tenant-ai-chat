@@ -1,4 +1,4 @@
-import { ChatReportingComponent } from "@/components/reporting-page/reporting-component";
+import { ChatReportingComponent } from "@/components/reporting-page-components/reporting-component";
 
 interface Props {
   params: Promise<{}>;
