@@ -305,7 +305,7 @@ export const CreateChatWithExtension = async (
       const modelToSave: ChatThreadModel = {
         id: uniqueId(),
         name: extension.name,
-        useName: session.name,
+        useName: session.name || "User",
         userId: hashedId,
         createdAt: new Date(),
         lastMessageAt: new Date(),
