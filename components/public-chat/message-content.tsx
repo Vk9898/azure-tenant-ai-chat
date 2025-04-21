@@ -1,15 +1,8 @@
 import { FC } from "react";
-
-interface ChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  name: string;
-  content: string;
-  createdAt?: Date;
-}
+import { PublicChatMessage } from "./public-chat-store";
 
 interface MessageContentProps {
-  message: ChatMessage;
+  message: PublicChatMessage;
 }
 
 const MessageContent: FC<MessageContentProps> = ({ message }) => {

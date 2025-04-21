@@ -117,7 +117,7 @@ export const usePublicChatStore = create<PublicChatStore>((set, get) => ({
         messages: [
           {
             id: uuidv4(),
-            role: "assistant",
+            role: "assistant" as const,
             content: "Welcome to the public chat! How can I help you today?",
             name: AI_NAME,
             createdAt: new Date(),
@@ -131,7 +131,7 @@ export const usePublicChatStore = create<PublicChatStore>((set, get) => ({
     const newMessages = [
       {
         id: uuidv4(),
-        role: "assistant",
+        role: "assistant" as const,
         content: "Chat history has been cleared. How can I help you?",
         name: AI_NAME,
         createdAt: new Date(),
