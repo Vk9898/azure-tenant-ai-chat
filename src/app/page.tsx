@@ -1,16 +1,13 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { buttonVariants } from '@/features/ui/button';
-import { getServerSession } from 'next-auth';
-import { options as authOptions } from '@/features/auth-page/auth-api';
+import { auth } from '@/features/auth-page/auth-api';
 
 export default async function Home() {
-  // Safely handle the case where session might be undefined during development
+  // Use the new auth() function instead of getServerSession
   let session;
   try {
-    // Ensure authOptions is properly awaited
-    const resolvedAuthOptions = await Promise.resolve(authOptions);
-    session = await getServerSession(resolvedAuthOptions);
+    session = await auth();
   } catch (error) {
     console.error("Error getting session:", error);
     session = null;
