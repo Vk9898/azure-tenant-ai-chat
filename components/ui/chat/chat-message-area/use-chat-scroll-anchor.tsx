@@ -10,36 +10,38 @@ export const useChatScrollAnchor = (props: {
 
   // This effect handles the user's scroll event
   useEffect(() => {
+    const currentRef = ref.current;
     const handleUserScroll = () => {
-      if (ref.current) {
+      if (currentRef) {
         const userScrolledUp =
-          ref.current.scrollTop + ref.current.clientHeight <
-          ref.current.scrollHeight;
+          currentRef.scrollTop + currentRef.clientHeight <
+          currentRef.scrollHeight;
 
         chatStore.updateAutoScroll(!userScrolledUp);
       }
     };
 
-    ref.current?.addEventListener("scroll", handleUserScroll);
+    currentRef?.addEventListener("scroll", handleUserScroll);
 
     // Cleanup: remove the event listener when the component unmounts or the dependencies change
     return () => {
-      ref.current?.removeEventListener("scroll", handleUserScroll);
+      currentRef?.removeEventListener("scroll", handleUserScroll);
     };
   }, [ref]);
 
   // This effect handles the automatic scroll to bottom
   useEffect(() => {
+    const currentRef = ref.current;
     const handleAutoScroll = () => {
-      if (ref.current && autoScroll) {
-        ref.current.scrollTop = ref.current.scrollHeight;
+      if (currentRef && autoScroll) {
+        currentRef.scrollTop = currentRef.scrollHeight;
       }
     };
 
     const observer = new MutationObserver(handleAutoScroll);
 
-    if (ref.current) {
-      observer.observe(ref.current, { childList: true, subtree: true });
+    if (currentRef) {
+      observer.observe(currentRef, { childList: true, subtree: true });
     }
 
     // Cleanup: disconnect the observer when the component unmounts or the dependencies change

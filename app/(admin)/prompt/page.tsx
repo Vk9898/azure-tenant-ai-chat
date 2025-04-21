@@ -11,16 +11,20 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Card } from "../../../components/ui/card";
 
-interface ChatSamplePromptProps {}
+interface ChatSamplePromptProps {
+  prompts: Array<{
+    id: string;
+    name: string;
+    type: "PROMPT";
+    description: string;
+    createdAt: Date;
+    isPublished: boolean;
+    userId: string;
+  }>;
+}
 
-export const ChatSamplePromptPage: FC<ChatSamplePromptProps> = async () => {
-  const promptsResponse = await FindAllPrompts();
-
-  if (promptsResponse.status !== "OK") {
-    return <DisplayError errors={promptsResponse.errors} />;
-  }
-
-  const prompts = promptsResponse.response;
+const ChatSamplePromptComponent: FC<ChatSamplePromptProps> = (props) => {
+  const { prompts } = props;
 
   return (
     <ScrollArea className="flex-1">
@@ -81,3 +85,18 @@ export const ChatSamplePromptPage: FC<ChatSamplePromptProps> = async () => {
     </ScrollArea>
   );
 };
+
+export default async function PromptPage() {
+  try {
+    const promptsResponse = await FindAllPrompts();
+
+    if (promptsResponse.status !== "OK") {
+      return <DisplayError errors={promptsResponse.errors} />;
+    }
+
+    return <ChatSamplePromptComponent prompts={promptsResponse.response} />;
+  } catch (error) {
+    console.error("Error fetching prompts:", error);
+    return <DisplayError errors={[{ message: "Error fetching prompts" }]} />;
+  }
+}

@@ -1,4 +1,3 @@
-
 import { FC } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AddExtension } from "@/components/extensions-page/add-extension/add-new-extension";
@@ -11,13 +10,12 @@ import { Button } from "@/components/ui/button";
 import { FindAllExtensionsForAdmin } from "@/components/extensions-page/extension-services/extension-service";
 import { DisplayError } from "@/components/ui/error/display-error";
 
-
 interface Props {
   extensions: ExtensionModel[];
   showWebSearchTemplates?: boolean;
 }
 
-export const ExtensionPage: FC<Props> = (props) => {
+const ExtensionPageComponent: FC<Props> = (props) => {
   return (
     <ScrollArea className="flex-1">
       <main className="flex flex-1 flex-col">
@@ -72,5 +70,20 @@ export const ExtensionPage: FC<Props> = (props) => {
     </ScrollArea>
   );
 };
+
+export default async function ExtensionsPage() {
+  try {
+    const result = await FindAllExtensionsForAdmin();
+    
+    if ('error' in result || !Array.isArray(result)) {
+      return <DisplayError errors={[{ message: "Failed to load extensions" }]} />;
+    }
+    
+    return <ExtensionPageComponent extensions={result} showWebSearchTemplates={true} />;
+  } catch (error) {
+    console.error("Error fetching extensions:", error);
+    return <DisplayError errors={[{ message: "Error fetching extensions" }]} />;
+  }
+}
 
 

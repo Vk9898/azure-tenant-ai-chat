@@ -1,6 +1,7 @@
 import { Markdown } from "@/components/ui/markdown/markdown";
 import { FunctionSquare } from "lucide-react";
 import React from "react";
+import Image from "next/image";
 import {
   Accordion,
   AccordionContent,
@@ -27,7 +28,7 @@ const MessageContent: React.FC<MessageContentProps> = ({ message }) => {
           content={message.content}
           onCitationClick={CitationAction}
         ></Markdown>
-        {message.multiModalImage && <img src={message.multiModalImage} className="rounded-xs border-2 border-border mt-2" data-slot="multimodal-image" />}
+        {message.multiModalImage && <Image src={message.multiModalImage} alt="Multimodal content" className="rounded-xs border-2 border-border mt-2" data-slot="multimodal-image" width={500} height={300} />}
       </div>
     );
   }

@@ -199,7 +199,7 @@ export default function ExtensionsPage() {
                   Extensions enhance your AI chat by connecting it to internal APIs or external resources.
                 </p>
                 <p>
-                  Create your own extensions to access specific data sources, perform custom calculations, or integrate with your company's tools.
+                  Create your own extensions to access specific data sources, perform custom calculations, or integrate with your company&apos;s tools.
                 </p>
                 <p>
                   Admin extensions are available to all users in your organization, while personal extensions are only available to you.

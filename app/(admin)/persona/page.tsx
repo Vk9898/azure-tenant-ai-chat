@@ -4,12 +4,14 @@ import { AddNewPersona } from "../../../components/persona-page/add-new-persona"
 import { PersonaCard } from "../../../components/persona-page/persona-card/persona-card";
 import { PersonaHero } from "../../../components/persona-page/persona-hero/persona-hero";
 import { PersonaModel } from "../../../components/persona-page/persona-services/models";
+import { FindAllPersonasForAdmin } from "../../../components/persona-page/persona-services/persona-service";
+import { DisplayError } from "../../../components/ui/error/display-error";
 
 interface ChatPersonaProps {
   personas: PersonaModel[];
 }
 
-export const ChatPersonaPage: FC<ChatPersonaProps> = (props) => {
+const ChatPersonaComponent: FC<ChatPersonaProps> = (props) => {
   return (
     <ScrollArea className="flex-1">
       <main className="flex flex-1 flex-col">
@@ -40,3 +42,18 @@ export const ChatPersonaPage: FC<ChatPersonaProps> = (props) => {
     </ScrollArea>
   );
 };
+
+export default async function PersonaPage() {
+  try {
+    const result = await FindAllPersonasForAdmin();
+    
+    if ('error' in result || !Array.isArray(result)) {
+      return <DisplayError errors={[{ message: "Failed to load personas" }]} />;
+    }
+    
+    return <ChatPersonaComponent personas={result} />;
+  } catch (error) {
+    console.error("Error fetching personas:", error);
+    return <DisplayError errors={[{ message: "Error fetching personas" }]} />;
+  }
+}

@@ -335,7 +335,7 @@ return JSON.stringify(requestBody);`
 const REPUTATION_CHECK_TEMPLATE = {
   id: "",
   name: "Reputation Check",
-  description: "Check a person's online reputation and assess potential fraud risk factors",
+  description: "Check a person&apos;s online reputation and assess potential fraud risk factors",
   executionSteps: `This extension allows the AI to perform a reputation check on an individual by searching for relevant information online.`,
   headers: [
     {
@@ -413,8 +413,8 @@ export const WebSearchTemplates: FC = () => {
     <div className="mb-8">
       <h2 className="text-2xl font-semibold mb-4">Web Search Templates</h2>
       <p className="text-muted-foreground mb-6">
-        Quickly create extensions that leverage OpenAI's web search capabilities. 
-        You'll need an OpenAI API key to use these templates.
+        Quickly create extensions that leverage OpenAI&apos;s web search capabilities. 
+        You&apos;ll need an OpenAI API key to use these templates.
       </p>
 
       <div className="grid grid-cols-3 gap-4 mb-8">
@@ -568,7 +568,7 @@ export const WebSearchTemplates: FC = () => {
               <Shield className="h-5 w-5" />
               Reputation Check
             </CardTitle>
-            <CardDescription>Check a person's online reputation</CardDescription>
+            <CardDescription>Check a person&apos;s online reputation</CardDescription>
           </CardHeader>
           <CardContent className="flex-grow">
             <p className="text-sm text-muted-foreground">

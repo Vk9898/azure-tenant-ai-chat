@@ -287,7 +287,7 @@ export function ChatPlayground() {
                             />
                           </FormControl>
                           <FormDescription className="text-xs text-muted-foreground">
-                            Instructions to shape the model's behavior
+                            Instructions to shape the model&apos;s behavior
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -431,7 +431,7 @@ export function ChatPlayground() {
                     <CardHeader className="p-4 sm:p-6">
                       <CardTitle className="text-xl font-bold">Response Comparison</CardTitle>
                       <CardDescription className="text-sm text-muted-foreground mt-1">
-                        Compare the expected response with the model's response
+                        Compare the expected response with the model&apos;s response
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">

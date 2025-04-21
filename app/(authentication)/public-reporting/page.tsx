@@ -1,4 +1,4 @@
-import { ChatReportingPage } from "@/app/(admin)/reporting/page";
+import { ChatReportingComponent } from "@/components/reporting-page/reporting-component";
 
 interface Props {
   params: Promise<{}>;
@@ -10,7 +10,7 @@ interface Props {
 export default async function Home(props: Props) {
   return (
     (<div className="flex flex-col min-h-screen" data-slot="reporting-page">
-      <ChatReportingPage page={Number((await props.searchParams).pageNumber ?? 0)} />
+      <ChatReportingComponent page={Number((await props.searchParams).pageNumber ?? 0)} />
     </div>)
   );
 }
