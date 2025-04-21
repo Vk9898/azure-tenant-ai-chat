@@ -1,7 +1,7 @@
 import { neon } from "@neondatabase/serverless";
 import path from "path";
 import fs from "fs/promises";
-import { getCurrentUser } from "@/components/auth-page/helpers";
+import { getCurrentUser } from "@/lib/auth/auth-helpers";
 
 
 export const NeonDBInstance = async () => {

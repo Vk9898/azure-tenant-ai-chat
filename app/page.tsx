@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
-import { auth } from '@/components/auth-page/auth-api';
+import { auth } from '@/lib/auth/auth-api';
 
 export default async function Home() {
   // Use the new auth() function which properly awaits cookies() internally

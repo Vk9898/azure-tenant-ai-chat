@@ -5,7 +5,7 @@ import {
   getCurrentUser,
   userHashedId,
   userSession,
-} from "@/components/auth-page/helpers";
+} from "@/lib/auth/auth-helpers";
 import { UpsertChatThread } from "@/components/chat-page/chat-services/chat-thread-service";
 import {
   CHAT_THREAD_ATTRIBUTE,

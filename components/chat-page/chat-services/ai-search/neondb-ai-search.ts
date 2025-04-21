@@ -1,7 +1,7 @@
 "use server";
 import { NeonDBInstance } from "@/components/common/services/neondb";
 
-import { getCurrentUser, userHashedId } from "@/components/auth-page/helpers";
+import { getCurrentUser, userHashedId } from "@/lib/auth/auth-helpers";
 import { ServerActionResponse } from "@/components/common/server-action-response";
 import { OpenAIEmbeddingInstance } from "@/components/common/services/openai";
 import { uniqueId } from "@/components/common/util";

@@ -1,6 +1,6 @@
 "use server";
 import { NeonDBInstance } from "@/components/common/services/neondb";
-import { userHashedId } from "@/components/auth-page/helpers";
+import { userHashedId } from "@/lib/auth/auth-helpers";
 import { ServerActionResponse } from "@/components/common/server-action-response";
 import { uniqueId } from "@/components/common/util";
 import { ChatMessageModel, ChatRole, MESSAGE_ATTRIBUTE } from "./models";

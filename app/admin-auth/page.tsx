@@ -1,4 +1,4 @@
-import { redirectIfAuthenticated } from "@/components/auth-page/helpers";
+import { redirectIfAuthenticated } from "@/lib/auth/auth-helpers";
 import { AdminLogin } from "./admin-login";
 import Link from "next/link";
 

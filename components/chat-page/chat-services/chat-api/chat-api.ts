@@ -1,7 +1,7 @@
 "use server";
 import "server-only";
 
-import { getCurrentUser } from "@/components/auth-page/helpers";
+import { getCurrentUser } from "@/lib/auth/auth-helpers";
 import { CHAT_DEFAULT_SYSTEM_PROMPT } from "@/components/theme/theme-config";
 import { ChatCompletionStreamingRunner } from "openai/resources/beta/chat/completions";
 import { ChatApiRAG } from "./chat-api-rag";

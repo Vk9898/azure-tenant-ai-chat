@@ -1,5 +1,5 @@
 "use server";
-import { getCurrentUser } from "@/components/auth-page/helpers";
+import { getCurrentUser } from "@/lib/auth/auth-helpers";
 import {
   CHAT_THREAD_ATTRIBUTE,
   ChatThreadModel,
@@ -7,7 +7,7 @@ import {
 } from "@/components/chat-page/chat-services/models";
 import { ServerActionResponse } from "@/components/common/server-action-response";
 import { NeonDBInstance } from "@/components/common/services/neondb";
-import { userHashedId } from "@/components/auth-page/helpers";
+import { userHashedId } from "@/lib/auth/auth-helpers";
 import { redirect } from "next/navigation";
 
 export const GetUserMetrics = async (): Promise<ServerActionResponse<{

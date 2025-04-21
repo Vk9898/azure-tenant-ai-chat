@@ -1,7 +1,7 @@
 "use server";
 import { NeonDBInstance } from "@/components/common/services/neondb";
 
-import { getCurrentUser, userHashedId } from "@/components/auth-page/helpers";
+import { getCurrentUser, userHashedId } from "@/lib/auth/auth-helpers";
 import { UpsertChatThread } from "@/components/chat-page/chat-services/chat-thread-service";
 import {
   CHAT_THREAD_ATTRIBUTE,

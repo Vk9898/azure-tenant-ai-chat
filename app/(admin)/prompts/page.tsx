@@ -1,5 +1,5 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getCurrentUser } from "@/components/auth-page/helpers";
+import { getCurrentUser } from "@/lib/auth/auth-helpers";
 import { redirect } from "next/navigation";
 import { Hero } from "@/components/ui/hero";
 import { BarChart, Database, SparklesIcon } from "lucide-react";

@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import { authConfig } from "./config";
+import { authConfig } from "./auth-config";
 
 // Create a simple NextAuth handler with basic exports
 // @ts-ignore - NextAuth v5 beta type issues

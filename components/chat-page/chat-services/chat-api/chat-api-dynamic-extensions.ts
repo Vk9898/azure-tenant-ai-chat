@@ -3,7 +3,7 @@ import "server-only";
 
 import { ServerActionResponse } from "@/components/common/server-action-response";
 
-import { userHashedId } from "@/components/auth-page/helpers";
+import { userHashedId } from "@/lib/auth/auth-helpers";
 import {
   FindAllExtensionsForCurrentUser,
   FindSecureHeaderValue,

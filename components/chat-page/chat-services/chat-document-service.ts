@@ -1,7 +1,7 @@
 "use server";
 import { NeonDBInstance } from "@/components/common/services/neondb";
 
-import { userHashedId } from "@/components/auth-page/helpers";
+import { userHashedId } from "@/lib/auth/auth-helpers";
 import { RevalidateCache } from "@/components/common/navigation-helpers";
 import { ServerActionResponse } from "@/components/common/server-action-response";
 import { DocumentIntelligenceInstance } from "@/components/common/services/document-intelligence";

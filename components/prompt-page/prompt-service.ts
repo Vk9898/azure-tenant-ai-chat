@@ -9,7 +9,7 @@ import {
   PromptModel,
   PromptModelSchema,
 } from "@/components/prompt-page/models";
-import { getCurrentUser, userHashedId } from "../auth-page/helpers";
+import { getCurrentUser, userHashedId } from "../../lib/auth/auth-helpers";
 import { NeonDBInstance } from "@/components/common/services/neondb";
 import { uniqueId } from "../common/util";
 

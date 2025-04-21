@@ -1,7 +1,7 @@
 "use server";
 import "server-only";
 
-import { userHashedId } from "@/components/auth-page/helpers";
+import { userHashedId } from "@/lib/auth/auth-helpers";
 import { OpenAIInstance } from "@/components/common/services/openai";
 import {
   ChatCompletionStreamingRunner,

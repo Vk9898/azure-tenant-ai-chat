@@ -14,7 +14,7 @@ import {
   BarChart3,
   VenetianMask,
 } from "lucide-react";
-import { getCurrentUser } from "../auth-page/helpers";
+import { getCurrentUser } from "../../lib/auth/auth-helpers";
 import { MenuLink } from "./menu-link";
 import { UserProfile } from "./user-profile";
 import { DropdownNavigation } from "./dropdown-navigation";

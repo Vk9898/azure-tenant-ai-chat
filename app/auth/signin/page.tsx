@@ -1,7 +1,7 @@
 "use client";
 
 import { LogIn } from "@/components/auth-page/login";
-import { redirectIfAuthenticated } from "@/components/auth-page/helpers";
+import { redirectIfAuthenticated } from "@/lib/auth/auth-helpers";
 import { useEffect, useState } from "react";
 
 export default function SignInPage() {

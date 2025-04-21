@@ -5,7 +5,7 @@ import {
   getCurrentUser,
   userHashedId,
   userSession,
-} from "@/components/auth-page/helpers";
+} from "@/lib/auth/auth-helpers";
 import { RedirectToChatThread } from "@/components/common/navigation-helpers";
 import { ServerActionResponse } from "@/components/common/server-action-response";
 import { uniqueId } from "@/components/common/util";

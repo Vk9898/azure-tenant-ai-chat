@@ -2,7 +2,7 @@
 
 import { NeonDBInstance } from "@/components/common/services/neondb";
 import { ServerActionResponse } from "@/components/common/server-action-response";
-import { getCurrentUser, userHashedId } from "@/components/auth-page/helpers";
+import { getCurrentUser, userHashedId } from "@/lib/auth/auth-helpers";
 
 export interface PromptLogEntry {
   id?: number;

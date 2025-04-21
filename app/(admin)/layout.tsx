@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@/components/auth-page/helpers";
+import { getCurrentUser } from "@/lib/auth/auth-helpers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { LayoutDashboard, Users, MessageSquare, ListFilter, SparklesIcon, Database } from "lucide-react";

@@ -1,8 +1,8 @@
 import { auth } from "./auth-api"; // Import auth function from our config
 import { Session } from "next-auth"; // Import Session type
-import { RedirectToPage } from "../common/navigation-helpers";
+import { RedirectToPage } from "../../components/common/navigation-helpers";
 import { redirect } from "next/navigation";
-import { hashValue, hashValueSync } from "./utils";
+import { hashValue, hashValueSync } from "./auth-utils";
 
 // Define the expected structure of the user object within the session
 // Removed databaseConnectionString as it's handled per-request now

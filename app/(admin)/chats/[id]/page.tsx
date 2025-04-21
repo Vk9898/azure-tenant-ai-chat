@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@/components/auth-page/helpers";
+import { getCurrentUser } from "@/lib/auth/auth-helpers";
 import { FindAllChatMessagesForAdmin } from "@/components/reporting-page/reporting-services/reporting-service";
 import { Button } from "@/components/ui/button";
 import { DisplayError } from "@/components/ui/error/display-error";

@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@/components/auth-page/helpers";
+import { getCurrentUser } from "@/lib/auth/auth-helpers";
 import {
   CHAT_THREAD_ATTRIBUTE,
   ChatMessageModel,

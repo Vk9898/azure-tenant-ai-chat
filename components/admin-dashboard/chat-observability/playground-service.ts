@@ -1,6 +1,6 @@
 "use server";
 
-import { getCurrentUser } from "@/components/auth-page/helpers";
+import { getCurrentUser } from "@/lib/auth/auth-helpers";
 import { ServerActionResponse } from "@/components/common/server-action-response";
 import { OpenAIInstance } from "@/components/common/services/openai";
 
