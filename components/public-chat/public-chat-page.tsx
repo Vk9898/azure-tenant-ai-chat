@@ -3,7 +3,7 @@ import { FC, useEffect, useRef } from "react";
 import { useChatScrollAnchor } from "@/components/ui/chat/chat-message-area/use-chat-scroll-anchor";
 import { ChatLoading } from "@/components/ui/chat/chat-message-area/chat-loading";
 import { PublicChatInput } from "./public-chat-input";
-import { usePublicChatStore } from "./public-chat-store";
+import { usePublicChatStore } from "./public-chat-store"; // Correct import
 import MessageContent from "./message-content";
 import { Button } from "@/components/ui/button";
 import { Trash2, Info } from "lucide-react";
@@ -18,7 +18,7 @@ import ChatMessageContainer from "@/components/ui/chat/chat-message-area/chat-me
 import ChatMessageContentArea from "@/components/ui/chat/chat-message-area/chat-message-content";
 
 export const PublicChatPage: FC = () => {
-  const { messages, loading, initChatSession, clearChatHistory } = usePublicChatStore();
+  const { messages, loading, initChatSession, clearChatHistory } = usePublicChatStore(); // Use the imported hook
   const current = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

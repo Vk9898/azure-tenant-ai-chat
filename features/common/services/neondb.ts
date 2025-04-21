@@ -101,7 +101,7 @@ export const createNeonProjectForUser = async (userId: string): Promise<string> 
           project: {
             name: projectName,
             pg_version: process.env.NEON_PG_VERSION ? parseInt(process.env.NEON_PG_VERSION) : 16,
-            region_id: process.env.NEON_REGION_ID || "aws-us-east-1", // Make region configurable
+            region_id: process.env.NEON_REGION_ID || "azure-eastus2", // Changed default region
           },
         }),
       });

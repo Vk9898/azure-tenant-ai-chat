@@ -12,6 +12,26 @@ import type { AdapterUser } from "next-auth/adapters"; // Import AdapterUser typ
 import { CustomUser } from "./auth-helpers"; // Import CustomUser for explicit typing
 
 /* ────────────────────────────────────────────────────────── */
+/*  Secret Check & Logging                                   */
+/* ────────────────────────────────────────────────────────── */
+const nextAuthSecret = process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET;
+
+if (!nextAuthSecret && process.env.NODE_ENV !== "development") {
+  console.error(
+    "\x1b[31m%s\x1b[0m", // Red color
+    "[AUTH_CONFIG_ERROR] Critical: NEXTAUTH_SECRET or AUTH_SECRET environment variable is not set. Authentication will fail."
+  );
+  // Optionally, throw an error in production to prevent startup without a secret
+  // throw new Error("Missing NEXTAUTH_SECRET or AUTH_SECRET environment variable");
+} else if (!nextAuthSecret && process.env.NODE_ENV === "development") {
+   console.warn(
+     "\x1b[33m%s\x1b[0m", // Yellow color
+     "[AUTH_CONFIG_WARNING] NEXTAUTH_SECRET or AUTH_SECRET is not set. Using a generated value for development. Ensure it's set for production."
+   );
+}
+
+
+/* ────────────────────────────────────────────────────────── */
 /*  Helpers                                                  */
 /* ────────────────────────────────────────────────────────── */
 const adminEmails = (process.env.ADMIN_EMAIL_ADDRESS || "")
@@ -97,7 +117,7 @@ export const authConfig: NextAuthConfig = {
   ],
 
   session: { strategy: "jwt" as const },
-  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET, // Use AUTH_SECRET for Vercel deployment
+  secret: nextAuthSecret, // Use the checked secret
 
   callbacks: {
     /* ---------------- JWT Callback ---------------------- */
@@ -122,6 +142,7 @@ export const authConfig: NextAuthConfig = {
         if (!token.databaseConnectionString && token.sub) {
            console.log(`[auth] No databaseConnectionString found for user ${token.sub}. Attempting to provision...`);
           try {
+            // Dynamically import the function only when needed
             const { createNeonProjectForUser } = await import("@/features/common/services/neondb");
             token.databaseConnectionString = await createNeonProjectForUser(token.sub);
             console.log(`[auth] Provisioned/retrieved Neon DB for user ${token.sub}`);

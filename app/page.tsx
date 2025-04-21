@@ -2,10 +2,19 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import { auth } from '@/lib/auth/auth-api';
+import { type Session } from "next-auth"; // Import Session type
 
 export default async function Home() {
-  // Use the new auth() function which properly awaits cookies() internally
-  const session = await auth();
+  let session: Session | null = null; // Initialize session as null
+
+  try {
+    // Use the auth() function which properly awaits cookies() internally
+    session = await auth();
+  } catch (error) {
+    // Log the error but allow the page to render for anonymous users
+    console.warn("[Home Page] Error fetching session (likely anonymous user):", error);
+    // session remains null
+  }
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -17,12 +26,11 @@ export default async function Home() {
             Deploy a private chat tenant in your Azure Subscription with a dedicated database per user on Neon
           </p>
           <div className="flex flex-col gap-4 max-w-[600px] mx-auto w-full">
-            {session && (
+            {session ? ( // Check if session exists
               <Link href="/chat" className={buttonVariants({ size: "lg", className: "ds-button-primary min-h-11 w-full sm:w-auto" })}>
                 Start Chat
               </Link>
-            )}
-            {!session && (
+            ) : ( // Render login/demo options if no session
               <>
                 <Link href="/auth/signin" className={buttonVariants({ size: "lg", className: "ds-button-primary min-h-11 w-full" })}>
                   Sign In

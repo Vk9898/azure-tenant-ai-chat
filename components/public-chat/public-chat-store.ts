@@ -97,7 +97,7 @@ const generateOfflineResponse = (message: string, userName: string): string => {
   return "I'm currently in offline mode due to connection issues. I can only respond to basic queries in this mode.";
 };
 
-// Create the store
+// Create the store and the hook
 export const usePublicChatStore = create<PublicChatStore>((set, get) => ({
   messages: [],
   loading: "idle",

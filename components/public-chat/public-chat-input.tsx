@@ -4,10 +4,10 @@ import { FC, KeyboardEvent, useRef, FormEvent } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Send } from "lucide-react";
-import { usePublicChatStore } from "./public-chat-store";
+import { usePublicChatStore } from "./public-chat-store"; // Correct import
 
 export const PublicChatInput: FC = () => {
-  const { input, loading, updateInput, submitChat } = usePublicChatStore();
+  const { input, loading, updateInput, submitChat } = usePublicChatStore(); // Use the imported hook
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {

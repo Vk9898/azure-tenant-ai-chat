@@ -49,7 +49,7 @@ export async function middleware(request: NextRequest) {
     const token = await getToken({
       req: request,
       // Ensure you have NEXTAUTH_SECRET set in your environment
-      // secret: process.env.NEXTAUTH_SECRET, // Uncomment if needed, though usually inferred
+      secret: process.env.NEXTAUTH_SECRET, // Explicitly pass the secret
     });
 
     // Redirect to login if not authenticated
