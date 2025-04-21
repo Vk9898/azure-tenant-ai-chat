@@ -1,3 +1,4 @@
+@config "../tailwind.config.css";
 @import "tailwindcss";
 
 @layer base {
