@@ -1,10 +1,12 @@
 import { ChatReportingComponent } from "@/components/reporting-page/reporting-component";
 
-export default function ReportingPage({ searchParams }: {
-  searchParams?: { pageNumber?: string | string[] }
-}) {
+// Add a minimal type annotation for the props
+export default function ReportingPage(props: any) {
+  // Extract page number from search params 
+  const searchParams = props.searchParams || {};
+  const pageNumberParam = searchParams.pageNumber;
+  
   // Handle potential string array for pageNumber, default to 0
-  const pageNumberParam = searchParams?.pageNumber;
   const pageNumberStr = Array.isArray(pageNumberParam)
     ? pageNumberParam[0]
     : pageNumberParam;
