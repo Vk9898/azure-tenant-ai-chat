@@ -67,82 +67,103 @@ export const FindExtensionByID = async (
 };
 
 export const CreateExtension = async (
-  inputModel: ExtensionModel
+  extension: ExtensionModel
 ): Promise<ServerActionResponse<ExtensionModel>> => {
   try {
     const user = await getCurrentUser();
-
-    inputModel.headers.forEach((h) => {
-      h.id = uniqueId();
-    });
-
-    inputModel.functions.forEach((f) => {
-      f.id = uniqueId();
-    });
+    const hashedId = await userHashedId();
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [
+          {
+            message: "User identification required",
+          },
+        ],
+      };
+    }
 
     const modelToSave: ExtensionModel = {
       id: uniqueId(),
-      name: inputModel.name,
-      executionSteps: inputModel.executionSteps,
-      description: inputModel.description,
-      isPublished: user.isAdmin ? inputModel.isPublished : false,
-      userId: await userHashedId(),
+      name: extension.name,
+      functions: extension.functions,
+      description: extension.description,
+      executionSteps: extension.executionSteps || "",
+      headers: extension.headers,
+      isPublished: user.isAdmin ? extension.isPublished : false,
+      userId: hashedId,
       createdAt: new Date(),
       type: EXTENSION_ATTRIBUTE,
-      functions: inputModel.functions,
-      headers: inputModel.headers,
     };
 
-    const validatedFields = validateSchema(modelToSave);
-
-    if (validatedFields.status === "OK") {
-      await secureHeaderValues(modelToSave);
-
-      const query = `
-        INSERT INTO extensions (id, name, execution_steps, description, is_published, user_id, created_at, type, functions, headers)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-        RETURNING *;
-      `;
-      const values = [
-        modelToSave.id,
-        modelToSave.name,
-        modelToSave.executionSteps,
-        modelToSave.description,
-        modelToSave.isPublished,
-        modelToSave.userId,
-        modelToSave.createdAt,
-        modelToSave.type,
-        JSON.stringify(modelToSave.functions),
-        JSON.stringify(modelToSave.headers),
-      ];
-
-      const sql = await NeonDBInstance();
-      const rows = await sql(query, values);
-
-      if (rows.length > 0) {
-        return {
-          status: "OK",
-          response: rows[0] as ExtensionModel,
-        };
+    modelToSave.functions.forEach((func) => {
+      if (!func.id) {
+        func.id = uniqueId();
       }
+    });
 
+    modelToSave.headers.forEach((header) => {
+      if (!header.id) {
+        header.id = uniqueId();
+      }
+    });
+
+    const valid = validateSchema(modelToSave);
+
+    if (valid.status !== "OK") {
+      return valid;
+    }
+
+    //create id for each parameter
+    const updatedExtension = await secureHeaderValues(modelToSave);
+
+    const query = `
+      INSERT INTO extensions (id, name, functions, description, execution_steps, headers, is_published, user_id, created_at, type)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING *;
+    `;
+    const values = [
+      updatedExtension.id,
+      updatedExtension.name,
+      JSON.stringify(updatedExtension.functions),
+      updatedExtension.description,
+      updatedExtension.executionSteps,
+      JSON.stringify(updatedExtension.headers),
+      updatedExtension.isPublished,
+      updatedExtension.userId,
+      updatedExtension.createdAt,
+      updatedExtension.type,
+    ];
+
+    const sql = await NeonDBInstance();
+    const rows = await sql(query, values);
+
+    if (rows.length > 0) {
+      return {
+        status: "OK",
+        response: {
+          ...rows[0],
+          functions: rows[0].functions,
+          headers: rows[0].headers,
+        } as ExtensionModel,
+      };
+    } else {
       return {
         status: "ERROR",
         errors: [
           {
-            message: `Unable to add Extension`,
+            message: "Error creating extension",
           },
         ],
       };
-    } else {
-      return validatedFields;
     }
   } catch (error) {
     return {
       status: "ERROR",
       errors: [
         {
-          message: `Error adding Extension: ${error}`,
+          message: `Error creating extension: ${error}`,
         },
       ],
     };
@@ -238,6 +259,32 @@ export const CreateChatWithExtension = async (
   extensionId: string
 ): Promise<ServerActionResponse<ChatThreadModel>> => {
   try {
+    const user = await getCurrentUser();
+    const hashedId = await userHashedId();
+    
+    // Return unauthorized if user is not an admin
+    if (!user.isAdmin) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [
+          {
+            message: "Admin access required",
+          },
+        ],
+      };
+    }
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [
+          {
+            message: "User identification required",
+          },
+        ],
+      };
+    }
+    
     const extensionResponse = await FindExtensionByID(extensionId);
 
     if (extensionResponse.status === "OK") {
@@ -247,7 +294,7 @@ export const CreateChatWithExtension = async (
         id: uniqueId(),
         name: extension.name,
         useName: (await userSession())!.name,
-        userId: await userHashedId(),
+        userId: hashedId,
         createdAt: new Date(),
         lastMessageAt: new Date(),
         bookmarked: false,
@@ -304,7 +351,7 @@ export const EnsureExtensionOperation = async (
   const hashedId = await userHashedId();
 
   if (extensionResponse.status === "OK") {
-    if (currentUser.isAdmin || extensionResponse.response.userId === hashedId) {
+    if (currentUser.isAdmin || (hashedId && extensionResponse.response.userId === hashedId)) {
       return extensionResponse;
     }
   }
@@ -406,16 +453,29 @@ export const DeleteExtension = async (
   }
 };
 
-export const FindAllExtensionForCurrentUser = async (): Promise<
+export const FindAllExtensionsForCurrentUser = async (): Promise<
   ServerActionResponse<Array<ExtensionModel>>
 > => {
   try {
+    const hashedId = await userHashedId();
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [
+          {
+            message: "User identification required",
+          },
+        ],
+      };
+    }
+    
     const query = `
       SELECT * FROM extensions
       WHERE type = $1 AND (is_published = $2 OR user_id = $3)
       ORDER BY created_at DESC;
     `;
-    const values = [EXTENSION_ATTRIBUTE, true, await userHashedId()];
+    const values = [EXTENSION_ATTRIBUTE, true, hashedId];
 
     const sql = await NeonDBInstance();
     const rows = await sql(query, values);
@@ -429,7 +489,53 @@ export const FindAllExtensionForCurrentUser = async (): Promise<
       status: "ERROR",
       errors: [
         {
-          message: `Error finding Extensions: ${error}`,
+          message: `Error finding extensions: ${error}`,
+        },
+      ],
+    };
+  }
+};
+
+export const FindAllExtensionForCurrentUser = FindAllExtensionsForCurrentUser;
+
+export const FindAllExtensionsForAdmin = async (): Promise<
+  ServerActionResponse<Array<ExtensionModel>>
+> => {
+  try {
+    const user = await getCurrentUser();
+    
+    // Return unauthorized if user is not an admin
+    if (!user.isAdmin) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [
+          {
+            message: "Admin access required",
+          },
+        ],
+      };
+    }
+    
+    const query = `
+      SELECT * FROM extensions
+      WHERE type = $1
+      ORDER BY created_at DESC;
+    `;
+    const values = [EXTENSION_ATTRIBUTE];
+
+    const sql = await NeonDBInstance();
+    const rows = await sql(query, values);
+
+    return {
+      status: "OK",
+      response: rows as ExtensionModel[],
+    };
+  } catch (error) {
+    return {
+      status: "ERROR",
+      errors: [
+        {
+          message: `Error finding extensions: ${error}`,
         },
       ],
     };

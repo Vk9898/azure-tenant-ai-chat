@@ -1,9 +1,9 @@
 import { ChatPersonaPage } from "@/features/persona-page/persona-page";
-import { FindAllPersonaForCurrentUser } from "@/features/persona-page/persona-services/persona-service";
+import { FindAllPersonasForAdmin } from "@/features/persona-page/persona-services/persona-service";
 import { DisplayError } from "@/features/ui/error/display-error";
 
 export default async function Home() {
-  const personasResponse = await FindAllPersonaForCurrentUser();
+  const personasResponse = await FindAllPersonasForAdmin();
   if (personasResponse.status !== "OK") {
     return <DisplayError errors={personasResponse.errors} />;
   }

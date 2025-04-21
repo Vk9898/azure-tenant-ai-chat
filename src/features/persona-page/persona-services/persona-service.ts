@@ -71,6 +71,18 @@ export const CreatePersona = async (
 ): Promise<ServerActionResponse<PersonaModel>> => {
   try {
     const user = await getCurrentUser();
+    const hashedId = await userHashedId();
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [
+          {
+            message: "User identification required",
+          },
+        ],
+      };
+    }
 
     const modelToSave: PersonaModel = {
       id: uniqueId(),
@@ -78,7 +90,7 @@ export const CreatePersona = async (
       description: props.description,
       persona_message: props.persona_message,
       isPublished: user.isAdmin ? props.isPublished : false,
-      user_id: await userHashedId(),
+      user_id: hashedId,
       created_at: new Date(),
       type: PERSONA_ATTRIBUTE,
     };
@@ -143,7 +155,7 @@ export const EnsurePersonaOperation = async (
   const hashedId = await userHashedId();
  
   if (personaResponse.status === "OK") {    
-    if (currentUser.isAdmin || personaResponse.response.user_id === hashedId) {
+    if (currentUser.isAdmin || (hashedId && personaResponse.response.user_id === hashedId)) {
      
       return personaResponse;
     }
@@ -290,16 +302,75 @@ export const UpsertPersona = async (
   }
 };
 
+// For regular authenticated users - provides access to published personas and their own
 export const FindAllPersonaForCurrentUser = async (): Promise<
   ServerActionResponse<Array<PersonaModel>>
 > => {
   try {
+    const hashedId = await userHashedId();
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [
+          {
+            message: "User identification required",
+          },
+        ],
+      };
+    }
+    
     const query = `
       SELECT * FROM personas
       WHERE type = $1 AND (is_published = $2 OR user_id = $3)
       ORDER BY created_at DESC;
     `;
-    const values = [PERSONA_ATTRIBUTE, true, await userHashedId()];
+    const values = [PERSONA_ATTRIBUTE, true, hashedId];
+
+    const sql = await NeonDBInstance();
+    const rows = await sql(query, values);
+
+    return {
+      status: "OK",
+      response: rows as PersonaModel[],
+    };
+  } catch (error) {
+    return {
+      status: "ERROR",
+      errors: [
+        {
+          message: `Error finding personas: ${error}`,
+        },
+      ],
+    };
+  }
+};
+
+// For admin-only access to all personas
+export const FindAllPersonasForAdmin = async (): Promise<
+  ServerActionResponse<Array<PersonaModel>>
+> => {
+  try {
+    const user = await getCurrentUser();
+    
+    // Return unauthorized if user is not an admin
+    if (!user.isAdmin) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [
+          {
+            message: "Admin access required",
+          },
+        ],
+      };
+    }
+    
+    const query = `
+      SELECT * FROM personas
+      WHERE type = $1
+      ORDER BY created_at DESC;
+    `;
+    const values = [PERSONA_ATTRIBUTE];
 
     const sql = await NeonDBInstance();
     const rows = await sql(query, values);
@@ -325,6 +396,30 @@ export const CreatePersonaChat = async (
 ): Promise<ServerActionResponse<ChatThreadModel>> => {
   const personaResponse = await FindPersonaByID(personaId);
   const user = await getCurrentUser();
+  const hashedId = await userHashedId();
+  
+  // Return unauthorized if user is not an admin
+  if (!user.isAdmin) {
+    return {
+      status: "UNAUTHORIZED",
+      errors: [
+        {
+          message: "Admin access required",
+        },
+      ],
+    };
+  }
+  
+  if (!hashedId) {
+    return {
+      status: "UNAUTHORIZED",
+      errors: [
+        {
+          message: "User identification required",
+        },
+      ],
+    };
+  }
 
   if (personaResponse.status === "OK") {
     const persona = personaResponse.response;
@@ -332,7 +427,7 @@ export const CreatePersonaChat = async (
     const response = await UpsertChatThread({
       name: persona.name,
       useName: user.name,
-      userId: await userHashedId(),
+      userId: hashedId,
       id: "",
       createdAt: new Date(),
       lastMessageAt: new Date(),
@@ -346,6 +441,7 @@ export const CreatePersonaChat = async (
 
     return response;
   }
+
   return personaResponse;
 };
 

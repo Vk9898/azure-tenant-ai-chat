@@ -24,13 +24,22 @@ export const FindAllChatThreadForCurrentUser = async (): Promise<
   ServerActionResponse<Array<ChatThreadModel>>
 > => {
   try {
+    const hashedId = await userHashedId();
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [{ message: "User identification required" }],
+      };
+    }
+    
     const query = `
       SELECT *
       FROM chat_threads
       WHERE type = $1 AND user_id = $2 AND is_deleted = $3
       ORDER BY created_at DESC;
     `;
-    const values = [CHAT_THREAD_ATTRIBUTE, await userHashedId(), false];
+    const values = [CHAT_THREAD_ATTRIBUTE, hashedId, false];
 
     const sql = await NeonDBInstance();
     const rows = await sql(query, values);
@@ -64,12 +73,21 @@ export const FindChatThreadForCurrentUser = async (
   id: string
 ): Promise<ServerActionResponse<ChatThreadModel>> => {
   try {
+    const hashedId = await userHashedId();
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [{ message: "User identification required" }],
+      };
+    }
+    
     const query = `
       SELECT *
       FROM chat_threads
       WHERE type = $1 AND user_id = $2 AND id = $3 AND is_deleted = $4;
     `;
-    const values = [CHAT_THREAD_ATTRIBUTE, await userHashedId(), id, false];
+    const values = [CHAT_THREAD_ATTRIBUTE, hashedId, id, false];
 
     const sql = await NeonDBInstance();
     const rows = await sql(query, values);
@@ -135,7 +153,7 @@ export const EnsureChatThreadOperation = async (
   const hashedId = await userHashedId();
 
   if (response.status === "OK") {
-    if (currentUser.isAdmin || response.response.userId === hashedId) {
+    if (currentUser.isAdmin || (hashedId && response.response.userId === hashedId)) {
       return response;
     }
   }

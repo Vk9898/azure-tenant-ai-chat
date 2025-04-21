@@ -1,9 +1,9 @@
 import { ExtensionPage } from "@/features/extensions-page/extension-page";
-import { FindAllExtensionForCurrentUser } from "@/features/extensions-page/extension-services/extension-service";
+import { FindAllExtensionsForAdmin } from "@/features/extensions-page/extension-services/extension-service";
 import { DisplayError } from "@/features/ui/error/display-error";
 
 export default async function Home() {
-  const extensionResponse = await FindAllExtensionForCurrentUser();
+  const extensionResponse = await FindAllExtensionsForAdmin();
 
   if (extensionResponse.status !== "OK") {
     return <DisplayError errors={extensionResponse.errors} />;

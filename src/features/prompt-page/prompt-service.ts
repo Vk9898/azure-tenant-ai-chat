@@ -19,6 +19,7 @@ export const CreatePrompt = async (
 ): Promise<ServerActionResponse<PromptModel>> => {
   try {
     const user = await getCurrentUser();
+    const hashedId = await userHashedId();
 
     if (!user.isAdmin) {
       return {
@@ -30,18 +31,29 @@ export const CreatePrompt = async (
         ],
       };
     }
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [
+          {
+            message: "User identification required",
+          },
+        ],
+      };
+    }
 
     const modelToSave: PromptModel = {
       id: uniqueId(),
       name: props.name,
       description: props.description,
       isPublished: user.isAdmin ? props.isPublished : false,
-      userId: await userHashedId(),
+      userId: hashedId,
       createdAt: new Date(),
       type: PROMPT_ATTRIBUTE,
     };
 
-    const valid = ValidateSchema(modelToSave);
+    const valid = validateSchema(modelToSave);
 
     if (valid.status !== "OK") {
       return valid;
@@ -92,10 +104,69 @@ export const CreatePrompt = async (
   }
 };
 
+// For regular authenticated users - provides access to published prompts and their own
+export const FindAllPublishedPrompts = async (): Promise<
+  ServerActionResponse<Array<PromptModel>>
+> => {
+  try {
+    const hashedId = await userHashedId();
+    
+    if (!hashedId) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [
+          {
+            message: "User identification required",
+          },
+        ],
+      };
+    }
+    
+    const query = `
+      SELECT * FROM prompts
+      WHERE type = $1 AND (is_published = $2 OR user_id = $3)
+      ORDER BY created_at DESC;
+    `;
+    const values = [PROMPT_ATTRIBUTE, true, hashedId];
+
+    const sql = await NeonDBInstance();
+    const rows = await sql(query, values);
+
+    return {
+      status: "OK",
+      response: rows as PromptModel[],
+    };
+  } catch (error) {
+    return {
+      status: "ERROR",
+      errors: [
+        {
+          message: `Error retrieving prompts: ${error}`,
+        },
+      ],
+    };
+  }
+};
+
+// For admin-only access to all prompts
 export const FindAllPrompts = async (): Promise<
   ServerActionResponse<Array<PromptModel>>
 > => {
   try {
+    const user = await getCurrentUser();
+
+    // Return unauthorized if user is not an admin
+    if (!user.isAdmin) {
+      return {
+        status: "UNAUTHORIZED",
+        errors: [
+          {
+            message: "Admin access required",
+          },
+        ],
+      };
+    }
+    
     const query = `
       SELECT * FROM prompts
       WHERE type = $1;
@@ -250,7 +321,7 @@ export const UpsertPrompt = async (
         createdAt: new Date(),
       };
 
-      const validationResponse = ValidateSchema(modelToUpdate);
+      const validationResponse = validateSchema(modelToUpdate);
       if (validationResponse.status !== "OK") {
         return validationResponse;
       }
@@ -309,7 +380,7 @@ export const UpsertPrompt = async (
   }
 };
 
-const ValidateSchema = (model: PromptModel): ServerActionResponse => {
+const validateSchema = (model: PromptModel): ServerActionResponse => {
   const validatedFields = PromptModelSchema.safeParse(model);
 
   if (!validatedFields.success) {

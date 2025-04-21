@@ -19,6 +19,12 @@ export const userSession = async (): Promise<UserModel | null> => {
   return null;
 };
 
+// Use this when you need to handle anonymous users gracefully
+export const getUserOrNull = async (): Promise<UserModel | null> => {
+  return await userSession();
+};
+
+// Use this when you need to enforce authentication and redirect anonymous users
 export const getCurrentUser = async (): Promise<UserModel> => {
   const user = await userSession();
   if (user) {
@@ -27,8 +33,11 @@ export const getCurrentUser = async (): Promise<UserModel> => {
   redirect('/');
 };
 
-export const userHashedId = async (): Promise<string> => {
-  const user = await getCurrentUser();
+export const userHashedId = async (): Promise<string | null> => {
+  const user = await getUserOrNull();
+  if (!user) {
+    return null;
+  }
   return hashValue(user.email);
 };
 
