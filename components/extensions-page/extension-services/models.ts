@@ -1,80 +1,87 @@
 import { refineFromEmpty } from "@/components/common/schema-validation";
-import { z } from "zod";
 
 export const EXTENSION_ATTRIBUTE = "EXTENSION";
 
-export type ExtensionModel = z.infer<typeof ExtensionModelSchema>;
-export type ExtensionFunctionModel = z.infer<typeof ExtensionFunctionSchema>;
-export type HeaderModel = z.infer<typeof HeaderSchema>;
+// Define types using TypeScript interfaces
+export interface ExtensionModel {
+  id: string;
+  name: string;
+  description: string;
+  executionSteps: string;
+  headers: HeaderModel[];
+  userId: string;
+  isPublished: boolean;
+  createdAt: Date;
+  functions: ExtensionFunctionModel[];
+  type: typeof EXTENSION_ATTRIBUTE;
+}
 
-export const HeaderSchema = z.object({
-  id: z.string(),
-  key: z
-    .string()
-    .min(1, {
-      message: "Header key cannot be empty",
-    })
-    .refine(refineFromEmpty, "Header key cannot be empty"),
-  value: z
-    .string()
-    .min(1, {
-      message: "Header value cannot be empty",
-    })
-    .refine(refineFromEmpty, "Header value cannot be empty"),
-});
+export interface ExtensionFunctionModel {
+  id: string;
+  code: string;
+  endpoint: string;
+  endpointType: EndpointType;
+  isOpen: boolean;
+}
 
-export type EndpointType = z.infer<typeof EndpointTypeSchema>;
+export interface HeaderModel {
+  id: string;
+  key: string;
+  value: string;
+}
 
-export const EndpointTypeSchema = z.enum([
-  "GET",
-  "POST",
-  "PUT",
-  "PATCH",
-  "DELETE",
-]);
+export type EndpointType = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-export const ExtensionFunctionSchema = z.object({
-  id: z.string({ required_error: "Function ID is required" }),
-  code: z
-    .string()
-    .min(1, {
-      message: "Function code cannot be empty",
-    })
-    .refine(refineFromEmpty, "Function code cannot be empty"),
-  endpoint: z
-    .string()
-    .min(1, {
-      message: "Function endpoint cannot be empty",
-    })
-    .refine(refineFromEmpty, "Function endpoint cannot be empty"),
-  endpointType: EndpointTypeSchema,
-  isOpen: z.boolean(),
-});
+// Simple validation schema for TypeScript
+export const ExtensionModelSchema = {
+  safeParse: (data: any) => {
+    try {
+      // Simple validation logic
+      if (!data.name || data.name.trim() === '') {
+        return { 
+          success: false, 
+          error: { 
+            errors: [{ path: ['name'], message: 'Title cannot be empty' }] 
+          } 
+        };
+      }
+      
+      if (!data.description || data.description.trim() === '') {
+        return { 
+          success: false, 
+          error: { 
+            errors: [{ path: ['description'], message: 'Description cannot be empty' }] 
+          } 
+        };
+      }
 
-export const ExtensionModelSchema = z.object({
-  id: z.string(),
-  name: z
-    .string()
-    .min(1, {
-      message: "Title cannot be empty",
-    })
-    .refine(refineFromEmpty, "Title cannot be empty"),
-  description: z
-    .string()
-    .min(1, {
-      message: "Description cannot be empty",
-    })
-    .refine(refineFromEmpty, "Description cannot be empty"),
-  executionSteps: z
-    .string()
-    .min(1, {
-      message: "persona cannot be empty",
-    })
-    .refine(refineFromEmpty, "Description cannot be empty"),
-  headers: z.array(HeaderSchema),
-  userId: z.string(),
-  isPublished: z.boolean(),
-  createdAt: z.date(),
-  functions: z.array(ExtensionFunctionSchema), // validation is done in the function schema
-  type: z.literal(EXTENSION_ATTRIBUTE),
-});
+      if (!data.executionSteps || data.executionSteps.trim() === '') {
+        return { 
+          success: false, 
+          error: { 
+            errors: [{ path: ['executionSteps'], message: 'Execution steps cannot be empty' }] 
+          } 
+        };
+      }
+      
+      // Check functions
+      if (!data.functions || !Array.isArray(data.functions) || data.functions.length === 0) {
+        return { 
+          success: false, 
+          error: { 
+            errors: [{ path: ['functions'], message: 'At least one function is required' }] 
+          } 
+        };
+      }
+      
+      return { success: true, data };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: { 
+          errors: [{ path: [], message: `Validation error: ${error}` }] 
+        } 
+      };
+    }
+  }
+};

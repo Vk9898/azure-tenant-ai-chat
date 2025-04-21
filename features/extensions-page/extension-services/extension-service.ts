@@ -23,6 +23,7 @@ import {
   ExtensionModel,
   ExtensionModelSchema,
   HeaderModel,
+  ExtensionFunctionModel
 } from "@/components/extensions-page/extension-services/models";
 
 const KEY_VAULT_MASK = "**********";
@@ -98,7 +99,7 @@ export const CreateExtension = async (
       type: EXTENSION_ATTRIBUTE,
     };
 
-    modelToSave.functions.forEach((func: FunctionModel) => {
+    modelToSave.functions.forEach((func: ExtensionFunctionModel) => {
       if (!func.id) {
         func.id = uniqueId();
       }
@@ -569,8 +570,8 @@ const validateSchema = (model: ExtensionModel): ServerActionResponse => {
 
   if (!validatedFields.success) {
     return {
-      status: "ERROR",
-      errors: zodErrorsToServerActionErrors(validatedFields.error.errors),
+      status: "ERROR", 
+      errors: zodErrorsToServerActionErrors(validatedFields.error?.errors || []),
     };
   }
 
