@@ -1,5 +1,5 @@
 import { FormEvent } from "react";
-import { create } from "zustand";
+import { create, StoreApi } from "zustand";
 import { nanoid } from "nanoid";
 
 const STORAGE_KEY = "public-chat-messages";
@@ -29,12 +29,12 @@ const handleAssistantResponse = async (userMessage: string) => {
   return `You said: "${userMessage}"\n\nThis is a demo chat that shows your messages echoed back to you. Sign in for a full chat experience with Azure OpenAI.`;
 };
 
-export const publicChatStore = create<ChatStore>((set, get) => ({
+export const publicChatStore = create<ChatStore>((set: StoreApi<ChatStore>["setState"], get: StoreApi<ChatStore>["getState"]) => ({
   messages: [],
   input: "",
   loading: "idle",
   
-  updateInput: (input) => set({ input }),
+  updateInput: (input: string) => set({ input }),
   
   submitChat: (e: FormEvent) => {
     e.preventDefault();
@@ -45,7 +45,7 @@ export const publicChatStore = create<ChatStore>((set, get) => ({
     }
   },
   
-  sendMessage: async (content) => {
+  sendMessage: async (content: string) => {
     const userMessage: ChatMessage = {
       id: nanoid(),
       role: "user",
@@ -54,7 +54,7 @@ export const publicChatStore = create<ChatStore>((set, get) => ({
       timestamp: Date.now(),
     };
     
-    set((state) => ({
+    set((state: ChatStore) => ({
       messages: [...state.messages, userMessage],
       loading: "loading",
     }));
@@ -70,7 +70,7 @@ export const publicChatStore = create<ChatStore>((set, get) => ({
         timestamp: Date.now(),
       };
       
-      set((state) => {
+      set((state: ChatStore) => {
         const updatedMessages = [...state.messages, assistantMessage];
         // Save to localStorage
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedMessages));
@@ -110,5 +110,10 @@ export const usePublicChat = () => {
     messages: store.messages,
     input: store.input,
     loading: store.loading,
+    sendMessage: publicChatStore.getState().sendMessage,
+    updateInput: publicChatStore.getState().updateInput,
+    submitChat: publicChatStore.getState().submitChat,
+    initChatSession: publicChatStore.getState().initChatSession,
+    clearChatHistory: publicChatStore.getState().clearChatHistory,
   };
 }; 

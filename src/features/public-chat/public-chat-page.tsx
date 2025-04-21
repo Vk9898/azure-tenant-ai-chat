@@ -35,10 +35,13 @@ export const PublicChatPage: FC = () => {
   };
 
   return (
-    <main className="flex flex-1 relative flex-col">
-      <div className="p-4 border-b border-border bg-primary/5">
+    <main className="flex flex-1 relative flex-col" data-slot="public-chat-page">
+      <div className="p-4 sm:p-6 border-b-2 border-border bg-primary/5">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xl sm:text-2xl font-bold">Public Chat Demo</h1>
+          <div>
+            <h1 className="ds-section-title">Public Chat Demo</h1>
+            <div className="ds-accent-bar"></div>
+          </div>
           <div className="flex items-center gap-2">
             <TooltipProvider>
               <Tooltip>
@@ -47,10 +50,11 @@ export const PublicChatPage: FC = () => {
                     variant="ghost"
                     size="icon"
                     onClick={handleClearChat}
-                    className="h-9 w-9 ds-touch-target"
+                    className="h-10 w-10 rounded-xs ds-touch-target"
                     uppercase={false}
+                    data-slot="clear-button"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-5 w-5" />
                     <span className="sr-only">Clear Chat</span>
                   </Button>
                 </TooltipTrigger>
@@ -61,8 +65,8 @@ export const PublicChatPage: FC = () => {
             </TooltipProvider>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-background/50 p-3 rounded-xs border border-border">
-          <Info className="h-4 w-4 text-primary flex-shrink-0" />
+        <div className="flex items-center gap-3 text-sm text-muted-foreground bg-background/50 p-4 rounded-xs border-2 border-border shadow-xs" data-slot="info-box">
+          <Info className="h-5 w-5 text-primary flex-shrink-0" />
           <p>
             This is a demo with limited functionality. Public chats are stored only in your browser and not saved to a database. For full features and persistent chats, please login.
           </p>
