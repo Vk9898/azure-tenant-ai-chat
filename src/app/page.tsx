@@ -1,6 +1,12 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
+import { buttonVariants } from '@/features/ui/button';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/features/auth-page/auth-options';
 
 export default async function Home() {
+  const session = await getServerSession(authOptions);
+
   return (
     <main className="flex min-h-screen flex-col">
       <div className="container mx-auto px-4 py-16">
@@ -9,19 +15,22 @@ export default async function Home() {
           <p className="text-xl max-w-3xl mb-8">
             Deploy a private chat tenant in your Azure Subscription with a dedicated database per user on Neon
           </p>
-          <div className="flex gap-4">
-            <Link
-              href="/login"
-              className="inline-flex items-center justify-center rounded-md bg-primary px-8 py-3 text-base font-medium text-white shadow hover:bg-primary/90"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/admin-auth"
-              className="inline-flex items-center justify-center rounded-md border border-input bg-background px-8 py-3 text-base font-medium shadow-sm hover:bg-accent hover:text-accent-foreground"
-            >
-              Admin Login
-            </Link>
+          <div className="flex flex-col gap-4 max-w-[600px] mx-auto">
+            {session && (
+              <Link href="/chat" className={buttonVariants({ size: "lg" })}>
+                Start Chat
+              </Link>
+            )}
+            {!session && (
+              <>
+                <Link href="/auth/signin" className={buttonVariants({ size: "lg" })}>
+                  Sign In
+                </Link>
+                <Link href="/public-chat" className={buttonVariants({ size: "lg", variant: "outline" })}>
+                  Try Public Chat Demo
+                </Link>
+              </>
+            )}
           </div>
         </div>
 

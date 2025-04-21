@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/features/ui/card";
 import { Button } from "@/features/ui/button";
-import { Search, MapPin, Book, Newspaper, Code, ShoppingCart } from "lucide-react";
+import { Search, MapPin, Book, Newspaper, Code, ShoppingCart, Shield } from "lucide-react";
 import { extensionStore } from "../extension-store";
 import { uniqueId } from "@/features/common/util";
 
@@ -332,6 +332,74 @@ return JSON.stringify(requestBody);`
   type: "EXTENSION"
 };
 
+const REPUTATION_CHECK_TEMPLATE = {
+  id: "",
+  name: "Reputation Check",
+  description: "Check a person's online reputation and assess potential fraud risk factors",
+  executionSteps: `This extension allows the AI to perform a reputation check on an individual by searching for relevant information online.`,
+  headers: [
+    {
+      id: uniqueId(),
+      key: "Authorization",
+      value: "Bearer YOUR_OPENAI_API_KEY"
+    },
+    {
+      id: uniqueId(),
+      key: "Content-Type", 
+      value: "application/json"
+    }
+  ],
+  functions: [
+    {
+      id: uniqueId(),
+      endpointType: "POST",
+      endpoint: "https://api.openai.com/v1/chat/completions",
+      isOpen: false,
+      code: `
+// Parse the incoming function call arguments
+const fullName = args.query.full_name;
+const location = args.query.location || "";
+const businessName = args.query.business_name || "";
+const checkType = args.query.check_type || "general";
+
+// Construct the search query based on check type
+let searchTerm = "";
+
+if (checkType === "general") {
+  searchTerm = '"' + fullName + '" background check reputation' + (location ? " " + location : "");
+} else if (checkType === "business" && businessName) {
+  searchTerm = '"' + fullName + '" "' + businessName + '" fraud scam complaint reviews';
+} else if (checkType === "professional") {
+  searchTerm = '"' + fullName + '" professional credentials verification' + (location ? " " + location : "");
+} else if (checkType === "comprehensive") {
+  // For comprehensive, we use a more specific query that captures both personal and business aspects
+  searchTerm = '"' + fullName + '" reputation fraud check' + (location ? " " + location : "") + (businessName ? ' "' + businessName + '"' : "");
+}
+
+// Construct the request body
+const requestBody = {
+  model: "gpt-4o-search-preview",
+  web_search_options: {},
+  messages: [
+    {
+      role: "user",
+      content: "Please conduct a thorough online reputation assessment for " + fullName + 
+               (location ? " in " + location : "") + 
+               (businessName ? " associated with " + businessName : "") + 
+               ". Identify any red flags, fraud allegations, or concerning patterns. Format the response as a clear assessment with specific findings and an overall risk evaluation."
+    }
+  ]
+};
+
+return JSON.stringify(requestBody);`
+    }
+  ],
+  isPublished: false,
+  userId: "",
+  createdAt: new Date(),
+  type: "EXTENSION"
+};
+
 export const WebSearchTemplates: FC = () => {
   const createExtensionFromTemplate = (template: any) => {
     extensionStore.updateExtension({
@@ -486,6 +554,30 @@ export const WebSearchTemplates: FC = () => {
           <CardFooter>
             <Button 
               onClick={() => createExtensionFromTemplate(PRODUCT_REVIEW_TEMPLATE)}
+              variant="outline" 
+              className="w-full"
+            >
+              Use This Template
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Reputation Check
+            </CardTitle>
+            <CardDescription>Check a person's online reputation</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-grow">
+            <p className="text-sm text-muted-foreground">
+              Assess potential fraud risk factors and conduct a thorough online reputation assessment.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button 
+              onClick={() => createExtensionFromTemplate(REPUTATION_CHECK_TEMPLATE)}
               variant="outline" 
               className="w-full"
             >

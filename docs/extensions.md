@@ -391,6 +391,76 @@ const data = await response.json();
 return data.choices[0].message.content;
 ```
 
+For the reputation check extension, you could use this implementation:
+
+```javascript
+// Parse the incoming function call arguments
+const fullName = args.query.full_name;
+const location = args.query.location || "";
+const businessName = args.query.business_name || "";
+const checkType = args.query.check_type || "general";
+
+// Construct search queries based on check type
+let searchTerms = [];
+if (checkType === "general" || checkType === "comprehensive") {
+  searchTerms.push(`"${fullName}" background check reputation${location ? " " + location : ""}`);
+  searchTerms.push(`"${fullName}" reviews complaints warnings${location ? " " + location : ""}`);
+}
+
+if ((checkType === "business" || checkType === "comprehensive") && businessName) {
+  searchTerms.push(`"${fullName}" "${businessName}" fraud scam complaint reviews`);
+  searchTerms.push(`"${businessName}" fraud scam reviews trustworthiness`);
+}
+
+if (checkType === "professional" || checkType === "comprehensive") {
+  searchTerms.push(`"${fullName}" professional credentials verification${location ? " " + location : ""}`);
+  searchTerms.push(`"${fullName}" professional license suspension practice history${location ? " " + location : ""}`);
+}
+
+// Execute multiple searches and combine results
+const results = [];
+for (const searchTerm of searchTerms) {
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-search-preview",
+      web_search_options: {},
+      messages: [
+        {
+          role: "user",
+          content: searchTerm
+        }
+      ]
+    })
+  });
+  
+  const data = await response.json();
+  if (data.choices && data.choices[0] && data.choices[0].message) {
+    results.push({
+      query: searchTerm,
+      content: data.choices[0].message.content
+    });
+  }
+}
+
+// Process and analyze the results to extract risk factors
+const processedResults = {
+  name: fullName,
+  business: businessName,
+  location: location,
+  checkType: checkType,
+  searchResults: results,
+  summary: "Based on the search results, here is a reputation analysis with potential risk factors highlighted.",
+  timestamp: new Date().toISOString()
+};
+
+return JSON.stringify(processedResults);
+```
+
 ### Required Headers
 
 For the extension to work properly, you'll need to include:

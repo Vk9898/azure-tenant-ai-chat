@@ -31,29 +31,23 @@ import {
 import { Label } from "@/features/ui/label";
 import { Slider } from "@/features/ui/slider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, FieldValues, ControllerRenderProps } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { RefreshCw, SendIcon, SparklesIcon } from "lucide-react";
 import { generatePlaygroundResponse } from "./playground-service";
 import { logPrompt } from "./prompt-logging-service";
 
-// Define the schema for the playground form
+// Define the schema for the playground form with required fields
 const formSchema = z.object({
   prompt: z.string().min(1, "Prompt is required"),
+  model: z.string(),
+  temperature: z.number(),
+  maxTokens: z.number(),
   expectedResponse: z.string().optional(),
-  model: z.string().default("gpt-4o"),
-  temperature: z.number().min(0).max(2).default(0.7),
-  maxTokens: z.number().min(1).max(4096).default(1000),
   systemPrompt: z.string().optional(),
 });
 
-// Create a type for the form values
 type FormValues = z.infer<typeof formSchema>;
-
-// Type for field props in form render functions
-type FieldProps = {
-  field: ControllerRenderProps<FormValues, any>;
-};
 
 type PromptResult = {
   response: string;
@@ -73,27 +67,26 @@ export function ChatPlayground() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: "",
-      expectedResponse: "",
       model: "gpt-4o",
       temperature: 0.7,
       maxTokens: 1000,
+      expectedResponse: "",
       systemPrompt: "You are a helpful AI assistant working for Azure Tenant AI Chat.",
     },
   });
 
-  // Update the onSubmit function to use the actual API and log the result
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(data: FormValues) {
     setIsLoading(true);
     
     try {
       const startTime = Date.now();
       
       const playgroundResponse = await generatePlaygroundResponse({
-        prompt: values.prompt,
-        model: values.model,
-        temperature: values.temperature,
-        maxTokens: values.maxTokens,
-        systemPrompt: values.systemPrompt || "",
+        prompt: data.prompt,
+        model: data.model,
+        temperature: data.temperature,
+        maxTokens: data.maxTokens,
+        systemPrompt: data.systemPrompt || "",
       });
       
       const endTime = Date.now();
@@ -104,17 +97,17 @@ export function ChatPlayground() {
         
         // Log the prompt and response
         await logPrompt({
-          modelName: values.model,
-          prompt: values.prompt,
-          expectedResponse: values.expectedResponse,
+          modelName: data.model,
+          prompt: data.prompt,
+          expectedResponse: data.expectedResponse,
           actualResponse: playgroundResponse.response.response,
-          temperature: values.temperature,
-          maxTokens: values.maxTokens,
+          temperature: data.temperature,
+          maxTokens: data.maxTokens,
           tokensUsed: playgroundResponse.response.tokens.total,
           responseTimeMs: responseTime,
           success: true,
           metadata: {
-            systemPrompt: values.systemPrompt,
+            systemPrompt: data.systemPrompt,
             source: "admin-playground"
           }
         });
@@ -124,17 +117,17 @@ export function ChatPlayground() {
         
         // Log the error
         await logPrompt({
-          modelName: values.model,
-          prompt: values.prompt,
-          expectedResponse: values.expectedResponse,
+          modelName: data.model,
+          prompt: data.prompt,
+          expectedResponse: data.expectedResponse,
           actualResponse: "Error: " + (playgroundResponse.errors[0]?.message || "Unknown error"),
-          temperature: values.temperature,
-          maxTokens: values.maxTokens,
+          temperature: data.temperature,
+          maxTokens: data.maxTokens,
           responseTimeMs: responseTime,
           success: false,
           errorMessage: playgroundResponse.errors[0]?.message || "Unknown error",
           metadata: {
-            systemPrompt: values.systemPrompt,
+            systemPrompt: data.systemPrompt,
             source: "admin-playground"
           }
         });
@@ -167,7 +160,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="model"
-                      render={({ field }: FieldProps) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Model</FormLabel>
                           <Select 
@@ -196,7 +189,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="temperature"
-                      render={({ field }: FieldProps) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Temperature: {field.value}</FormLabel>
                           <FormControl>
@@ -219,7 +212,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="maxTokens"
-                      render={({ field }: FieldProps) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Max Tokens: {field.value}</FormLabel>
                           <FormControl>
@@ -242,7 +235,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="systemPrompt"
-                      render={({ field }: FieldProps) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>System Prompt</FormLabel>
                           <FormControl>
@@ -265,7 +258,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="prompt"
-                      render={({ field }: FieldProps) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>User Prompt</FormLabel>
                           <FormControl>
@@ -286,7 +279,7 @@ export function ChatPlayground() {
                     <FormField
                       control={form.control}
                       name="expectedResponse"
-                      render={({ field }: FieldProps) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Expected Response (Optional)</FormLabel>
                           <FormControl>
