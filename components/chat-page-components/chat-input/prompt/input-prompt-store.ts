@@ -1,5 +1,5 @@
-import { PromptModel } from "@/components/prompt-page/models";
-import { FindAllPublishedPrompts } from "@/components/prompt-page/prompt-service";
+import { PromptModel } from "@/components/prompt-page-components/prompt-models";
+import { FindAllPublishedPrompts } from "@/components/prompt-page-components/prompt-service";
 import { proxy, useSnapshot } from "valtio";
 import { chatStore } from "../../chat-store";
 import { SetInputRowsToMax } from "../use-chat-input-dynamic-height";

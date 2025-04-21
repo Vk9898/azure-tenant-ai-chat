@@ -8,10 +8,10 @@ import {
   PROMPT_ATTRIBUTE,
   PromptModel,
   PromptModelSchema,
-} from "@/components/prompt-page/models";
-import { getCurrentUser, userHashedId } from "../../lib/auth/auth-helpers";
+} from "@/components/prompt-page-components/models";
+import { getCurrentUser, userHashedId } from "@/lib/auth/auth-helpers";
 import { NeonDBInstance } from "@/lib/db/neondb";
-import { uniqueId } from "../common/util";
+import { uniqueId } from "@/components/common/util";
 
 
 export const CreatePrompt = async (
