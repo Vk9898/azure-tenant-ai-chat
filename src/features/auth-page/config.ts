@@ -52,12 +52,18 @@ export const authConfig: NextAuthConfig = {
     // ───── B2C / Consumer  ──────────
     AzureADB2CProvider({
       // For NextAuth v5, we need to use issuer format instead of tenantId
-      issuer: process.env.B2C_TENANT 
+      issuer: process.env.B2C_TENANT && process.env.B2C_POLICY
         ? `https://${process.env.B2C_TENANT}.b2clogin.com/${process.env.B2C_TENANT}.onmicrosoft.com/${process.env.B2C_POLICY}/v2.0`
-        : "",
+        : undefined,
       clientId: process.env.B2C_CLIENT_ID ?? "",
       clientSecret: process.env.B2C_CLIENT_SECRET ?? "",
-      authorization: { params: { scope: "offline_access openid" } },
+      authorization: { 
+        params: { scope: "offline_access openid" } 
+      },
+      checks: ["pkce"],
+      client: {
+        token_endpoint_auth_method: 'none'
+      },
     }),
 
     // ───── GitHub ──────────

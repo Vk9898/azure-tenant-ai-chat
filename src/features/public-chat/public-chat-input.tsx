@@ -2,7 +2,7 @@
 
 import { FC, KeyboardEvent, useEffect, useState } from "react";
 import { Textarea } from "@/features/ui/textarea";
-import { Button, dsButtonPrimary } from "@/features/ui/button";
+import { Button, buttonVariants } from "@/features/ui/button";
 import { Send } from "lucide-react";
 import { nanoid } from "nanoid";
 
@@ -99,7 +99,7 @@ export const PublicChatInput: FC = () => {
           </div>
           <Button
             size="icon"
-            className={`${dsButtonPrimary} h-11 w-11 rounded-xs min-h-11 min-w-11`}
+            className={`${buttonVariants({ variant: "default" })} h-11 w-11 rounded-xs min-h-11 min-w-11`}
             disabled={message.trim().length === 0}
             onClick={handleSubmit}
             data-slot="send-button"

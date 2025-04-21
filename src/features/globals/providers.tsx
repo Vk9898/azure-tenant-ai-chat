@@ -1,7 +1,7 @@
 "use client";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/features/theme/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/features/ui/sonner";
 import { auth } from "@/features/auth-page/auth-api";
 
 export const AuthenticatedProviders = ({
