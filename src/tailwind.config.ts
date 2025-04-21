@@ -98,9 +98,8 @@ const config = {
         }
       },
       borderRadius: {
-        xs: "var(--radius-xs)",
         sm: "var(--radius-sm)",
-        DEFAULT: "var(--radius-md)",
+        DEFAULT: "var(--radius)",
         md: "var(--radius-md)",
         lg: "var(--radius-lg)",
         xl: "var(--radius-xl)",
@@ -123,24 +122,23 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
-        default: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
-        cal: ["var(--font-cal)", "Cal Sans", "ui-sans-serif", "system-ui", "sans-serif"],
-        title: ["var(--font-title)", "Cal Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+        default: ["var(--font-inter)", "system-ui", "sans-serif"],
+        cal: ["var(--font-cal)", "system-ui", "sans-serif"],
+        title: ["var(--font-title)", "system-ui", "sans-serif"],
         openai: ["var(--font-openai-sans)", "system-ui", "sans-serif"],
-        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"],
+        mono: ["JetBrains Mono", "monospace"],
       },
       typography: {
         DEFAULT: {
           css: {
             h1: {
-              fontFamily: "Cal Sans, var(--font-cal), var(--font-title), system-ui, sans-serif",
+              fontFamily: "Cal Sans",
             },
             h2: {
-              fontFamily: "Cal Sans, var(--font-cal), var(--font-title), system-ui, sans-serif",
+              fontFamily: "Cal Sans",
             },
             h3: {
-              fontFamily: "Cal Sans, var(--font-cal), var(--font-title), system-ui, sans-serif",
+              fontFamily: "Cal Sans",
             },
             "blockquote p:first-of-type::before": { content: "none" },
             "blockquote p:first-of-type::after": { content: "none" },
