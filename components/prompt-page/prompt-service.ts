@@ -10,7 +10,7 @@ import {
   PromptModelSchema,
 } from "@/components/prompt-page/models";
 import { getCurrentUser, userHashedId } from "../../lib/auth/auth-helpers";
-import { NeonDBInstance } from "@/components/common/services/neondb";
+import { NeonDBInstance } from "@/lib/db/neondb";
 import { uniqueId } from "../common/util";
 
 

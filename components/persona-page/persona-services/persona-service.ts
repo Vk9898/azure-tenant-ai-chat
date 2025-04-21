@@ -1,5 +1,5 @@
 "use server";
-import { NeonDBInstance } from "@/components/common/services/neondb";
+import { NeonDBInstance } from "@/lib/db/neondb";
 
 import { getCurrentUser, userHashedId } from "@/lib/auth/auth-helpers";
 import { UpsertChatThread } from "@/components/chat-page/chat-services/chat-thread-service";

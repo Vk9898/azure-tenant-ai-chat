@@ -174,3 +174,62 @@ To reduce costs, you can switch to free SKUs for Azure App Service and Form Reco
 ## About Neon
 
  [Neon](https://neon.tech/) is a serverless, fully managed PostgreSQL database service optimized for modern applications. Neon's advanced features include autoscaling, scale-to-zero, database branching, instant point-in-time restore, and time travel queries. Neon manages the Postgres infrastructure, including database configuration, maintenance, and scaling operations, allowing you to focus on building and optimizing your applications.
+
+# Database Management
+
+## Schema Management
+
+The database schema is defined in a centralized location at `lib/db/schema.ts`. This ensures consistency across the application and helps avoid schema drift between different parts of the codebase.
+
+### Schema Structure
+
+All tables and indexes are defined in the `SchemaDefinition` object, which includes:
+
+- Core application tables (chat_threads, documents, etc.)
+- Standard indexes for performance optimization
+- Vector indexes for similarity search operations
+
+### Initialization Tools
+
+The application provides several tools for managing the database schema:
+
+1. **Automatic Initialization**: The schema is automatically initialized when a new user account is created, in the auth flow.
+
+2. **Manual Initialization**: You can manually initialize or reset a database using the utility script:
+
+   ```bash
+   # Initialize the default database (specified by DATABASE_URL)
+   npx ts-node lib/db/init-db.ts
+   
+   # Initialize a specific database
+   npx ts-node lib/db/init-db.ts "postgres://your-connection-string"
+   ```
+
+3. **Diagnostic Tools**: Tools to check the database status are available in the `tools/` directory:
+
+   ```bash
+   # Check the default database
+   npx ts-node tools/db-validator.ts
+   
+   # Check a specific user's database
+   npx ts-node tools/user-db-check.ts
+   ```
+
+## Multi-Tenant Architecture
+
+The application uses a multi-tenant database architecture where:
+
+1. Each user gets their own Neon database project
+2. The user's database connection string is stored in their session
+3. All operations use the appropriate database based on the current user
+
+This architecture provides strong isolation between users while still allowing for centralized administration.
+
+## Troubleshooting
+
+If you encounter database issues:
+
+1. Check the `neon.md` file for known issues and solutions
+2. Run the diagnostic tools to check the database status
+3. Examine the schema corrections table to see any errors during schema initialization
+4. If necessary, re-initialize the schema using the manual initialization tool

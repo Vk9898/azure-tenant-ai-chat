@@ -1,5 +1,5 @@
 "use server";
-import { NeonDBInstance } from "@/components/common/services/neondb";
+import { NeonDBInstance } from "@/lib/db/neondb";
 import { userHashedId } from "@/lib/auth/auth-helpers";
 import { ServerActionResponse } from "@/components/common/server-action-response";
 import { uniqueId } from "@/components/common/util";

@@ -1,5 +1,5 @@
 "use server";
-import { NeonDBInstance } from "@/components/common/services/neondb";
+import { NeonDBInstance } from "@/lib/db/neondb";
 
 import {
   getCurrentUser,
@@ -568,7 +568,7 @@ const validateSchema = (model: ExtensionModel): ServerActionResponse => {
 
   if (!validatedFields.success) {
     return {
-      status: "ERROR", 
+      status: "ERROR",
       errors: zodErrorsToServerActionErrors(validatedFields.error?.errors ?? []),
     };
   }

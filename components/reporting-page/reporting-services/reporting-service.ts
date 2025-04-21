@@ -6,7 +6,7 @@ import {
   MESSAGE_ATTRIBUTE,
 } from "@/components/chat-page/chat-services/models";
 import { ServerActionResponse } from "@/components/common/server-action-response";
-import { NeonDBInstance } from "@/components/common/services/neondb";
+import { NeonDBInstance } from "@/lib/db/neondb";
 
 
 export const FindAllChatThreadsForAdmin = async (
