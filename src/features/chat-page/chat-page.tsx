@@ -42,37 +42,41 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
   useChatScrollAnchor({ ref: current });
 
   return (
-    <main className="flex flex-1 relative flex-col">
+    <main className="flex flex-1 relative flex-col" data-slot="chat-page">
       <ChatHeader
         chatThread={props.chatThread}
         chatDocuments={props.chatDocuments}
         extensions={props.extensions}
       />
-      <ChatMessageContainer ref={current}>
-        <ChatMessageContentArea>
-          {messages.map((message) => {
-            return (
-              <ChatMessageArea
-                key={message.id}
-                profileName={message.name}
-                role={message.role}
-                onCopy={() => {
-                  navigator.clipboard.writeText(message.content);
-                }}
-                profilePicture={
-                  message.role === "assistant"
-                    ? "/ai-icon.png"
-                    : session?.user?.image
-                }
-              >
-                <MessageContent message={message} />
-              </ChatMessageArea>
-            );
-          })}
+      <ChatMessageContainer ref={current} className="flex-1 py-4 sm:py-6 pb-32 sm:pb-24">
+        <ChatMessageContentArea className="container max-w-3xl px-4 sm:px-6 mx-auto space-y-8 sm:space-y-10">
+          {messages.map((message) => (
+            <ChatMessageArea
+              key={message.id}
+              profileName={message.name}
+              role={message.role}
+              onCopy={() => {
+                navigator.clipboard.writeText(message.content);
+              }}
+              profilePicture={
+                message.role === "assistant"
+                  ? "/ai-icon.png"
+                  : session?.user?.image
+              }
+              className="rounded-xs"
+              data-slot={`message-${message.role}`}
+            >
+              <MessageContent message={message} />
+            </ChatMessageArea>
+          ))}
           {loading === "loading" && <ChatLoading />}
         </ChatMessageContentArea>
       </ChatMessageContainer>
-      <ChatInput />
+      <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t border-border pb-safe" data-slot="chat-input-container">
+        <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-4">
+          <ChatInput />
+        </div>
+      </div>
     </main>
   );
 };

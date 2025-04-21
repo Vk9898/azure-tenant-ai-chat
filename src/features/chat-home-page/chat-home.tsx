@@ -9,6 +9,7 @@ import { ScrollArea } from "@/features/ui/scroll-area";
 import Image from "next/image";
 import { FC } from "react";
 import { Button } from "@/features/ui/button";
+import { PlusCircle } from "lucide-react";
 
 interface ChatPersonaProps {
   personas: PersonaModel[];
@@ -18,44 +19,50 @@ interface ChatPersonaProps {
 export const ChatHome: FC<ChatPersonaProps> = (props) => {
   return (
     <ScrollArea className="flex-1">
-      <main className="flex flex-1 flex-col gap-6 pb-6">
+      <main className="flex flex-1 flex-col">
         <Hero
           title={
             <>
-              <Image
-                src={"/ai-icon.png"}
-                width={60}
-                height={60}
-                quality={100}
-                alt="ai-icon"
-                className="rounded-xs"
-              />{" "}
-              {AI_NAME}
+              <div className="flex items-center gap-3">
+                <Image
+                  src={"/ai-icon.png"}
+                  width={64}
+                  height={64}
+                  quality={100}
+                  alt="AI Icon"
+                  className="rounded-xs"
+                />
+                <span>{AI_NAME}</span>
+              </div>
             </>
           }
           description={AI_DESCRIPTION}
         />
         
-        <div className="container max-w-4xl flex flex-col gap-8 md:gap-10">
+        <div className="container max-w-6xl px-4 sm:px-6 py-6 sm:py-8 space-y-10 sm:space-y-12">
           <section>
-            <h2 className="ds-section-title">Extensions</h2>
-            <div className="ds-accent-bar"></div>
+            <div className="mb-6 sm:mb-8">
+              <h2 className="ds-section-title">Extensions</h2>
+              <div className="ds-accent-bar"></div>
+            </div>
 
             {props.extensions && props.extensions.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {props.extensions.map((extension) => {
-                  return (
-                    <ExtensionCard
-                      extension={extension}
-                      key={extension.id}
-                      showContextMenu={false}
-                    />
-                  );
-                })}
+                {props.extensions.map((extension) => (
+                  <ExtensionCard
+                    extension={extension}
+                    key={extension.id}
+                    showContextMenu={false}
+                  />
+                ))}
               </div>
             ) : (
               <div className="border-2 border-dashed border-border p-6 sm:p-8 flex flex-col items-center justify-center text-center rounded-xs" data-slot="empty-state">
-                <p className="text-muted-foreground mb-4">No extensions created</p>
+                <div className="size-12 flex items-center justify-center bg-primary/10 text-primary rounded-full mb-4">
+                  <PlusCircle className="size-6" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">No Extensions Found</h3>
+                <p className="text-muted-foreground mb-6">Add extensions to enhance your AI chat experience</p>
                 <Button 
                   className="ds-button-primary"
                   onClick={() => {
@@ -72,24 +79,28 @@ export const ChatHome: FC<ChatPersonaProps> = (props) => {
           </section>
           
           <section>
-            <h2 className="ds-section-title">Personas</h2>
-            <div className="ds-accent-bar"></div>
+            <div className="mb-6 sm:mb-8">
+              <h2 className="ds-section-title">Personas</h2>
+              <div className="ds-accent-bar"></div>
+            </div>
 
             {props.personas && props.personas.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {props.personas.map((persona) => {
-                  return (
-                    <PersonaCard
-                      persona={persona}
-                      key={persona.id}
-                      showContextMenu={false}
-                    />
-                  );
-                })}
+                {props.personas.map((persona) => (
+                  <PersonaCard
+                    persona={persona}
+                    key={persona.id}
+                    showContextMenu={false}
+                  />
+                ))}
               </div>
             ) : (
               <div className="border-2 border-dashed border-border p-6 sm:p-8 flex flex-col items-center justify-center text-center rounded-xs" data-slot="empty-state">
-                <p className="text-muted-foreground mb-4">No personas created</p>
+                <div className="size-12 flex items-center justify-center bg-primary/10 text-primary rounded-full mb-4">
+                  <PlusCircle className="size-6" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">No Personas Found</h3>
+                <p className="text-muted-foreground mb-6">Create personas to customize your chat experience</p>
               </div>
             )}
           </section>

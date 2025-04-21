@@ -33,9 +33,19 @@ import { Slider } from "@/features/ui/slider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { RefreshCw, SendIcon, SparklesIcon } from "lucide-react";
+import { 
+  BarChart3, 
+  Clock, 
+  RefreshCw, 
+  Send, 
+  Sparkles, 
+  TerminalSquare, 
+  Zap 
+} from "lucide-react";
 import { generatePlaygroundResponse } from "./playground-service";
 import { logPrompt } from "./prompt-logging-service";
+import { Badge } from "@/features/ui/badge";
+import { ScrollArea } from "@/features/ui/scroll-area";
 
 // Define the schema for the playground form with required fields
 const formSchema = z.object({
@@ -142,43 +152,61 @@ export function ChatPlayground() {
   }
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container max-w-6xl px-4 sm:px-6 py-6 sm:py-8">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex items-center gap-2 mb-2">
+          <TerminalSquare size={24} className="text-primary" />
+          <h2 className="ds-section-title">Chat Playground</h2>
+        </div>
+        <div className="ds-accent-bar"></div>
+        <p className="text-muted-foreground mt-2">
+          Test prompts with different models and parameters to fine-tune your system behavior
+        </p>
+      </div>
+      
       <div className="grid grid-cols-1 gap-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Card>
-              <CardHeader>
-                <CardTitle>Chat Playground</CardTitle>
-                <CardDescription>
-                  Test prompts with different models and parameters
-                </CardDescription>
+            <Card className="ds-card shadow-xs border-2">
+              <CardHeader className="p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xl font-bold">Model Configuration</CardTitle>
+                    <CardDescription className="text-sm text-muted-foreground mt-1">
+                      Configure model parameters and prompt settings
+                    </CardDescription>
+                  </div>
+                  <Badge variant="secondary" className="text-xs px-2 py-1 rounded-xs">
+                    Admin Only
+                  </Badge>
+                </div>
               </CardHeader>
               
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-6">
                     <FormField
                       control={form.control}
                       name="model"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Model</FormLabel>
+                          <FormLabel className="text-sm font-medium">Model</FormLabel>
                           <Select 
                             onValueChange={field.onChange} 
                             defaultValue={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger className="h-12 md:h-10 rounded-xs">
                                 <SelectValue placeholder="Select model" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent>
+                            <SelectContent className="rounded-xs border-2">
                               <SelectItem value="gpt-4o">GPT-4o</SelectItem>
                               <SelectItem value="gpt-35-turbo">GPT-3.5 Turbo</SelectItem>
                               <SelectItem value="gpt-4">GPT-4</SelectItem>
                             </SelectContent>
                           </Select>
-                          <FormDescription>
+                          <FormDescription className="text-xs text-muted-foreground">
                             Select the model to use for generating responses
                           </FormDescription>
                           <FormMessage />
@@ -191,17 +219,23 @@ export function ChatPlayground() {
                       name="temperature"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Temperature: {field.value}</FormLabel>
+                          <div className="flex items-center justify-between">
+                            <FormLabel className="text-sm font-medium">Temperature</FormLabel>
+                            <Badge variant="outline" className="font-mono text-xs">
+                              {field.value.toFixed(1)}
+                            </Badge>
+                          </div>
                           <FormControl>
                             <Slider
                               min={0}
                               max={2}
                               step={0.1}
                               value={[field.value]}
+                              className="py-2"
                               onValueChange={(value: number[]) => field.onChange(value[0])}
                             />
                           </FormControl>
-                          <FormDescription>
+                          <FormDescription className="text-xs text-muted-foreground">
                             Controls randomness. Lower values are more deterministic.
                           </FormDescription>
                           <FormMessage />
@@ -214,17 +248,23 @@ export function ChatPlayground() {
                       name="maxTokens"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Max Tokens: {field.value}</FormLabel>
+                          <div className="flex items-center justify-between">
+                            <FormLabel className="text-sm font-medium">Max Tokens</FormLabel>
+                            <Badge variant="outline" className="font-mono text-xs">
+                              {field.value}
+                            </Badge>
+                          </div>
                           <FormControl>
                             <Slider
                               min={100}
                               max={4096}
                               step={100}
                               value={[field.value]}
+                              className="py-2"
                               onValueChange={(value: number[]) => field.onChange(value[0])}
                             />
                           </FormControl>
-                          <FormDescription>
+                          <FormDescription className="text-xs text-muted-foreground">
                             Maximum number of tokens to generate
                           </FormDescription>
                           <FormMessage />
@@ -237,15 +277,15 @@ export function ChatPlayground() {
                       name="systemPrompt"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>System Prompt</FormLabel>
+                          <FormLabel className="text-sm font-medium">System Prompt</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Enter system prompt..."
-                              className="resize-y min-h-[100px]"
+                              className="resize-y min-h-[100px] h-12 md:h-32 rounded-xs"
                               {...field}
                             />
                           </FormControl>
-                          <FormDescription>
+                          <FormDescription className="text-xs text-muted-foreground">
                             Instructions to shape the model's behavior
                           </FormDescription>
                           <FormMessage />
@@ -260,15 +300,15 @@ export function ChatPlayground() {
                       name="prompt"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>User Prompt</FormLabel>
+                          <FormLabel className="text-sm font-medium">User Prompt</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Enter your prompt..."
-                              className="resize-y min-h-[150px]"
+                              className="resize-y min-h-[150px] h-12 md:h-52 rounded-xs font-medium"
                               {...field}
                             />
                           </FormControl>
-                          <FormDescription>
+                          <FormDescription className="text-xs text-muted-foreground">
                             The prompt to send to the model
                           </FormDescription>
                           <FormMessage />
@@ -281,15 +321,15 @@ export function ChatPlayground() {
                       name="expectedResponse"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Expected Response (Optional)</FormLabel>
+                          <FormLabel className="text-sm font-medium">Expected Response (Optional)</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Enter what you expect the model to respond with..."
-                              className="resize-y min-h-[150px]"
+                              className="resize-y min-h-[150px] h-12 md:h-52 rounded-xs"
                               {...field}
                             />
                           </FormControl>
-                          <FormDescription>
+                          <FormDescription className="text-xs text-muted-foreground">
                             What you expect the model to respond with
                           </FormDescription>
                           <FormMessage />
@@ -300,23 +340,28 @@ export function ChatPlayground() {
                 </div>
               </CardContent>
               
-              <CardFooter className="flex justify-between">
+              <CardFooter className="p-4 sm:p-6 flex flex-col sm:flex-row sm:justify-between gap-3">
                 <Button 
                   type="button" 
                   variant="outline"
+                  className="rounded-xs border-2 w-full sm:w-auto"
                   onClick={() => form.reset()}
                 >
-                  <RefreshCw className="mr-2 h-4 w-4" /> Reset
+                  <RefreshCw className="mr-2 h-4 w-4" /> Reset Form
                 </Button>
-                <Button type="submit" disabled={isLoading}>
+                <Button 
+                  type="submit" 
+                  disabled={isLoading}
+                  className="ds-button-primary w-full sm:w-auto gap-2"
+                >
                   {isLoading ? (
                     <>
-                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      <RefreshCw className="h-4 w-4 animate-spin" />
                       Generating...
                     </>
                   ) : (
                     <>
-                      <SendIcon className="mr-2 h-4 w-4" />
+                      <Send className="h-4 w-4" />
                       Generate Response
                     </>
                   )}
@@ -327,95 +372,151 @@ export function ChatPlayground() {
         </Form>
 
         {result && (
-          <Tabs defaultValue="result" className="w-full">
-            <TabsList>
-              <TabsTrigger value="result">Model Response</TabsTrigger>
-              {form.getValues("expectedResponse") && (
-                <TabsTrigger value="comparison">Comparison</TabsTrigger>
-              )}
-              <TabsTrigger value="metrics">Metrics</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="result">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Response</CardTitle>
-                  <CardDescription>
-                    Generated using {form.getValues("model")} with temperature {form.getValues("temperature")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-muted p-4 rounded-md whitespace-pre-wrap">
-                    {result.response}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            {form.getValues("expectedResponse") && (
-              <TabsContent value="comparison">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Response Comparison</CardTitle>
-                    <CardDescription>
-                      Compare the expected response with the model's response
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mt-6">
+            <Tabs defaultValue="result" className="w-full">
+              <TabsList className="bg-muted border border-border rounded-xs h-12 mb-6">
+                <TabsTrigger 
+                  value="result" 
+                  className="rounded-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  Model Response
+                </TabsTrigger>
+                {form.getValues("expectedResponse") && (
+                  <TabsTrigger 
+                    value="comparison" 
+                    className="rounded-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  >
+                    Comparison
+                  </TabsTrigger>
+                )}
+                <TabsTrigger 
+                  value="metrics" 
+                  className="rounded-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  Metrics
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="result">
+                <Card className="ds-card shadow-xs border-2">
+                  <CardHeader className="p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                       <div>
-                        <Label className="mb-2 block font-semibold">Expected Response</Label>
-                        <div className="bg-muted p-4 rounded-md whitespace-pre-wrap">
-                          {form.getValues("expectedResponse")}
+                        <CardTitle className="text-xl font-bold">Model Response</CardTitle>
+                        <CardDescription className="text-sm text-muted-foreground mt-1">
+                          Generated using {form.getValues("model")}
+                        </CardDescription>
+                      </div>
+                      <Badge 
+                        className="w-fit bg-primary/10 text-primary border-0 px-3 py-1.5 rounded-xs"
+                      >
+                        Temp: {form.getValues("temperature").toFixed(1)}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+                    <ScrollArea className="h-[300px] sm:h-[400px] w-full rounded-xs">
+                      <div className="bg-muted/50 p-4 rounded-xs whitespace-pre-wrap font-medium border border-border">
+                        {result.response}
+                      </div>
+                    </ScrollArea>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              {form.getValues("expectedResponse") && (
+                <TabsContent value="comparison">
+                  <Card className="ds-card shadow-xs border-2">
+                    <CardHeader className="p-4 sm:p-6">
+                      <CardTitle className="text-xl font-bold">Response Comparison</CardTitle>
+                      <CardDescription className="text-sm text-muted-foreground mt-1">
+                        Compare the expected response with the model's response
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                          <Label className="mb-2 block text-sm font-bold">Expected Response</Label>
+                          <ScrollArea className="h-[300px] w-full rounded-xs">
+                            <div className="bg-muted/50 p-4 rounded-xs whitespace-pre-wrap font-medium border border-border">
+                              {form.getValues("expectedResponse")}
+                            </div>
+                          </ScrollArea>
+                        </div>
+                        <div>
+                          <Label className="mb-2 block text-sm font-bold">Model Response</Label>
+                          <ScrollArea className="h-[300px] w-full rounded-xs">
+                            <div className="bg-muted/50 p-4 rounded-xs whitespace-pre-wrap font-medium border border-border">
+                              {result.response}
+                            </div>
+                          </ScrollArea>
                         </div>
                       </div>
-                      <div>
-                        <Label className="mb-2 block font-semibold">Model Response</Label>
-                        <div className="bg-muted p-4 rounded-md whitespace-pre-wrap">
-                          {result.response}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              )}
+              
+              <TabsContent value="metrics">
+                <Card className="ds-card shadow-xs border-2">
+                  <CardHeader className="p-4 sm:p-6">
+                    <CardTitle className="text-xl font-bold">Response Metrics</CardTitle>
+                    <CardDescription className="text-sm text-muted-foreground mt-1">
+                      Performance metrics for this response
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <MetricCard 
+                        title="Prompt Tokens" 
+                        value={result.tokens.prompt.toString()} 
+                        icon={<Sparkles className="h-5 w-5 text-yellow-500" />}
+                      />
+                      <MetricCard 
+                        title="Completion Tokens" 
+                        value={result.tokens.completion.toString()} 
+                        icon={<Sparkles className="h-5 w-5 text-emerald-500" />}
+                      />
+                      <MetricCard 
+                        title="Total Tokens" 
+                        value={result.tokens.total.toString()} 
+                        icon={<Zap className="h-5 w-5 text-primary" />}
+                      />
+                      <MetricCard 
+                        title="Response Time" 
+                        value={`${result.timeTaken.toFixed(2)}s`} 
+                        icon={<Clock className="h-5 w-5 text-violet-500" />}
+                      />
+                    </div>
+                    
+                    <div className="mt-6">
+                      <h3 className="text-sm font-medium mb-2">Usage Visualization</h3>
+                      <div className="rounded-xs overflow-hidden bg-muted/30 border border-border">
+                        <div className="h-8 flex">
+                          <div 
+                            className="bg-yellow-500/70 flex items-center justify-center text-xs font-medium text-background h-full"
+                            style={{ width: `${(result.tokens.prompt / result.tokens.total) * 100}%` }}
+                          >
+                            {Math.round((result.tokens.prompt / result.tokens.total) * 100)}%
+                          </div>
+                          <div 
+                            className="bg-emerald-500/70 flex items-center justify-center text-xs font-medium text-background h-full"
+                            style={{ width: `${(result.tokens.completion / result.tokens.total) * 100}%` }}
+                          >
+                            {Math.round((result.tokens.completion / result.tokens.total) * 100)}%
+                          </div>
+                        </div>
+                        <div className="flex text-xs text-muted-foreground px-2 py-1 justify-between border-t border-border/50">
+                          <span>Prompt: {result.tokens.prompt} tokens</span>
+                          <span>Completion: {result.tokens.completion} tokens</span>
                         </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </TabsContent>
-            )}
-            
-            <TabsContent value="metrics">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Response Metrics</CardTitle>
-                  <CardDescription>
-                    Performance metrics for this response
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    <MetricCard 
-                      title="Prompt Tokens" 
-                      value={result.tokens.prompt.toString()} 
-                      icon={<SparklesIcon className="h-4 w-4" />}
-                    />
-                    <MetricCard 
-                      title="Completion Tokens" 
-                      value={result.tokens.completion.toString()} 
-                      icon={<SparklesIcon className="h-4 w-4" />}
-                    />
-                    <MetricCard 
-                      title="Total Tokens" 
-                      value={result.tokens.total.toString()} 
-                      icon={<SparklesIcon className="h-4 w-4" />}
-                    />
-                    <MetricCard 
-                      title="Response Time" 
-                      value={`${result.timeTaken.toFixed(2)}s`} 
-                      icon={<SparklesIcon className="h-4 w-4" />}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+            </Tabs>
+          </div>
         )}
       </div>
     </div>
@@ -430,13 +531,13 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, icon }: MetricCardProps) {
   return (
-    <Card>
+    <Card className="ds-card shadow-xs border-2">
       <CardContent className="p-4">
-        <div className="flex items-center space-x-2">
-          {icon}
+        <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium">{title}</span>
+          {icon}
         </div>
-        <div className="mt-2 text-2xl font-bold">{value}</div>
+        <div className="text-2xl font-bold">{value}</div>
       </CardContent>
     </Card>
   );

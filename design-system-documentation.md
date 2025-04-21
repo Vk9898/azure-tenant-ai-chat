@@ -168,14 +168,138 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
 
 ### Form Components
 
-Form components such as Input and Textarea follow the design system:
+Form components have been updated to follow the design system:
+
+#### Input Component (`src/features/ui/input.tsx`)
 
 ✅ Implementation highlights:
-- Use `rounded-xs` corners
-- Implement proper error states
-- Use ds-focus-ring utility
-- Have mobile optimizations
-- Use data-slot attributes
+- Uses `rounded-xs` corners
+- Uses proper `h-12 md:h-10` for mobile-first approach
+- Uses `border-2` for emphasis
+- Implements ds-focus-ring utility
+- Uses data-slot attributes
+
+```tsx
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, showError, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        className={cn(
+          "flex h-12 md:h-10 w-full rounded-xs border-2 border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ds-focus-ring",
+          showError && "border-destructive focus-visible:ring-destructive",
+          className
+        )}
+        ref={ref}
+        data-slot="input"
+        {...props}
+      />
+    );
+  }
+);
+```
+
+#### Textarea Component (`src/features/ui/textarea.tsx`)
+
+✅ Implementation highlights:
+- Uses `rounded-xs` corners
+- Uses mobile-first design with `min-h-[120px] md:min-h-[100px]`
+- Uses `border-2` for emphasis
+- Implements ds-focus-ring utility
+- Uses data-slot attribute
+
+#### Form Components (`src/features/ui/form.tsx`)
+
+✅ Implementation highlights:
+- Proper spacing with `mb-4` for form items
+- Consistent typography with `text-sm font-medium` for labels
+- Smaller `text-xs` for descriptions and error messages
+- Vertical spacing with `mt-1` for descriptions and messages
+- Uses data-slot attributes across all form components
+
+#### Select Component (`src/features/ui/select.tsx`)
+
+✅ Implementation highlights:
+- Uses `rounded-xs` corners
+- Uses `border-2` for emphasis
+- Mobile-first design with `h-12 md:h-10`
+- Proper sizing for content with `py-2`
+- Clear visual feedback with `h-5 w-5` for icons
+- Uses data-slot attributes throughout
+
+#### Label Component (`src/features/ui/label.tsx`)
+
+✅ Implementation highlights:
+- Clear typography with `text-sm font-medium`
+- Uses data-slot attribute
+
+### Dialog and Sheet Components
+
+The Sheet component (`src/features/ui/sheet.tsx`) follows the design system:
+
+✅ Implementation highlights:
+- Uses `rounded-xs` for corners
+- Implements `border-2` for emphasis
+- Uses `shadow-xs` for elevation
+- Uses responsive padding with `p-4 sm:p-6`
+- Enhanced close button with proper touch target
+- Uses data-slot attributes
+
+### Menu Components
+
+The DropdownMenu (`src/features/ui/dropdown-menu.tsx`) and ContextMenu (`src/features/ui/context-menu.tsx`) components follow the design system:
+
+✅ Implementation highlights:
+- Uses `rounded-xs` for all elements
+- Implements `border-2 border-border` for containers
+- Uses `shadow-xs` for elevation
+- Uses proper padding with `p-2`
+- Consistent iconography with `h-5 w-5` sizing
+- Uses `font-bold` for typography
+- Uses data-slot attributes throughout
+
+### Tab Components
+
+The Tabs components (`src/features/ui/tabs.tsx`) follow the design system:
+
+✅ Implementation highlights:
+- Uses `rounded-xs` for all tab elements
+- Uses `border-2 border-border` for the tabs list
+- Active state uses `bg-primary text-primary-foreground`
+- Uses `shadow-xs` for active state
+- Uses `font-bold` for tab text
+- Uses ds-focus-ring for accessibility
+- Uses data-slot attributes
+
+### Toast Components
+
+The Toast components (`src/features/ui/toast.tsx`) follow the design system:
+
+✅ Implementation highlights:
+- Uses `rounded-xs` for toast container and actions
+- Uses `border-2 border-border` for toast container
+- Uses `shadow-xs` for elevation
+- Responsive padding with `p-4 sm:p-6`
+- Proper touch targets for close button (`min-h-10 min-w-10`)
+- Uses `font-bold` for toast title
+- Uses ds-focus-ring for accessibility
+- Uses data-slot attributes
+
+### Avatar Component (`src/features/ui/avatar.tsx`)
+
+✅ Implementation highlights:
+- Updated to use `rounded-xs` instead of rounded-full
+- Consistent sizing with the design system
+- Uses data-slot attributes
+
+### Tooltip Component (`src/features/ui/tooltip.tsx`)
+
+✅ Implementation highlights:
+- Uses `rounded-xs` corners
+- Uses `border-2` and `border-border` for emphasis
+- Uses `shadow-xs` for elevation
+- Appropriate padding with `px-3 py-2`
+- Uses data-slot attribute
 
 ### Navigation & Menu Components
 

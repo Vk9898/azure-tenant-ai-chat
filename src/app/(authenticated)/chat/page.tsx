@@ -16,10 +16,13 @@ export default async function Home() {
   if (extensionResponse.status !== "OK") {
     return <DisplayError errors={extensionResponse.errors} />;
   }
+  
   return (
-    <ChatHome
-      personas={personaResponse.response}
-      extensions={extensionResponse.response}
-    />
+    <div className="flex flex-col min-h-screen" data-slot="chat-home-page">
+      <ChatHome
+        personas={personaResponse.response}
+        extensions={extensionResponse.response}
+      />
+    </div>
   );
 }

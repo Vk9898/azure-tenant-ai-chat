@@ -27,13 +27,17 @@ export default async function RootLayout({
   }
 
   return (
-    <div className={cn("flex flex-1 items-stretch")}>
+    <div className={cn("flex flex-1 items-stretch")} data-slot="chat-layout">
       <div className="flex-1 flex">
         <MenuTray>
-          <ChatMenuHeader />
-          <ScrollArea>
-            <ChatMenu menuItems={chatHistoryResponse.response} />
-          </ScrollArea>
+          <div className="flex flex-col h-full">
+            <ChatMenuHeader />
+            <ScrollArea className="flex-1">
+              <nav className="p-4 sm:p-6">
+                <ChatMenu menuItems={chatHistoryResponse.response} />
+              </nav>
+            </ScrollArea>
+          </div>
         </MenuTray>
         {children}
       </div>

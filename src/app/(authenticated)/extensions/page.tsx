@@ -9,5 +9,9 @@ export default async function Home() {
     return <DisplayError errors={extensionResponse.errors} />;
   }
 
-  return <ExtensionPage extensions={extensionResponse.response} showWebSearchTemplates={true} />;
+  return (
+    <div className="flex flex-col min-h-screen" data-slot="extensions-page">
+      <ExtensionPage extensions={extensionResponse.response} showWebSearchTemplates={true} />
+    </div>
+  );
 }

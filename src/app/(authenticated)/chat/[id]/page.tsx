@@ -44,11 +44,13 @@ export default async function Home(props: HomeParams) {
   }
 
   return (
-    <ChatPage
-      messages={chatResponse.response}
-      chatThread={chatThreadResponse.response}
-      chatDocuments={docsResponse.response}
-      extensions={extensionResponse.response}
-    />
+    <div className="flex flex-col min-h-screen" data-slot="chat-thread-page">
+      <ChatPage
+        messages={chatResponse.response}
+        chatThread={chatThreadResponse.response}
+        chatDocuments={docsResponse.response}
+        extensions={extensionResponse.response}
+      />
+    </div>
   );
 }
