@@ -10,10 +10,16 @@ const requireAuth: string[] = [
   "/prompt"
 ];
 const requireAdmin: string[] = ["/reporting"];
+const publicRoutes: string[] = ["/", "/login", "/admin-auth"];
 
 export async function middleware(request: NextRequest) {
   const res = NextResponse.next();
   const pathname = request.nextUrl.pathname;
+
+  // Allow public routes without authentication check
+  if (publicRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`))) {
+    return res;
+  }
 
   if (requireAuth.some((path) => pathname.startsWith(path))) {
     const token = await getToken({
@@ -22,7 +28,7 @@ export async function middleware(request: NextRequest) {
 
     //check not logged in
     if (!token) {
-      const url = new URL(`/`, request.url);
+      const url = new URL(`/login`, request.url);
       return NextResponse.redirect(url);
     }
 
@@ -46,5 +52,7 @@ export const config = {
     "/api/chat:path*",
     "/api/images:path*",
     "/chat/:path*",
+    "/login",
+    "/admin-auth",
   ],
 };

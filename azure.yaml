@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
 
-name: azure-tenant-ai-chat
+name: demo-neon-ai-chat
 metadata:
   template: azure-chat@0.0.1
 services:

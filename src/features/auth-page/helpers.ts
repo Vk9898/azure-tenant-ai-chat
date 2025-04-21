@@ -1,5 +1,6 @@
 import { createHash } from "crypto";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import { RedirectToPage } from "../common/navigation-helpers";
 import { options } from "./auth-api";
 
@@ -23,28 +24,27 @@ export const getCurrentUser = async (): Promise<UserModel> => {
   if (user) {
     return user;
   }
-  throw new Error("User not found");
+  redirect('/');
 };
 
 export const userHashedId = async (): Promise<string> => {
-  const user = await userSession();
-  if (user) {
-    return hashValue(user.email);
-  }
-
-  throw new Error("User not found");
+  const user = await getCurrentUser();
+  return hashValue(user.email);
 };
 
 export const hashValue = (value: string): string => {
-  const hash = createHash("sha256");
-  hash.update(value);
-  return hash.digest("hex");
+  return createHash("sha256").update(value).digest("hex");
 };
 
 export const redirectIfAuthenticated = async () => {
   const user = await userSession();
   if (user) {
-    RedirectToPage("chat");
+    // Redirect admin users to the reporting page and regular users to chat
+    if (user.isAdmin) {
+      RedirectToPage("reporting");
+    } else {
+      RedirectToPage("chat");
+    }
   }
 };
 

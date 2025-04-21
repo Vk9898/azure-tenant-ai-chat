@@ -93,33 +93,6 @@
       "type": "string",
       "defaultValue": "text-embedding-ada-002"
     },
-    "dalleLocation": {
-      "type": "string",
-      "allowedValues": [
-        "swedencentral",
-        "eastus",
-        "australiaeast"
-      ],
-      "metadata": {
-        "description": "Location for the OpenAI DALL-E 3 instance resource group"
-      }
-    },
-    "dalleDeploymentCapacity": {
-      "type": "int",
-      "defaultValue": 1
-    },
-    "dalleDeploymentName": {
-      "type": "string",
-      "defaultValue": "dall-e-3"
-    },
-    "dalleModelName": {
-      "type": "string",
-      "defaultValue": "dall-e-3"
-    },
-    "dalleApiVersion": {
-      "type": "string",
-      "defaultValue": "2023-12-01-preview"
-    },
     "userPrincipalName": {
       "type": "string",
       "minLength": 1,
@@ -216,21 +189,8 @@
           },
           "embeddingModelName": {
             "value": "[parameters('embeddingModelName')]"
-          },
-          "dalleLocation": {
-            "value": "[parameters('dalleLocation')]"
-          },
-          "dalleDeploymentCapacity": {
-            "value": "[parameters('dalleDeploymentCapacity')]"
-          },
-          "dalleDeploymentName": {
-            "value": "[parameters('dalleDeploymentName')]"
-          },
-          "dalleModelName": {
-            "value": "[parameters('dalleModelName')]"
-          },
-          "dalleApiVersion": {
-            "value": "[parameters('dalleApiVersion')]"
+
+
           },
           "formRecognizerSkuName": {
             "value": "[parameters('formRecognizerSkuName')]"
@@ -295,21 +255,6 @@
             "embeddingModelName": {
               "type": "string"
             },
-            "dalleLocation": {
-              "type": "string"
-            },
-            "dalleDeploymentCapacity": {
-              "type": "int"
-            },
-            "dalleDeploymentName": {
-              "type": "string"
-            },
-            "dalleModelName": {
-              "type": "string"
-            },
-            "dalleApiVersion": {
-              "type": "string"
-            },
             "speechServiceSkuName": {
               "type": "string",
               "defaultValue": "S0"
@@ -339,7 +284,6 @@
           },
           "variables": {
             "openai_name": "[toLower(format('{0}-aillm', parameters('name')))]",
-            "openai_dalle_name": "[toLower(format('{0}-aidalle', parameters('name')))]",
             "form_recognizer_name": "[toLower(format('{0}-form', parameters('name')))]",
             "speech_service_name": "[toLower(format('{0}-speech', parameters('name')))]",
             "webapp_name": "[toLower(format('{0}-webapp', parameters('name')))]",
@@ -422,19 +366,6 @@
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2021-06-01-preview",
-              "name": "[format('{0}/{1}', variables('keyVaultName'), 'AZURE-OPENAI-DALLE-API-KEY')]",
-              "properties": {
-                "contentType": "text/plain",
-                "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('openai_dalle_name')), '2023-05-01').key1]"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.CognitiveServices/accounts', variables('openai_dalle_name'))]",
-                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.KeyVault/vaults/secrets",
-              "apiVersion": "2021-06-01-preview",
               "name": "[format('{0}/{1}', variables('keyVaultName'), 'NEXTAUTH-SECRET')]",
               "properties": {
                 "contentType": "text/plain",
@@ -486,7 +417,7 @@
             {
               "type": "Microsoft.CognitiveServices/accounts/deployments",
               "apiVersion": "2023-05-01",
-              "name": "[format('{0}/{1}', variables('openai_dalle_name'), parameters('dalleDeploymentName'))]",
+              "name": "[format('{0}/{1}', variables('openai__name'), parameters('dalleDeploymentName'))]",
               "properties": {
                 "model": {
                   "format": "OpenAI",
@@ -581,22 +512,6 @@
                     {
                       "name": "AZURE_OPENAI_API_VERSION",
                       "value": "[parameters('openai_api_version')]"
-                    },
-                    {
-                      "name": "AZURE_OPENAI_DALLE_API_KEY",
-                      "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName={1})', variables('keyVaultName'), 'AZURE-OPENAI-DALLE-API-KEY')]"
-                    },
-                    {
-                      "name": "AZURE_OPENAI_DALLE_API_INSTANCE_NAME",
-                      "value": "[variables('openai_dalle_name')]"
-                    },
-                    {
-                      "name": "AZURE_OPENAI_DALLE_API_DEPLOYMENT_NAME",
-                      "value": "[parameters('dalleDeploymentName')]"
-                    },
-                    {
-                      "name": "AZURE_OPENAI_DALLE_API_VERSION",
-                      "value": "[parameters('dalleApiVersion')]"
                     },
                     {
                       "name": "NEXTAUTH_SECRET",
@@ -780,21 +695,7 @@
                 "[resourceId('Microsoft.CognitiveServices/accounts', variables('openai_name'))]"
               ]
             },
-            {
-              "type": "Microsoft.CognitiveServices/accounts",
-              "apiVersion": "2023-05-01",
-              "name": "[variables('openai_dalle_name')]",
-              "location": "[parameters('dalleLocation')]",
-              "tags": "[parameters('tags')]",
-              "kind": "OpenAI",
-              "properties": {
-                "customSubDomainName": "[variables('openai_dalle_name')]",
-                "publicNetworkAccess": "Enabled"
-              },
-              "sku": {
-                "name": "[parameters('openAiSkuName')]"
-              }
-            },
+  
             {
               "type": "Microsoft.CognitiveServices/accounts",
               "apiVersion": "2023-05-01",

@@ -23,23 +23,14 @@ param openAILocation string
 param openAISku string = 'S0'
 param openAIApiVersion string ='2024-08-01-preview'
 
-param chatGptDeploymentCapacity int = 30
+param chatGptDeploymentCapacity int = 10
 param chatGptDeploymentName string = 'gpt-4o'
 param chatGptModelName string = 'gpt-4o'
 param chatGptModelVersion string = '2024-05-13'
 param embeddingDeploymentName string = 'embedding'
-param embeddingDeploymentCapacity int = 120
+param embeddingDeploymentCapacity int = 50
 param embeddingModelName string = 'text-embedding-ada-002'
 
-// DALL-E v3 only supported in limited regions for now
-@description('Location for the OpenAI DALL-E 3 instance resource group')
-@allowed(['swedencentral', 'eastus', 'australiaeast'])
-param dalleLocation string
-
-param dalleDeploymentCapacity int = 1
-param dalleDeploymentName string = 'dall-e-3'
-param dalleModelName string = 'dall-e-3'
-param dalleApiVersion string = '2023-12-01-preview'
 
 @minLength(1)
 @description('Enter your Azure user principal name (e.g. jane.doe@contoso.com)')
@@ -81,11 +72,7 @@ module resources 'resources.bicep' = {
     embeddingDeploymentName: embeddingDeploymentName
     embeddingDeploymentCapacity: embeddingDeploymentCapacity
     embeddingModelName: embeddingModelName
-    dalleLocation: dalleLocation
-    dalleDeploymentCapacity: dalleDeploymentCapacity
-    dalleDeploymentName: dalleDeploymentName
-    dalleModelName: dalleModelName
-    dalleApiVersion: dalleApiVersion
+  
     formRecognizerSkuName: formRecognizerSkuName
     storageServiceSku: storageServiceSku
     storageServiceImageContainerName: storageServiceImageContainerName
