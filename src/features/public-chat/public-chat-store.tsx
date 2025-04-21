@@ -1,3 +1,19 @@
+/**
+ * Public Chat Store
+ * 
+ * This is a simplified version of the chat functionality for unauthenticated users.
+ * Unlike the authenticated version that:
+ * 1. Creates a Neon database for each user
+ * 2. Provides a sidebar with navigation to other features
+ * 3. Persists chat data server-side
+ * 
+ * This public chat implementation:
+ * 1. Stores all data in browser localStorage only
+ * 2. Has no sidebar navigation (implemented as a standalone page)
+ * 3. Provides limited functionality with simulated responses
+ * 
+ * See src/app/(authenticated)/layout.tsx for the authenticated layout with sidebar.
+ */
 "use client";
 import { uniqueId } from "@/features/common/util";
 import { showError } from "@/features/globals/global-message-store";

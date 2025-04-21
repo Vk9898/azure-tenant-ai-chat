@@ -20,6 +20,7 @@ import { UserProfile } from "./user-profile";
 
 export const MainMenu = async () => {
   const user = await getCurrentUser();
+  const isAdmin = user.isAdmin;
 
   return (
     <Menu>
@@ -38,24 +39,26 @@ export const MainMenu = async () => {
               <MessageCircle {...menuIconProps} />
             </MenuLink>
           </MenuItem>
-          <MenuItem tooltip="Persona">
-            <MenuLink href="/persona" ariaLabel="Go to the Persona configuration page">
-              <VenetianMask {...menuIconProps} />
-            </MenuLink>
-          </MenuItem>
-          <MenuItem tooltip="extensions">
-            <MenuLink href="/extensions" ariaLabel="Go to the Extensions configuration page">
-              <PocketKnife {...menuIconProps} />
-            </MenuLink>
-          </MenuItem>
-          <MenuItem tooltip="prompts">
-            <MenuLink href="/prompt" ariaLabel="Go to the Prompt Library configuration page">
-              <Book {...menuIconProps} />
-            </MenuLink>
-          </MenuItem>
-          {user.isAdmin && (
+          
+          {/* Only show these menu items for admin users */}
+          {isAdmin && (
             <>
-              <MenuItem tooltip="reporting">
+              <MenuItem tooltip="Persona">
+                <MenuLink href="/persona" ariaLabel="Go to the Persona configuration page">
+                  <VenetianMask {...menuIconProps} />
+                </MenuLink>
+              </MenuItem>
+              <MenuItem tooltip="Extensions">
+                <MenuLink href="/extensions" ariaLabel="Go to the Extensions configuration page">
+                  <PocketKnife {...menuIconProps} />
+                </MenuLink>
+              </MenuItem>
+              <MenuItem tooltip="Prompts">
+                <MenuLink href="/prompt" ariaLabel="Go to the Prompt Library configuration page">
+                  <Book {...menuIconProps} />
+                </MenuLink>
+              </MenuItem>
+              <MenuItem tooltip="Reporting">
                 <MenuLink href="/reporting" ariaLabel="Go to the Admin reporting" >
                   <Sheet {...menuIconProps} />
                 </MenuLink>

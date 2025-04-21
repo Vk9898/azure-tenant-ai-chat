@@ -42,7 +42,7 @@ export const CrackDocument = async (
   }
 };
 
-const LoadFile = async (
+export const LoadFile = async (
   formData: FormData
 ): Promise<ServerActionResponse<string[]>> => {
   try {
