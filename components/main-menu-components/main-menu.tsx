@@ -1,4 +1,4 @@
-import { MenuTrayToggle } from "@/components/main-menu/menu-tray-toggle";
+import { MenuTrayToggle } from "@/components/main-menu-components/menu-tray-toggle";
 import {
   Menu,
   MenuBar,

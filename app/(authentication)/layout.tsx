@@ -1,6 +1,6 @@
 import { AuthenticatedProviders } from "@/components/globals/providers";
-import { MainMenu } from "@/components/main-menu/main-menu";
-import { MobileNavigation } from "@/components/main-menu/mobile-navigation";
+import { MainMenu } from "@/components/main-menu-components/main-menu";
+import { MobileNavigation } from "@/components/main-menu-components/mobile-navigation";
 import { AI_NAME } from "@/components/theme/theme-config";
 import { cn } from "@/lib/utils";
 import { auth } from "@/lib/auth/auth-api";
